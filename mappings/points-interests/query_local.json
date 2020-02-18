@@ -1,0 +1,22 @@
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match_all": {}
+      },
+      "filter": [
+        {
+          "geo_shape": {
+            "location": {
+              "shape": {
+                "type": "point",
+                "coordinates" : [-25.40651, -49.257615]
+              },
+              "relation": "contains"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

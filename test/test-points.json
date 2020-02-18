@@ -1,0 +1,16 @@
+{
+  "features": [
+  { "type": "Feature", 
+    "properties": { 
+      "name": "Aeroporto de Tefé", 
+      "key": "aeroway", 
+      "value": "aerodrome" 
+    }, 
+    "geometry": { 
+      "type": "Point", 
+      "coordinates": [ -64.7237464, -3.3793825 ] 
+    } 
+  }]
+}
+
+  
