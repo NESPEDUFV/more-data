@@ -8,11 +8,11 @@ class Query:
   def __init__(self, client, index, doc_type):
     self.client = client
     self.index = index
-    self.doc_type = doc_typetype_doc
+    self.doc_type = doc_type
 
-  def create_locals_index(self, mapping):
-    with open("./mappings/locals.json", "r") as json_file:
-      locals_mapping = json.loads(json_file.read())
+  def create_locals_index(self, mapping_file):
+    with open(mapping_file, "r") as json_file:
+      mapping = json.loads(json_file.read())
 
     try:
       self.client.indices.create(index=self.index, body=mapping)
@@ -22,11 +22,11 @@ class Query:
       else:
         raise
   
-  def load_index(self, data, parser_func):
+  def load_index(self, parser_func):
     try:
       bulk(
         self.client,
-        parser_func(data),
+        parser_func(),
         index = self.index,
         doc_type = self.doc_type
       ):
