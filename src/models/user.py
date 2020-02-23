@@ -1,13 +1,21 @@
+import json 
+
 def write_json(data, filename): 
     with open(filename,'w') as f: 
         json.dump(data, f, indent=4) 
 
-def read_json_elasticsearch(path):
-    str = "["
-    with open(path, 'r') as reader:
-        str = str + reader.read()
-    str = str + "]" 
-
+def read_json_unstructured(path):
+  with open(path, "r") as f:
+    str = "[" + f.read()
+    str = str.replace("\\", "")
+    str = str.replace('''"{''', '{')
+    str = str.replace('''}"''', '}')
+    str = str.replace('''"[''', '[')
+    str = str.replace(''']"''', ']')
+    str = str.replace('''""''', '''"''')
+    str = str.replace(''':",''', ''':"",''')
+    str = str.replace("\n", ",\n")
+    str = str + "]"
     return json.loads(json.dumps(str))
 
 def get_lat_long(user):
