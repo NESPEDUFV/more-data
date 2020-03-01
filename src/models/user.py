@@ -2,7 +2,7 @@ import json
 
 def write_json(data, filename): 
     with open(filename,'w') as f: 
-        json.dump(data, f, indent=4) 
+      json.dump(data, f, indent=4) 
 
 def read_json_unstructured(path):
   with open(path, "r") as f:

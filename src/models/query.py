@@ -10,7 +10,7 @@ class Query:
     self.index = index
     self.doc_type = doc_type
 
-  def create_locals_index(self, mapping_file):
+  def create_index(self, mapping_file):
     with open(mapping_file, "r") as json_file:
       mapping = json.loads(json_file.read())
 
@@ -22,14 +22,13 @@ class Query:
       else:
         raise
   
-  def load_index(self, parser_func):
+  def load_index(self, parser):
     try:
       bulk(
         self.client,
-        parser_func(),
+        parser(),
         index = self.index,
         doc_type = self.doc_type
-      ):
+      )
     except BulkIndexError as e:
-      #log message
-      pass
+      raise(e)
