@@ -16,9 +16,9 @@ if __name__ == '__main__':
     hosts=[{'host': host, 'port': 9200}]
   )
 
-  app = models.Data(data_dir=APP_DATA, parser_func=parser.parsers.parse_app, data_type="csv")
-  query_app = models.Query(es, "apps", "app")
-  query_app.load_index(app.parse)
+  # app = models.Data(data_dir=APP_DATA, parser_func=parser.parsers.parse_app, data_type="csv")
+  # query_app = models.Query(es, "apps", "app")
+  # query_app.load_index(app.parse)
 
   user = models.Data(data_dir=USER_DATA, parser_func=parser.parsers.parse_user, data_type="json")
   query_user = models.Query(es, "users", "user")

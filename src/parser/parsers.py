@@ -34,10 +34,11 @@ def parse_local_geojson(data):
     yield data_json["features"]
 
 def parse_app(data):
-  f = open(data)
-  reader = csv.DictReader(f)
-  return reader
-
+  with open(data, "r") as f:
+    reader = csv.DictReader(f)
+    for cnt, row in enumerate(reader):
+      yield row
+      
 def parse_user(data): 
   for user in json.loads(__read_unstructured_json(data)):
     user['external_identifier'] = str(user['external_identifier'])
@@ -47,7 +48,7 @@ def parse_user(data):
       and user['external_identifier'] != ""):
       yield {
         "external_identifier": str(user['external_identifier']),
-        "applications_id_list": user['applications_id_list'],
+        "applications_id_list": [str(id)+".0" for id in user['applications_id_list']],
         "operating_system": user['operating_system'],
         "user_segments_id_list": user['user_segments_id_list'],
         "radius_gyration": user['radius_of_gyration'],

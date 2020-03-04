@@ -1,0 +1,13 @@
+{
+  "description" : "Enriching app details to user",
+  "processors": [
+    {
+      "enrich" : {
+        "policy_name": "app-user-policy",
+        "field": "applications_id_list",
+        "target_field": "apps",
+        "max_matches": 128
+      }
+    }
+  ]
+}
