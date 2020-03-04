@@ -19,7 +19,7 @@ def read_json(file):
 if __name__ == "__main__":
   es = Elasticsearch(
     hosts=[{'host': HOST, 'port': PORT}],
-    timeout=40
+    timeout=10000
   )  
 
   #enrich user document
