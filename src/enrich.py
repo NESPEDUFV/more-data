@@ -8,8 +8,8 @@ import time
 HOST = 'localhost'
 PORT = 9200
 
-POLICY_FILE = "../elk-maps/enriches/app-id-policy.json"
-POLICY_PIPELINE = "../elk-maps/pipelines/app-id-pipeline.json"
+POLICY_FILE = "../elk-maps/enriches/app-user-policy.json"
+POLICY_PIPELINE = "../elk-maps/pipelines/user-pipeline.json"
 
 def read_json(file):
   with open(file, "r") as f:

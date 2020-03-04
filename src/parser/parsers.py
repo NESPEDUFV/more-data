@@ -1,5 +1,6 @@
 import json 
 import csv
+from h3 import h3
 
 def __read_unstructured_json(data):
   with open(data, "r") as f:
@@ -14,6 +15,10 @@ def __read_unstructured_json(data):
     str = str.replace("\n", ",\n")
     str = str + "]"
     return json.loads(json.dumps(str))
+
+def __POI_parser(point):
+  point["code_h3"] = h3.geo_to_h3(point["latitude"], point["longitude"], 8)
+  return point
 
 def parse_local_geojson(data):
   # TODO: copy the style of user's yield parser
@@ -33,7 +38,7 @@ def parse_local_geojson(data):
     
     yield data_json["features"]
 
-def parse_app(data):
+def csv_generator(data):
   with open(data, "r") as f:
     reader = csv.DictReader(f)
     for cnt, row in enumerate(reader):
@@ -54,7 +59,7 @@ def parse_user(data):
         "radius_gyration": user['radius_of_gyration'],
         "last_handset": user['last_handset'],
         "last_network_operator": user['last_network_operator'],
-        "points_of_interest": [points for points in user['points_of_interest']],
+        "points_of_interest": [__POI_parser(points) for points in user['points_of_interest']],
         "host_app_frequency": user['host_app_frequency'],
         "job_reference_date": user['job_reference_date']
       }
