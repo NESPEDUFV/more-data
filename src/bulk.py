@@ -34,16 +34,22 @@ def bulk_census_data(client):
   query = models.Query(client, "census", "sector")
   query.load_index(census.parse)
 
-def bulk_h3_sectors_data(client):
-  sector = models.Data(data_dir=SETORES_DIR, parser_func=parser.parsers.csv_generator, data_type="csv")
-  query = models.Query(client, "sectors", "h3_sector")
-  sector.parse()
+def bulk_h3_sectors_data(client, data_type):
+
+  import glob
+  dir = SETORES_DIR+"*."+data_type
+  files = glob.glob(dir)
+
+  for file in files:
+    print(file)
+    sector = models.Data(data_file=file, parser_func=parser.parsers.parse_setores, data_type="csv")
+    query = models.Query(client, "sectors", "h3_sector")
+    query.load_index(sector.parse)
 
 if __name__ == '__main__':
   es = Elasticsearch(
     hosts=[{'host': host, 'port': 9200}]
   )
 
-  bulk_h3_sectors_data(es)
 
   

@@ -1,3 +1,5 @@
+# this is a old version of enrichment 
+# need refactoring
 # TODO: refactorate
 from shapely import wkt
 import geopandas as gpd

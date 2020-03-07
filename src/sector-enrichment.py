@@ -1,4 +1,6 @@
-#TODO: Refactorate
+# this is a old version of enrichment 
+# need refactoring
+# TODO: refactorate
 import json
 from h3 import h3
 import dask.dataframe as dd
@@ -6,10 +8,10 @@ import dask
 import pandas as pd
 import multiprocessing
 
-df_setores = dd.read_csv(r'/home/gegen07/dev/nesped/mestrado-leonardo/datasets/setores/*.csv')
+df_setores = dd.read_csv(r'../../datasets/setores/*.csv')
 df_setores = df_setores.rename(columns={'Unnamed: 0': 'id', '0': 'setor_id', '1': 'code'})
 
-df_census = pd.read_csv(r'/home/gegen07/dev/nesped/mestrado-leonardo/datasets/df_census_2010.csv')
+df_census = pd.read_csv(r'../../datasets/df_census_2010.csv')
 df_census.rename(columns = {"Cod_setor": "setor_id"}, inplace=True)
 
 def write_json(data, filename): 

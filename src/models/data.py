@@ -6,13 +6,15 @@ class Data:
     self.parser = parser_func
 
   def parse(self):
+    # Plese use data_file arg, data_dir is not implemented correctly here.
+    # TODO do data_dir usable.
     if self.data_dir != None:
       import glob
       dir = self.data_dir+"*."+self.data_type
       files = glob.glob(dir)
-
+    
       for file in files:
-        yield self.parser(file)
+        return self.parser(file)
     elif self.data_file != None:
       return self.parser(self.data_file)
     else:

@@ -43,6 +43,15 @@ def csv_generator(data):
     reader = csv.DictReader(f)
     for cnt, row in enumerate(reader):
       yield row
+
+def parse_setores(data):
+  with open(data, "r") as f:
+    reader = csv.DictReader(f)
+    for cnt, row in enumerate(reader):
+      yield {
+        "setor_id": row["0"],
+        "code": row["1"]
+      }
       
 def parse_user(data): 
   for user in json.loads(__read_unstructured_json(data)):
