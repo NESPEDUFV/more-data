@@ -30,7 +30,7 @@ def bulk_locals(client):
   query.load_index(locals.parse)
 
 def bulk_census_data(client):
-  census = models.Data(data_file=CENSUS_DATA, parser_func=parser.parsers.csv_generator, data_type="csv")
+  census = models.Data(data_file=CENSUS_DATA, parser_func=parser.parsers.parse_census, data_type="csv")
   query = models.Query(client, "census", "sector")
   query.load_index(census.parse)
 
@@ -51,5 +51,6 @@ if __name__ == '__main__':
     hosts=[{'host': host, 'port': 9200}]
   )
 
-
+  bulk_census_data(es)
+  bulk_user(es)
   

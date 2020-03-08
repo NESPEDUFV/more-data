@@ -1,0 +1,9 @@
+{
+  "match": {
+    "indices": "sectors",
+    "match_field": "code",
+    "enrich_fields": [
+      "code"
+    ]
+  }
+}

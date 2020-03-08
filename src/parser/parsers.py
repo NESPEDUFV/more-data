@@ -44,6 +44,14 @@ def csv_generator(data):
     for cnt, row in enumerate(reader):
       yield row
 
+def parse_census(data):
+  with open(data, "r") as f:
+    reader = csv.DictReader(f)
+    for cnt, row in enumerate(reader):
+      cod = str(row["Cod_setor"])
+      row["Cod_setor"] = cod[:len(cod)-2]
+      yield row
+
 def parse_setores(data):
   with open(data, "r") as f:
     reader = csv.DictReader(f)

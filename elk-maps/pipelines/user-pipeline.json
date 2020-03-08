@@ -8,6 +8,33 @@
         "target_field": "apps",
         "max_matches": 128
       }
+    },
+    {
+      "foreach": {
+        "field": "points_of_interest",
+        "processor": {
+          "enrich" : {
+            "policy_name": "sectors-policy",
+            "field": "_value.code_h3",
+            "target_field": "sectors",
+            "max_matches": 10
+          }
+        }
+      }
+    },
+    {
+      "foreach": {
+        "field": "sectors",
+        "processor": {
+          "enrich": {
+            "policy_name": "census-policy",
+            "field": "_value.code",
+            "target_field": "census",
+            "max_matches": 10
+          }
+        }
+      }
     }
+
   ]
 }
