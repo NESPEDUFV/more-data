@@ -51,6 +51,6 @@ if __name__ == '__main__':
     hosts=[{'host': host, 'port': 9200}]
   )
 
-  bulk_census_data(es)
+  # bulk_census_data(es)
   bulk_user(es)
   

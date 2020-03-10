@@ -3,7 +3,7 @@
     "indices": "sectors",
     "match_field": "code",
     "enrich_fields": [
-      "code"
+      "setor_id"
     ]
   }
 }

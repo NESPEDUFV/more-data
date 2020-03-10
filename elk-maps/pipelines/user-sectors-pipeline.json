@@ -1,0 +1,19 @@
+{
+  "description" : "Enriching app details to user",
+  "processors": [
+    {
+      "foreach":{
+        "field": "points_of_interest",
+        "processor": {
+          "enrich": {
+            "policy_name": "sector-policy",
+            "field": "_ingest._value.code_h3",
+            "target_field": "sectors_id",
+            "max_matches": 10
+          }
+        },
+        "ignore_failure": true
+      }
+    }
+  ]
+}
