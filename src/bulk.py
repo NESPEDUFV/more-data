@@ -48,8 +48,7 @@ def bulk_locals(client):
 
   for file in files:
     locals = models.Data(data_file=file, parser_func=parser.parsers.parse_local_geojson, data_type="json")
-    # json.dumps([locals])
-    query.load_index(locals, use_mapping=True)
+    query.load_index(parser=locals.parse, streaming=True)
 
 def bulk_census_data(client):
   census = models.Data(data_file=CENSUS_DATA, parser_func=parser.parsers.parse_census, data_type="csv")

@@ -18,11 +18,13 @@ class Query:
       else:
         raise
   
-  def load_index(self, parser=None, data=None, use_mapping=None):
+  def load_index(self, parser, streaming=None):
     try:
-      if use_mapping:
-        print("")
-        # self.client.index(index=self.index, doc_type=self.doc_type, body=json.dumps(data))
+      if streaming:
+        for ok, response in streaming_bulk(self.client, index=self.index, actions = parser()):
+          if not ok:
+            # failure inserting
+            print(response)
       else: 
           bulk(
             self.client,
@@ -31,5 +33,5 @@ class Query:
             doc_type = self.doc_type
           ) 
     except BulkIndexError as e:
-      raise(e)
+      pass
     

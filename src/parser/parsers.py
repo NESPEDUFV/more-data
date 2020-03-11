@@ -1,6 +1,7 @@
 import json 
 import csv
 from h3 import h3
+from utils.util import *
 
 def __read_unstructured_json(data):
   with open(data, "r") as f:
@@ -21,6 +22,7 @@ def __POI_parser(point):
   return point
 
 def parse_local_geojson(data):
+  data = read_json(data)
   for local in data["features"]:
     if (local["properties"]["name"] != "null" and local["geometry"]["type"] != "Point"):
       yield {
