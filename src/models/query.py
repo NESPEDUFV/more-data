@@ -9,10 +9,7 @@ class Query:
     self.index = index
     self.doc_type = doc_type
 
-  def create_index(self, mapping_file):
-    with open(mapping_file, "r") as json_file:
-      mapping = json.loads(json_file.read())
-
+  def create_index(self, mapping):
     try:
       self.client.indices.create(index=self.index, body=mapping)
     except TransportError as e:
@@ -21,13 +18,18 @@ class Query:
       else:
         raise
   
-  def load_index(self, parser):
+  def load_index(self, parser=None, data=None, use_mapping=None):
     try:
-      bulk(
-        self.client,
-        parser(),
-        index = self.index,
-        doc_type = self.doc_type
-      )
+      if use_mapping:
+        print("")
+        # self.client.index(index=self.index, doc_type=self.doc_type, body=json.dumps(data))
+      else: 
+          bulk(
+            self.client,
+            parser(),
+            index = self.index,
+            doc_type = self.doc_type
+          ) 
     except BulkIndexError as e:
       raise(e)
+    

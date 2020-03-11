@@ -21,22 +21,17 @@ def __POI_parser(point):
   return point
 
 def parse_local_geojson(data):
-  # TODO: copy the style of user's yield parser
-
-  data_json = {}
-
-  for local in data:
-    data_json["name"] = local["properties"]["name"]
-    data_json["key"] = local["properties"]["key"]
-    data_json["value"] = local["properties"]["value"]
-    
-    location_json = {}
-    location_json["type"] = str(local["geometry"]["type"]).lower()
-    location_json["coordinates"] = local["geometry"]["coordinates"]
-
-    data_json["location"] = location_json
-    
-    yield data_json["features"]
+  for local in data["features"]:
+    if (local["properties"]["name"] != "null" and local["geometry"]["type"] != "Point"):
+      yield {
+        "name": local["properties"]["name"],
+        "key": local["properties"]["key"],
+        "value": local["properties"]["value"],
+        "location": {
+          "type": str(local["geometry"]["type"]).lower(),
+          "coordinates": local["geometry"]["coordinates"]
+        }
+      }
 
 def csv_generator(data):
   with open(data, "r") as f:
