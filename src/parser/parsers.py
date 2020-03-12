@@ -2,6 +2,8 @@ import json
 import csv
 from h3 import h3
 from utils.util import *
+from shapely.geometry import asPoint
+from numpy import array
 
 def __read_unstructured_json(data):
   with open(data, "r") as f:
@@ -19,6 +21,7 @@ def __read_unstructured_json(data):
 
 def __POI_parser(point):
   point["code_h3"] = h3.geo_to_h3(point["latitude"], point["longitude"], 8)
+  point["geo_location"] = asPoint(array([point["longitude"], point["latitude"]])).wkt
   return point
 
 def parse_local_geojson(data):

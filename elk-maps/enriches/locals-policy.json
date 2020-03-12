@@ -1,0 +1,7 @@
+{
+  "geo_match": {
+    "indices": "locals",
+    "match_field": "location",
+    "enrich_fields": ["location", "name", "key", "value"]    
+  }
+}

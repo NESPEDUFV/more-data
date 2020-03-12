@@ -73,5 +73,5 @@ if __name__ == '__main__':
   )
 
   # bulk_census_data(es)
-  # bulk_user(es)
-  bulk_locals(es)
+  bulk_user(es)
+  # bulk_locals(es)

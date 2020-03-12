@@ -1,0 +1,20 @@
+{
+  "description" : "Enriching app details to user",
+  "processors": [
+    {
+      "foreach":{
+        "field": "points_of_interest",
+        "processor": {
+          "enrich": {
+            "policy_name": "locals-policy",
+            "field": "_ingest._value.geo_location",
+            "target_field": "locals",
+            "max_matches": 10,
+            "shape_relation": "CONTAINS"
+          }
+        },
+        "ignore_failure": true
+      }
+    }
+  ]
+}
