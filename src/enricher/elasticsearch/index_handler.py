@@ -3,7 +3,7 @@ from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 from elasticsearch.helpers.errors import BulkIndexError
 
-class Query:
+class IndexHandler:
   def __init__(self, client, index, doc_type):
     self.client = client
     self.index = index

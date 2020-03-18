@@ -1,7 +1,4 @@
-from elasticsearch.client.enrich import EnrichClient
-
-class Enricher:
-  
+class PolicyHandler:
   def __init__(self, client, policy, name):
     """
       Parameters
