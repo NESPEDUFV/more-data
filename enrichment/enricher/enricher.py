@@ -1,29 +1,26 @@
 from __future__ import annotations
-from abc import ABC, abstractproperty, abstractmethod
-from typing import Any, List
-from .connector import Enricher
+from abc import ABC, abstractmethod
+from typing import List
 from enrichment.models.data import Data
 
-from pytoolz.functional.pipe import pipe
+class Enricher:
+    def __init__(self, connector: IEnricherConnector) -> None:
+        self._connector = connector
 
-class Builder(ABC):
+    @property
+    def connector(self) -> IEnricherConnector:
+        return self._connector
+
+    @connector.setter
+    def connector(self, connector: IEnricherConnector) -> None:
+        self._connector = connector
+
+    def enrich(self, data) -> Data:
+        return self._connector.enrich(data)
+
+
+class IEnricherConnector(ABC):
 
     @abstractmethod
-    def withEnrichment(self, connector: Enricher):
+    def enrich(self, data, **kwargs) -> Data:
         pass
-
-    @abstractmethod
-    def enrich(self) -> Data:
-        pass
-
-class EnricherBuilder(Builder):
-
-    def __init__(self, data: Data) -> None:
-        self._data = data
-
-    def withEnrichment(self, enricher: Enricher):
-        self._data.add(enricher)
-        return self
-
-    def get_result(self):
-        return pipe([e.enrich for e in self._data.enrichers], self._data)
