@@ -9,6 +9,7 @@ class IndexHandler:
         self.client = client
         self.index = index
         self.doc_type = doc_type
+        
 
     def create_index(self, mapping):
         try:
@@ -18,6 +19,7 @@ class IndexHandler:
                 pass
             else:
                 raise
+
 
     def load_index(self, parser, streaming=None):
         try:
@@ -35,6 +37,16 @@ class IndexHandler:
                     )
         except BulkIndexError as e:
             pass
+
+
+    def get_all_data(self, index, query):
+        res = scan(self.client,
+            query=query,
+            index=index)
+        
+        for data in res["_source"]:
+            yield data
+
 
     def reindex(self, reindex_handler):
         reindex(self.client, reindex_handler._json)

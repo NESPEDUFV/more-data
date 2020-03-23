@@ -2,7 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractproperty, abstractmethod
 from typing import Any, List
 from .enricher import Enricher
-from enrichment.models.data import Data
+from models.data import Data
 
 from pytoolz.functional.pipe import pipe
 

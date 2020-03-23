@@ -1,4 +1,4 @@
-from elasticsearch.client.ingest import EnrichClient
+from elasticsearch.client.enrich import EnrichClient
 
 
 class PolicyHandler:

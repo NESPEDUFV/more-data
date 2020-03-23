@@ -1,7 +1,7 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import List
-from enrichment.models.data import Data
+from models.data import Data
 
 class Enricher:
     def __init__(self, connector: IEnricherConnector) -> None:

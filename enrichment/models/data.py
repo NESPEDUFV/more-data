@@ -1,5 +1,3 @@
-from enrichment.utils.util import *
-from enrichment.enricher.enricher import Enricher
 class Data:
   def __init__(self, parser_func, data_type, data_file):
     self.data_file = data_file
@@ -10,6 +8,6 @@ class Data:
   def parse(self):
     return self.parser(self.data_file)
 
-  def add(self, enricher: Enricher) -> None:
+  def add(self, enricher) -> None:
     self.enrichers.append(enricher)
 

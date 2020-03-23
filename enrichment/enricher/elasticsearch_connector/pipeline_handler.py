@@ -17,7 +17,7 @@ class PipelineHandler():
                             "processor": {
                                 "enrich": {
                                     "policy_name": policy_name,
-                                    "field": "_ingest._value."+target_field_name,
+                                    "field": "_ingest._value."+match_field,
                                     "target_field": "_ingest._value."+target_field_name,
                                 }
                             },
@@ -28,10 +28,10 @@ class PipelineHandler():
             }
         
             if kwargs.get('max_matches'):
-                self._json['processors'][0]['foreach']['enrich']['max_matches'] = kwargs.get('max_matches')
+                self._json['processors'][0]['foreach']["processor"]['enrich']['max_matches'] = kwargs.get('max_matches')
             
             if kwargs.get('shape_relation'):
-                self._json['processors'][0]['foreach']['shape_relation'] = kwargs.get('shape_relation')
+                self._json['processors'][0]['foreach']['processor']['enrich']['shape_relation'] = kwargs.get('shape_relation')
 
         else:
             self._json = {

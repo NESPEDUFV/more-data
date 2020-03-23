@@ -1,7 +1,7 @@
 import json
 import csv
 from h3 import h3
-from enrichment.utils.util import read_json
+from utils.util import read_json
 from shapely.geometry import asPoint
 from numpy import array
 
