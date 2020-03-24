@@ -1,6 +1,6 @@
 import json
 from elasticsearch.exceptions import TransportError
-from elasticsearch.helpers import bulk, streaming_bulk, reindex
+from elasticsearch.helpers import bulk, streaming_bulk, reindex, scan
 from elasticsearch.helpers.errors import BulkIndexError
 
 
@@ -40,16 +40,12 @@ class IndexHandler:
 
 
     def get_all_data(self, index, query):
-        res = scan(self.client,
-            query=query,
-            index=index)
-        
-        for data in res["_source"]:
-            yield data
+        for record in scan(self.client,query=query,index=index):
+            yield record["_source"]
 
 
-    def reindex(self, reindex_handler):
-        reindex(self.client, reindex_handler._json)
+    def re_index(self, reindex_handler):
+        self.client.reindex(reindex_handler._json)
 
 
 class ReindexHandler:
@@ -63,3 +59,6 @@ class ReindexHandler:
                 "pipeline": pipeline_name
             }
         }
+
+        self.source_index=index
+        self.target_index = target_index

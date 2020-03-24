@@ -1,5 +1,5 @@
 from elasticsearch.client.ingest import IngestClient
-
+import utils.util as util
 
 class PipelineHandler():
     #Refactorate
@@ -21,7 +21,7 @@ class PipelineHandler():
                                     "target_field": "_ingest._value."+target_field_name,
                                 }
                             },
-                            "ignore_failure": true
+                            "ignore_failure": True
                         }
                     }
                 ]
@@ -76,6 +76,6 @@ class Pipeline:
 
     def create_pipeline(self, params=None):
         try:
-            self.ingest_client.put_pipeline(self.name, self._pipeline_handler._json)
+            self.ingest_client.put_pipeline(self._name, util.load_json(self._pipeline_handler._json))
         except Exception as e:
             raise(e)

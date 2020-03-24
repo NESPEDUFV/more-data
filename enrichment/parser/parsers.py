@@ -1,7 +1,7 @@
 import json
 import csv
 from h3 import h3
-from utils.util import read_json
+from utils.util import read_json_from_file
 from shapely.geometry import asPoint
 from numpy import array
 
@@ -35,7 +35,7 @@ def __POI_parser(point):
 
 
 def parse_local_geojson(data):
-    data = read_json(data)
+    data = read_json_from_file(data)
     for local in data["features"]:
         if (local["properties"]["name"] != "null" and local["geometry"]["type"] != "Point"):
             yield {

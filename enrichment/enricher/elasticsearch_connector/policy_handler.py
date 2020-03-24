@@ -1,4 +1,5 @@
 from elasticsearch.client.enrich import EnrichClient
+import utils.util as util
 
 
 class PolicyHandler:
@@ -33,7 +34,7 @@ class Policy:
 	
 	def create_policy(self, params=None):
 		try:
-			self.enrich_client.put_policy(self.name, self._policy_handler._json)
+			self.enrich_client.put_policy(self.name, util.load_json(self._policy_handler._json))
 		except Exception as e:
 			raise(e)
 	

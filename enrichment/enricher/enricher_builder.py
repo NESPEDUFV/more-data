@@ -12,17 +12,13 @@ class Builder(ABC):
     def withEnrichment(self, connector: Enricher):
         pass
 
-    @abstractmethod
-    def enrich(self) -> Data:
-        pass
-
 class EnricherBuilder(Builder):
 
     def __init__(self, data: Data) -> None:
         self._data = data
 
-    def withEnrichment(self, enricher: Enricher):
-        self._data.add(enricher)
+    def withEnrichment(self, connector: Enricher):
+        self._data.add(connector)
         return self
 
     def get_result(self):

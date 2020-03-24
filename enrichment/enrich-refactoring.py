@@ -24,16 +24,19 @@ if __name__ == '__main__':
                                                                 name="user-local-enricher", \
                                                                 pipeline_handler=PipelineHandler( \
                                                                                 description="enriching user with locals",\
-                                                                                target_field_name="geo_location", \
-                                                                                match_field="local", \
+                                                                                match_field="geo_location", \
+                                                                                target_field_name="local", \
                                                                                 policy_name="locals-policy", \
-                                                                                field_array="points_of_interests", \
-                                                                                shape_relation="CONTAINS"))),
+                                                                                field_array="points_of_interest", \
+                                                                                shape_relation="CONTAINS")),
                                             reindex_handler=ReindexHandler(index="users", \
                                                                             target_index="u-local-enriched", \
-                                                                            pipeline_name="user-local-enricher"))
+                                                                            pipeline_name="user-local-enricher")))
 
     user_enriched = \
-        EnricherBuilder(user)\
-        .withEnrichment(elk_local_enricher)\
+        EnricherBuilder(user) \
+        .withEnrichment(elk_local_enricher) \
         .get_result()
+
+    import utils.util as util
+    util.write_json_generator_to_file("../data/output/user-local.json", user_enriched)
