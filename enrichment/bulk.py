@@ -3,8 +3,8 @@ from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
-import parser
-import models
+import .parser
+import .models
 
 host = 'localhost'
 

@@ -5,6 +5,24 @@ from elasticsearch.helpers.errors import BulkIndexError
 
 
 class IndexHandler:
+    """Index Handler control index actions in Elasticsearch. 
+
+    Parameters
+    ----------
+    client: :obj:`elasticsearch.Elasticsearch`
+    index: str
+        name of index
+    doc_type: str
+        name of document
+
+    Attributes
+    ----------
+    client: :obj:`elasticsearch.Elasticsearch`
+    index: str
+        name of index
+    doc_type: str
+        name of document
+    """
     def __init__(self, client, index, doc_type):
         self.client = client
         self.index = index

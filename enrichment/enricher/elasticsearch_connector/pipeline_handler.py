@@ -1,5 +1,5 @@
 from elasticsearch.client.ingest import IngestClient
-import utils.util as util
+from ...utils import util
 
 class PipelineHandler():
     #Refactorate
