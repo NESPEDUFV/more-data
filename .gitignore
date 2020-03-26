@@ -1,2 +1,8 @@
 .vscode/
 __pycache__
+data/output/*.json
+docs/build
+*.bat
+
+.idea/
+docs/

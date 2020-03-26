@@ -8,8 +8,7 @@
           "enrich": {
             "policy_name": "locals-policy",
             "field": "_ingest._value.geo_location",
-            "target_field": "locals",
-            "max_matches": 10,
+            "target_field": "_ingest._value.local",
             "shape_relation": "CONTAINS"
           }
         },
