@@ -1,7 +1,7 @@
 import json
 import csv
 from h3 import h3
-from utils.util import read_json_from_file
+from ..utils.util import read_json_from_file
 from shapely.geometry import asPoint
 from numpy import array
 

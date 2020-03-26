@@ -19,9 +19,10 @@ class PipelineHandler():
                                     "policy_name": policy_name,
                                     "field": "_ingest._value."+match_field,
                                     "target_field": "_ingest._value."+target_field_name,
+                                    "ignore_missing": True,
                                 }
                             },
-                            "ignore_failure": True
+                            "ignore_failure": True,
                         }
                     }
                 ]
@@ -32,7 +33,6 @@ class PipelineHandler():
             
             if kwargs.get('shape_relation'):
                 self._json['processors'][0]['foreach']['processor']['enrich']['shape_relation'] = kwargs.get('shape_relation')
-
         else:
             self._json = {
                 "description": description,
