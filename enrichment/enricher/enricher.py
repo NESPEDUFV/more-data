@@ -22,7 +22,10 @@ class Enricher:
 
     @property
     def connector(self) -> IEnricherConnector:
-        """:obj:`IEnricherConnector` getter method
+        """
+        Returns
+        -------
+            :obj:`IEnricherConnector` getter method
         """
         return self._connector
 
@@ -35,8 +38,7 @@ class Enricher:
         
         Parameters
         ----------
-        data
-            :obj:`Data`
+        data: :obj:`Data`
 
         Returns
         -------
