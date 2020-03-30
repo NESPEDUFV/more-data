@@ -2,10 +2,45 @@ from elasticsearch.client.ingest import IngestClient
 from ...utils import util
 
 class PipelineHandler():
-    #Refactorate
+    """
+    PipelineHandler create json object for elasticsearch pipeline.
+
+    Parameters
+    ----------
+    description: str
+        explain what is pipeline.
+    target_field_name: str
+        field name that will post the result of enrichment.
+    match_field: str
+        what index lookup field to bind the enrichments.
+    policy_name: str
+        name of policy.
+    field_array: str
+        name of field if the field you want to enrich is an array.
+    max_matches: int
+        if the matches is > 1 the target_field will be an array and 
+        the results of enrichments will bind more than 1 object to get result.
+    shape_relation: str 
+        if the enrichment is geobased you have to put this parameter to specify
+        which relation you want to get. 
+        
+        - INTERSECTS 
+            Return all documents whose field intersects the query geometry.
+        - DISJOINT 
+            Return all documents whose field has nothing in common with the query geometry.
+        - WITHIN 
+            Return all documents whose field is within the query geometry.
+        - CONTAINS 
+            Return all documents whose field contains the query geometry.
+    
+    Attributes
+    ----------
+
+    json: dict 
+        this attribute is the json created with the parameters specifying the pipeline.
+    """
 
     def __init__(self, description, target_field_name, match_field, policy_name, **kwargs):
-        # think about create decorator 
 
         if kwargs.get('field_array'):
             self._json = {
@@ -60,21 +95,39 @@ class PipelineHandler():
         pass
 
 class Pipeline:
+    """
+    A pipeline is a definition of a series of processors that 
+    are to be executed in the same order as they are declared.
+    (https://www.elastic.co/guide/en/elasticsearch/reference/current/pipeline.html)
+
+    Parameters
+    ----------
+
+    client: elasticsearch.Elasticsearch
+        a elasticsearch client.
+    name: str
+        name for pipeline.
+    pipeline_handler: :obj:`PipelineHandler` 
+        object that contains json object of pipeline.
+
+    Attributes
+    ----------
+
+    client: str
+    name: str
+    pipeline_handler: :obj:`PipelineHandler`
+    """
 
     def __init__(self, client, name, pipeline_handler):
-        """
-          Parameters
-          ----------
-          client: a elasticsearch client
-          id: name for pipeline
-          pipeline: file of pipeline
-        """
-
         self._pipeline_handler = pipeline_handler
         self._name = name
         self.ingest_client = IngestClient(client)
 
     def create_pipeline(self, params=None):
+        """
+        create_pipeline method create the elasticsearch pipeline
+        with processors specified in pipeline_handler json.
+        """
         try:
             self.ingest_client.put_pipeline(self._name, util.load_json(self._pipeline_handler._json))
         except Exception as e:

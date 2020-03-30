@@ -30,6 +30,14 @@ class IndexHandler:
         
 
     def create_index(self, mapping):
+        """This method create index with mapping provided using 
+        elasticsearch-py package (https://elasticsearch-py.readthedocs.io/en/master/api.html#elasticsearch.client.IndicesClient.create)
+
+        Parameters
+        ----------
+        mapping: :obj:`Json`
+            mapping is a definitions of attributes index types (https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html)
+        """
         try:
             self.client.indices.create(index=self.index, body=mapping)
         except TransportError as e:
@@ -40,6 +48,20 @@ class IndexHandler:
 
 
     def load_index(self, parser, streaming=None):
+        """load_index method load documents to specified index in constructor. 
+        It can stream the load or just load all data passing a `iterable` as parameter.
+        The difference between of these two methods is that if you want that your data assume specified
+        type you have to stream but if you don't care about this you can simply bulk data that 
+        elasticsearch will infer the types of your document.
+
+        Parameters
+        ----------
+        pasrser: Callable
+            It's a function that yield the document which has data to index into elasticsearch.
+        
+        streaming: bool
+            If streaming load_index method will do streaming bulk instead of bulk all data.
+        """
         try:
             if streaming:
                 for ok, response in streaming_bulk(self.client, index=self.index, actions=parser()):
@@ -58,15 +80,57 @@ class IndexHandler:
 
 
     def get_all_data(self, index, query):
+        """ Get all data indexed by a index.
+        
+        Parameters
+        ----------
+        index: str
+            name of index
+
+        query: dict
+            query is the document that elasticsearch uses to retrive information
+
+        Yields
+        ------
+        generate the data retrieved by elasticsearch.
+
+        """
         for record in scan(self.client,query=query,index=index):
             yield record["_source"]
 
 
     def re_index(self, reindex_handler):
+        """ reindex to apply pipeline to enrich
+
+        Parameters
+        ----------
+        reindex_handler: :obj:`ReindexHandler`
+        """
         self.client.reindex(reindex_handler._json)
 
 
 class ReindexHandler:
+    """ReindexHandler creates a necessary json to send to elasticsearch to reindex with pipeline
+    and enrich the index provided.
+
+    Parameters
+    ----------
+    index: str
+        name of source index
+    
+    target_index: str
+        name of destination index
+
+    pipeline_name: str
+        name of pipeline
+    
+
+    Attributes
+    ----------
+    
+    json: dict
+        this is a json file created by the parameters to sendo to reindex route
+    """
     def __init__(self, index, target_index, pipeline_name):
         self._json = {
             "source": {
