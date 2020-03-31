@@ -22,6 +22,7 @@ def __read_unstructured_json(data):
 
 
 def csv_generator(data):
+    csv.field_size_limit(2147483647)
     with open(data, "r") as f:
         reader = csv.DictReader(f)
         for cnt, row in enumerate(reader):

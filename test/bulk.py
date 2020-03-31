@@ -1,22 +1,34 @@
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+
 import json
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
-import .parser
-import .models
+import enrichment.parser as models
+import enrichment.models as models
+from enrichment.enricher.elasticsearch_connector import IndexHandler
+
+
+import enrichment.utils.processing as processing
 
 host = 'localhost'
 
 ELK_MAPS_DIR = "../elk-maps/"
 MAPPING_DIR = ELK_MAPS_DIR + "mappings/"
 
-APP_DATA = "../../datasets/ranking_apps.csv"
-USER_DATA = "../../datasets/user_profile_17092019.json"
-CENSUS_DATA = "../../datasets/df_census_2010.csv"
+DATASETS_DIR = "../../datasets/"
 
-LOCALS_DIR = "../../datasets/Locais_OSM/geojson/"
-SETORES_DIR = "../../datasets/setores/"
+APP_DATA = DATASETS_DIR + "ranking_apps.csv"
+USER_DATA = DATASETS_DIR + "user_profile_17092019.json"
+CENSUS_DATA = DATASETS_DIR + "df_census_2010.csv"
+
+LOCALS_DIR = DATASETS_DIR + "Locais_OSM/geojson/"
+SETORES_DIR = DATASETS_DIR + "setores/"
+
+CIDADES_DIR = DATASETS_DIR + "cidades_info_polygon.csv"
 
 MAPPING_LOCAL_FILE = MAPPING_DIR + "points-interests/locals.json"
 
