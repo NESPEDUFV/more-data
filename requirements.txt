@@ -15,6 +15,8 @@ GDAL==2.4.4
 geopandas==0.7.0
 h3==3.4.3
 idna==2.8
+imagesize==1.2.0
+Jinja2==2.11.1
 locket==0.2.0
 MarkupSafe==1.1.1
 msgpack==1.0.0

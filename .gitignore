@@ -1,6 +1,6 @@
 .vscode/
 __pycache__
-data/output/*.json
+data/output/
 docs/build
 *.bat
 

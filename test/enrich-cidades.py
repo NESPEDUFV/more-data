@@ -49,32 +49,33 @@ if __name__ == "__main__":
         timeout = 10000
     )
 
-    bulk_cidades(es)
-    create_policy(es)
+    # bulk_cidades(es)
+    # create_policy(es)
 
-    user = Data(data_file=USER_DATA, parser_func=parse_user, data_type="json")
+    # user = Data(data_file=USER_DATA, parser_func=parse_user, data_type="json")
 
-    elk_city_enricher = Enricher(connector=ElasticsearchConnector(
-        index_handler=IndexHandler(client=es, index="cities", doc_type="city"),
-        pipeline=Pipeline(client=es,
-                          name="user-city-enricher",
-                          pipeline_handler=PipelineHandler(
-                                description="enriching user with cities",
-                                match_field="geo_location",
-                                target_field_name="city",
-                                policy_name="city-policy",
-                                field_array="points_of_interest",
-                                shape_relation="CONTAINS")),
-        reindex_handler=ReindexHandler(index="u-census-enriched",
-                                       target_index="u-city-enriched",
-                                       pipeline_name="user-city-enricher")))
+    # elk_city_enricher = Enricher(connector=ElasticsearchConnector(
+    #     index_handler=IndexHandler(client=es, index="cities", doc_type="city"),
+    #     pipeline=Pipeline(client=es,
+    #                       name="user-city-enricher",
+    #                       pipeline_handler=PipelineHandler(
+    #                             description="enriching user with cities",
+    #                             match_field="geo_location",
+    #                             target_field_name="city",
+    #                             policy_name="city-policy",
+    #                             field_array="points_of_interest",
+    #                             shape_relation="CONTAINS")),
+    #     reindex_handler=ReindexHandler(index="u-census-enriched",
+    #                                    target_index="u-city-enriched",
+    #                                    pipeline_name="user-city-enricher")))
 
-    user_enriched = \
-        EnricherBuilder(user) \
-        .with_enrichment(elk_city_enricher) \
-        .get_result()
+    # user_enriched = \
+    #     EnricherBuilder(user) \
+    #     .with_enrichment(elk_city_enricher) \
+    #     .get_result()
     
-
     import enrichment.utils.util as util
-    util.write_json_generator_to_file("../data/output/user-enriched.json", user_enriched)    
+
+    # util.write_json_generator_to_json("../data/output/json/user-enriched", user_enriched, 1000) 
+    util.convert_json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")   
     
