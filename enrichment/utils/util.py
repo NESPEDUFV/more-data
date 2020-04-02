@@ -24,11 +24,13 @@ class StreamArray(list):
 	def __len__(self):
 		return self._len
 
+
 def grouper(iterable, n, fillvalue=None):
 	from itertools import zip_longest
 
 	args = [iter(iterable)] * n
 	return zip_longest(fillvalue=fillvalue, *args)
+
 
 def write_json_generator_to_json(file, data, n):
 
@@ -38,4 +40,13 @@ def write_json_generator_to_json(file, data, n):
 
 
 def convert_json_enriched_to_csv(path, output_path):
-	
+	import pandas as pd
+	from glob import glob
+	from flatten_json import flatten
+
+	files = glob(path)
+
+	for i, file in enumerate(files):
+		dic_flattened = (flatten(d) for d in read_json_from_file(file))
+		df = pd.DataFrame(dic_flattened)
+		df.to_csv(output_path+str(i)+".csv")
