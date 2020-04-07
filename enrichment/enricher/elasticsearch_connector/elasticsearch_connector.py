@@ -44,12 +44,6 @@ class ElasticsearchConnector(IEnricherConnector):
 
         self.pipeline.create_pipeline()
         self.index_handler.re_index(self.reindex_handler)
-
-        query = {
-            "query": {
-                "match_all":{}
-            }
-        }
         
-        return self.index_handler.get_all_data(index=self.reindex_handler.target_index, query=query) 
+        return self.index_handler.get_all_data(index=self.reindex_handler.target_index, **kwargs) 
          

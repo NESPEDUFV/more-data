@@ -47,7 +47,7 @@ class IndexHandler:
                 raise
 
 
-    def load_index(self, parser, streaming=None):
+    def load_index(self, parser, streaming=None, **kwargs):
         """load_index method load documents to specified index in constructor. 
         It can stream the load or just load all data passing a `iterable` as parameter.
         The difference between of these two methods is that if you want that your data assume specified
@@ -64,22 +64,43 @@ class IndexHandler:
         """
         try:
             if streaming:
-                for ok, response in streaming_bulk(self.client, index=self.index, actions=parser()):
+                for ok, response in streaming_bulk(self.client, index=self.index, actions=parser(**kwargs)):
                     if not ok:
                         # failure inserting
                         print(response)
-                else:
-                    bulk(
-                        self.client,
-                        parser(),
-                        index=self.index,
-                        doc_type=self.doc_type
-                    )
+            else:
+                bulk(
+                    self.client,
+                    parser(**kwargs),
+                    index=self.index,
+                    doc_type=self.doc_type
+                )
         except BulkIndexError as e:
             pass
 
+    def __remove_fields_preprocessed(self, data, **kwargs):
+        array_point_field = kwargs.get('array_point_field')
+        geo_location = kwargs.get('geo_location')
+        code_h3 = kwargs.get('code_h3')
 
-    def get_all_data(self, index, query):
+        if geo_location:
+            if array_point_field:
+                for points in data[array_point_field]:
+                    points = points.pop("geo_location", None)
+            else:
+                data = data.pop("geo_location", None)
+
+        if code_h3:
+            if array_point_field:
+                for points in data[array_point_field]:
+                    points = points.pop("code_h3", None)
+            else:
+                data = data.pop("code_h3", None)
+        
+        return data
+
+
+    def get_all_data(self, index, **kwargs):
         """ Get all data indexed by a index.
         
         Parameters
@@ -95,8 +116,21 @@ class IndexHandler:
         generate the data retrieved by elasticsearch.
 
         """
-        for record in scan(self.client,query=query,index=index):
-            yield record["_source"]
+
+        # if kwargs.get('geo_location') or kwargs.get('code_h3'):
+        #     self.__remove_fields_preprocessed(index=index, **kwargs)
+
+        query = {
+            "query": {
+                "match_all":{}
+            }
+        }
+
+        for record in scan(self.client, query=query, index=index):
+            if kwargs.get('geo_location') or kwargs.get('code_h3'):
+                yield self.__remove_fields_preprocessed(record["_source"], **kwargs)
+            else:
+                yield record["_source"]
 
 
     def re_index(self, reindex_handler):

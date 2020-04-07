@@ -29,10 +29,13 @@ def csv_generator(data):
             yield row
 
 
-def __POI_parser(point):
-    point["code_h3"] = h3.geo_to_h3(point["latitude"], point["longitude"], 8)
-    point["geo_location"] = asPoint(array([point["longitude"], point["latitude"]])).wkt
-    return point
+def __add_geo_location(doc):
+    doc["geo_location"] = asPoint(array([doc["longitude"], doc["latitude"]])).wkt
+    return doc
+
+def __add_code_point(doc):
+    doc["code_h3"] = h3.geo_to_h3(doc["latitude"], doc["longitude"], 8)
+    return doc
 
 
 def parse_local_geojson(data):
@@ -68,6 +71,25 @@ def parse_setores(data):
                 "code": row["1"]
             }
 
+
+def parse_document(data, **kwargs):
+    array_point_field = kwargs.get('array_point_field')
+    geo_location = kwargs.get('geo_location')
+    code_h3 = kwargs.get('code_h3')
+
+    for doc in json.loads(__read_unstructured_json(data)):
+        if geo_location:
+            if array_point_field != None:
+                doc[array_point_field] = [__add_geo_location(points) for points in doc[array_point_field]]
+            else:
+                doc = __add_geo_location(doc)
+        
+        if code_h3:
+            if array_point_field != None:
+                doc[array_point_field] = [__add_code_point(points) for points in doc[array_point_field]]
+            else:
+                doc = __add_code_point(doc)
+        yield doc
 
 def parse_user(data):
     for user in json.loads(__read_unstructured_json(data)):

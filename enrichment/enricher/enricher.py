@@ -33,7 +33,7 @@ class Enricher:
     def connector(self, connector: IEnricherConnector) -> None:
         self._connector = connector
 
-    def enrich(self, data: Data) -> Data:
+    def enrich(self, data: Data, **kwargs) -> Data:
         """Call enrich function of interface :obj:`IEnricherConnector`
         
         Parameters
@@ -46,7 +46,7 @@ class Enricher:
             data enriched
 
         """
-        return self._connector.enrich(data)
+        return self._connector.enrich(data, **kwargs)
 
 
 class IEnricherConnector(ABC):

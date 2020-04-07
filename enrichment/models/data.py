@@ -29,9 +29,9 @@ class Data:
         self.parser = parser_func
         self.enrichers = []
 
-    def parse(self):
+    def parse(self, **kwargs):
         """parse calls the parser_func attribute"""
-        return self.parser(self.data_file)
+        return self.parser(self.data_file, **kwargs)
 
     def add(self, enricher) -> None:
         """add enricher in enrichers attribute"""

@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('..'))
 from enrichment.enricher import Enricher, EnricherBuilder
 from enrichment.enricher.elasticsearch_connector import ElasticsearchConnector, IndexHandler, ReindexHandler, Pipeline, PipelineHandler, PolicyHandler, Policy
 from enrichment.models.data import Data
-from enrichment.parser import csv_generator, parse_user
+from enrichment.parser import csv_generator, parse_document
 from enrichment.utils.util import read_json_from_file
 
 from elasticsearch import Elasticsearch
@@ -26,6 +26,11 @@ USER_DATA = DATASETS_DIR + "user_profile_17092019.json"
 
 HOST = 'localhost'
 PORT = 9200
+
+def bulk_user(client, data):
+    index_handler = IndexHandler(client, "users", "user")
+
+    index_handler.load_index(parser=data.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 def bulk_cidades(client):
     cidades = Data(data_file=CIDADES_DIR, parser_func=csv_generator, data_type="csv")
@@ -49,10 +54,12 @@ if __name__ == "__main__":
         timeout = 10000
     )
 
-    bulk_cidades(es)
-    create_policy(es)
+    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
-    user = Data(data_file=USER_DATA, parser_func=parse_user, data_type="json")
+    # bulk_user(es, user)
+
+    # bulk_cidades(es)
+    # create_policy(es)
 
     elk_city_enricher = Enricher(connector=ElasticsearchConnector(
         index_handler=IndexHandler(client=es, index="cities", doc_type="city"),
@@ -65,19 +72,18 @@ if __name__ == "__main__":
                                 policy_name="city-policy",
                                 field_array="points_of_interest",
                                 shape_relation="CONTAINS")),
-        reindex_handler=ReindexHandler(index="u-census-enriched",
-                                       target_index="u-city-enriched",
+        reindex_handler=ReindexHandler(index="users",
+                                       target_index="users-city-enriched",
                                        pipeline_name="user-city-enricher")))
 
     user_enriched = \
         EnricherBuilder(user) \
         .with_enrichment(elk_city_enricher) \
-        .get_result()
+        .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
     
     import enrichment.utils.util as util
-
     util.write_json_generator_to_json("../data/output/json/user-enriched", user_enriched, 1000) 
-    util.convert_json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")  
+    # util.convert_json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")  
     # this is getting error
     # AssertionError: flatten requires a dictionary input
 

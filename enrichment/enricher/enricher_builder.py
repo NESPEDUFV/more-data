@@ -3,7 +3,6 @@ from abc import ABC, abstractproperty, abstractmethod
 from typing import Any, List
 from .enricher import Enricher
 from ..models.data import Data
-from pytoolz.functional.pipe import pipe
 
 
 class Builder(ABC):
@@ -56,14 +55,20 @@ class EnricherBuilder(Builder):
         self._data.add(connector)
         return self
 
-    def get_result(self):
+    def get_result(self, **kwargs):
+
+        def __pipe(data, funcs, **kwargs):
+            for func in funcs:
+                data = func(data=data, **kwargs)
+            return data
+
+        
         """Implements a chaining method like `f(g(h(data)))`. So,
         this method call all of enrichments functions that are 
         saved as array attribute in data class. 
-        You can see more of pipe (https://toolz.readthedocs.io/en/latest/api.html#toolz.functoolz.pipe).
 
         Returns
         -------
         This method returns the implementations of each :func:`~enricher.Enricher.enrich` that is a Json structure.
         """
-        return pipe([e.enrich for e in self._data.enrichers], self._data)
+        return __pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs)
