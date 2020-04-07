@@ -83,8 +83,6 @@ if __name__ == "__main__":
     
     import enrichment.utils.util as util
     util.write_json_generator_to_json("../data/output/json/user-enriched", user_enriched, 1000) 
-    # util.convert_json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")  
-    # this is getting error
-    # AssertionError: flatten requires a dictionary input
+    util.convert_json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")  
 
     

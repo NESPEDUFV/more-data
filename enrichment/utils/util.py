@@ -47,6 +47,11 @@ def convert_json_enriched_to_csv(path, output_path):
 	files = glob(path)
 
 	for i, file in enumerate(files):
-		dic_flattened = (flatten(d) for d in read_json_from_file(file))
+		dic_flattened = []
+		for d in read_json_from_file(file):
+			try:
+				dic_flattened.append(flatten(d))
+			except AssertionError as e:
+				pass
 		df = pd.DataFrame(dic_flattened)
 		df.to_csv(output_path+str(i)+".csv")
