@@ -38,20 +38,35 @@ def write_json_generator_to_json(file, data, n):
 		with open(file + '-{}.json'.format(i), 'w') as outfile:
 			json.dump(list(group), outfile, ensure_ascii=False)
 
+class Converter:
+	@staticmethod
+	def json_enriched_to_csv(path, output_path):
+		import pandas as pd
+		from glob import glob
+		from flatten_json import flatten
 
-def convert_json_enriched_to_csv(path, output_path):
-	import pandas as pd
-	from glob import glob
-	from flatten_json import flatten
+		files = glob(path)
 
-	files = glob(path)
+		for i, file in enumerate(files):
+			dic_flattened = []
+			for d in read_json_from_file(file):
+				try:
+					dic_flattened.append(flatten(d))
+				except AssertionError as e:
+					pass
+			df = pd.DataFrame(dic_flattened)
+			df.to_csv(output_path+str(i)+".csv")
 
-	for i, file in enumerate(files):
-		dic_flattened = []
-		for d in read_json_from_file(file):
-			try:
-				dic_flattened.append(flatten(d))
-			except AssertionError as e:
-				pass
-		df = pd.DataFrame(dic_flattened)
-		df.to_csv(output_path+str(i)+".csv")
+	@staticmethod
+	def csv_to_json(file, output_file):
+		import csv
+
+		arr = []
+
+		with open(file) as f:
+			reader = csv.DictReader(f)
+			for row in reader:
+				arr.append(row)
+
+		with open(output_file, "w+") as out:
+			json.dump(arr, out, ensure_ascii=False)
