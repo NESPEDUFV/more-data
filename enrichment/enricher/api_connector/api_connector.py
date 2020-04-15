@@ -1,16 +1,16 @@
 from ..enricher import IEnricherConnector
 from ...models.data import Data
-from ...utils.util import read_json_from_file
+from ...utils.util import load_json
 from typing import Callable, Dict
 
 class ApiConnector(IEnricherConnector):
 
   def __init__(self, response_parser: Callable, url_pattern: str, params: Dict):
-    self.response_handler = response_parser
+    self.response_parser = response_parser
     self.url_pattern = url_pattern
     self.params = params
 
-  def __make_request(pattern: str, params: Dict, *args, **kwargs):
+  def __make_request(cls, pattern: str, params: Dict, *args, **kwargs):
     import requests
     import re
 
@@ -23,24 +23,10 @@ class ApiConnector(IEnricherConnector):
     return requests.get(pattern).json()
 
   def enrich(self, data: Data, **kwargs):
-    """
-      fields: [
-        {
-          "key": "localidade",
-          "name": "id"
-        }
-      ]
-      pesquisa: "-"
-      indicador: 49000
-      ----------------
-      localidade: "id"
-    """
 
     for d in data.parse(**kwargs):
-      if params["fields"]:
-        for field in params["fields"]:
-          params[field["key"]] = d[field["name"]]
-        
-        del params["fields"]
+      if self.params["fields"]:
+        for field in self.params["fields"]:
+          self.params[field["key"]] = d[field["name"]]
       
-      yield from self.parser(d, self.__make_request(self.url_pattern, params=params))
+      yield from self.response_parser(d, self.__make_request(self.url_pattern, self.params))

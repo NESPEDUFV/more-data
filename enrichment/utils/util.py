@@ -60,6 +60,7 @@ class Converter:
 	@staticmethod
 	def csv_to_json(file, output_file):
 		import csv
+		csv.field_size_limit(2147483647)
 
 		arr = []
 
