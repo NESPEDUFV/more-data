@@ -1,7 +1,7 @@
 import json
 import csv
 from h3 import h3
-from ..utils.util import read_json_from_file
+from ..utils.util import read_json_from_file, load_json
 from shapely.geometry import asPoint
 from numpy import array
 
@@ -72,12 +72,17 @@ def parse_setores(data):
             }
 
 
-def parse_document(data, **kwargs):
+def parse_document(data, unstructured_data, **kwargs):
     array_point_field = kwargs.get('array_point_field')
     geo_location = kwargs.get('geo_location')
     code_h3 = kwargs.get('code_h3')
 
-    for doc in json.loads(__read_unstructured_json(data)):
+    if unstructured_data:
+        docs = json.loads(__read_unstructured_json(data))
+    else:
+        docs = read_json_from_file(data)
+
+    for doc in docs:
         if geo_location:
             if array_point_field != None:
                 doc[array_point_field] = [__add_geo_location(points) for points in doc[array_point_field]]
