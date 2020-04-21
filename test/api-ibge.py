@@ -18,17 +18,18 @@ PARAMETERS = {
   "fields": [
     {
       "key": "localidade",
-      "name": "Código da Região Geográfica Imediata"
+      "name": "Código do Município"
     }
   ]
 }
 
 if __name__ == "__main__":
-  def response_parser(data, response):
+  def response_parser(response):
     for res in response:
       for res in res["res"]:
-        data["pib_per_capita"] = res["res"]["2017"]
-    yield data
+        return {
+          "pib_per_capita": res["res"]["2017"]
+        }
  
   # Converter.csv_to_json(CIDADES_DIR_CSV, CIDADES_DIR_JSON)
   cidades = Data(data_file=CIDADES_DIR_JSON, parser_func=parse_document, data_type="csv")
