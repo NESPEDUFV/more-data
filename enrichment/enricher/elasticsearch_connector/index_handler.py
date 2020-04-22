@@ -78,7 +78,7 @@ class IndexHandler:
         except BulkIndexError as e:
             pass
 
-    def __remove_fields_preprocessed(self, data, **kwargs):
+    def _remove_fields_preprocessed(self, data, **kwargs):
         array_point_field = kwargs.get('array_point_field')
         geo_location = kwargs.get('geo_location')
         code_h3 = kwargs.get('code_h3')
@@ -117,9 +117,6 @@ class IndexHandler:
 
         """
 
-        # if kwargs.get('geo_location') or kwargs.get('code_h3'):
-        #     self.__remove_fields_preprocessed(index=index, **kwargs)
-
         query = {
             "query": {
                 "match_all":{}
@@ -128,7 +125,7 @@ class IndexHandler:
 
         for record in scan(self.client, query=query, index=index):
             if kwargs.get('geo_location') or kwargs.get('code_h3'):
-                yield self.__remove_fields_preprocessed(record["_source"], **kwargs)
+                yield self._remove_fields_preprocessed(record["_source"], **kwargs)
             else:
                 yield record["_source"]
 

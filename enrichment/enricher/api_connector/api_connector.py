@@ -4,6 +4,32 @@ from ...utils.util import load_json
 from typing import Callable, Dict
 
 class ApiConnector(IEnricherConnector):
+	"""ApiConnector implements interface IEnricherConnector, 
+	so this connector can be used to enrich some data.
+
+	Parameters
+	----------
+	response_parser: Callable
+		a function that will parse the response of the request 
+		and returns a dict with the values which will enrich the data.
+
+	url_pattern: str
+		url_pattern is the route of the api to retrieve values 
+		which will enrich the data.
+
+	params: dict
+		params are a dict that has key as the variable in route and name is 
+		where to retrieve the data value to assign in route.
+
+	Attributes
+	----------
+	response_parser: Callable
+
+	url_pattern: str
+
+	params: dict
+ 
+	"""
 
 	def __init__(self, response_parser: Callable, url_pattern: str, params: Dict):
 		self.response_parser = response_parser
@@ -11,6 +37,20 @@ class ApiConnector(IEnricherConnector):
 		self.params = params
 
 	def _handle_params(cls, pattern: str, params: Dict) -> str:
+		"""
+		Replace all variables inside pattern string with params 
+		values to build the url to request.
+
+		Parameters
+		----------
+		pattern: str
+
+		params: Dict
+
+		Returns
+		-------
+		url: str
+		"""
 		import re
 
 		regex = re.compile('\{.*?\}')
@@ -22,6 +62,17 @@ class ApiConnector(IEnricherConnector):
 		return pattern  
 
 	def _make_request(cls, url: str, *args, **kwargs):
+		"""
+		Using requests package this method will do the request and return tha json.
+		
+		Parameters
+		----------
+		url: str
+
+		Returns
+		-------
+		json: Json
+		"""
 		import requests
 		from urllib3.exceptions import InsecureRequestWarning
 		requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
@@ -29,6 +80,21 @@ class ApiConnector(IEnricherConnector):
 		return requests.get(url, verify=False).json()
 
 	def enrich(self, data: Data, **kwargs):
+		"""Method overrided of interface. This interface do enrichment using 
+        API as a enricher and return all data enriched as Json. This method
+		has a cache that will store as dict the url as key and the response parsed as value
+		for don't spend time with requests that are already done previously. 
+
+		Parameters
+		----------
+		data: Data
+
+		Yields
+		------
+		data: Dict
+		
+		"""
+
 		responses_cache = {}
 
 		for d in data.parse(**kwargs):
