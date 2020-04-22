@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 
 from enrichment.enricher import Enricher, EnricherBuilder
@@ -13,7 +13,7 @@ from elasticsearch import Elasticsearch
 HOST = 'localhost'
 PORT = 9200
 
-USER_DATA = "../datasets/user_profile_17092019.json"
+USER_DATA = "../../../datasets/user_profile_17092019.json"
 
 if __name__ == '__main__':
 
@@ -91,4 +91,4 @@ if __name__ == '__main__':
     
 
     import enrichment.utils.util as util
-    util.write_json_generator_to_file("../data/output/user-enriched.json", user_enriched)
+    util.write_json_generator_to_file("../../data/output/user-enriched.json", user_enriched)

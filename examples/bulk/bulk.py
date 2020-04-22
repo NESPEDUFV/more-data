@@ -1,25 +1,24 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 import json
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
-import enrichment.parser as models
+import enrichment.parser as parser
 import enrichment.models as models
 from enrichment.enricher.elasticsearch_connector import IndexHandler
 
-
-import enrichment.utils.processing as processing
+import parsers
 
 host = 'localhost'
 
-ELK_MAPS_DIR = "../elk-maps/"
+ELK_MAPS_DIR = "../../elk-maps/"
 MAPPING_DIR = ELK_MAPS_DIR + "mappings/"
 
-DATASETS_DIR = "../../datasets/"
+DATASETS_DIR = "../../../datasets/"
 
 APP_DATA = DATASETS_DIR + "ranking_apps.csv"
 USER_DATA = DATASETS_DIR + "user_profile_17092019.json"
@@ -37,12 +36,12 @@ def read_json(file):
         return json.loads(f.read())
 
 def bulk_user(client):
-    user = models.Data(data_file=USER_DATA, parser_func=parser.parsers.parse_user, data_type="json")
+    user = models.Data(data_file=USER_DATA, parser_func=parser.parse_document, data_type="json", unstructured_data=True)
     query_user = models.Query(client, "users", "user")
-    query_user.load_index(user.parse)
+    query_user.load_index(user.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 def bulk_app(client):
-    app = models.Data(data_file=APP_DATA, parser_func=parser.parsers.csv_generator, data_type="csv")
+    app = models.Data(data_file=APP_DATA, parser_func=parsers.csv_generator, data_type="csv")
     query_app = models.Query(client, "apps", "app")
     query_app.load_index(app.parse)
 
@@ -59,11 +58,11 @@ def bulk_locals(client):
     files = glob.glob(dir)
 
     for file in files:
-        locals = models.Data(data_file=file, parser_func=parser.parsers.parse_local_geojson, data_type="json")
+        locals = models.Data(data_file=file, parser_func=parsers.parse_local_geojson, data_type="json")
         query.load_index(parser=locals.parse, streaming=True)
 
 def bulk_census_data(client):
-    census = models.Data(data_file=CENSUS_DATA, parser_func=parser.parsers.parse_census, data_type="csv")
+    census = models.Data(data_file=CENSUS_DATA, parser_func=parsers.parse_census, data_type="csv")
     query = models.Query(client, "census", "sector")
     query.load_index(census.parse)
 

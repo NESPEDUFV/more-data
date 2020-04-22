@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 from enrichment.enricher import Enricher, EnricherBuilder
@@ -12,11 +12,11 @@ from enrichment.utils.util import read_json_from_file
 from elasticsearch import Elasticsearch
 
 
-ELK_MAPS_DIR = "../elk-maps/"
+ELK_MAPS_DIR = "../../elk-maps/"
 MAPPING_DIR = ELK_MAPS_DIR + "mappings/"
 POLICY_DIR = ELK_MAPS_DIR + "enriches/"
 
-DATASETS_DIR = "../../datasets/"
+DATASETS_DIR = "../../../datasets/"
 
 CIDADES_DIR = DATASETS_DIR + "cidades_info_polygon.csv"
 MAPPING_CITY_FILE = MAPPING_DIR + "cities/cities.json"
@@ -82,6 +82,6 @@ if __name__ == "__main__":
         .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
     
     import enrichment.utils.util as util
-    util.write_json_generator_to_json("../data/output/json/user-enriched", user_enriched, 1000) 
-    util.Converter.json_enriched_to_csv("../data/output/json/*.json", "../data/output/csv/")
+    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
+    util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
     

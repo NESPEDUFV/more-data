@@ -37,20 +37,20 @@ def parse_document(data, unstructured_data, **kwargs):
     code_h3 = kwargs.get('code_h3')
 
     if unstructured_data:
-        docs = json.loads(__read_unstructured_json(data))
+        docs = json.loads(_read_unstructured_json(data))
     else:
         docs = read_json_from_file(data)
 
     for doc in docs:
         if geo_location:
             if array_point_field != None:
-                doc[array_point_field] = [__add_geo_location(points) for points in doc[array_point_field]]
+                doc[array_point_field] = [_add_geo_location(points) for points in doc[array_point_field]]
             else:
-                doc = __add_geo_location(doc)
+                doc = _add_geo_location(doc)
         
         if code_h3:
             if array_point_field != None:
-                doc[array_point_field] = [__add_code_point(points) for points in doc[array_point_field]]
+                doc[array_point_field] = [_add_code_point(points) for points in doc[array_point_field]]
             else:
-                doc = __add_code_point(doc)
+                doc = _add_code_point(doc)
         yield doc

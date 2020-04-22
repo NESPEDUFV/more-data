@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 from enrichment.enricher import EnricherBuilder, Enricher
 from enrichment.enricher.api_connector import ApiConnector
@@ -8,10 +8,10 @@ from enrichment.models.data import Data
 from enrichment.parser import csv_generator, parse_document
 from enrichment.utils.util import read_json_from_file, Converter
 
-DATASETS_DIR = "../../datasets/"
+DATASETS_DIR = "../../../datasets/"
 
 CIDADES_DIR_CSV = DATASETS_DIR + "cidades_info_polygon.csv"
-CIDADES_DIR_JSON = "../data/output/conversion/cidades_info_polygon.json"
+CIDADES_DIR_JSON = "../../data/output/conversion/cidades_info_polygon.json"
 
 URL_PATTERN = r'https://servicodados.ibge.gov.br/api/v1/pesquisas/-/indicadores/47001/resultados/{localidade}'
 PARAMETERS = {
@@ -42,6 +42,6 @@ if __name__ == "__main__":
     .get_result()
 
   import enrichment.utils.util as util
-  util.write_json_generator_to_json("../data/output/cidades/json/cidades-enriched", cidades_enriched, 1000) 
-  util.Converter.json_enriched_to_csv("../data/output/cidades/json/*.json", "../data/output/cidades/csv/")
+  util.write_json_generator_to_json("../../data/output/cidades/json/cidades-enriched", cidades_enriched, 1000) 
+  util.Converter.json_enriched_to_csv("../../data/output/cidades/json/*.json", "../../data/output/cidades/csv/")
   

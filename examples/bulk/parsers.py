@@ -1,3 +1,14 @@
+import simplejson as json
+import csv
+
+def read_json_from_file(file):
+	with open(file, "r") as f:
+		return json.loads(f.read())
+
+
+def load_json(json_object):
+	return json.loads(json.dumps(json_object))
+
 def parse_local_geojson(data):
     data = read_json_from_file(data)
     for local in data["features"]:
