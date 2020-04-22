@@ -45,6 +45,5 @@ class ApiConnector(IEnricherConnector):
 
 				for k, v in response_value.items():
 					d[k] = v
-					print(k+":"+v)
 
 				yield d

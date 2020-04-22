@@ -49,7 +49,7 @@ class IndexHandler:
 
     def load_index(self, parser, streaming=None, **kwargs):
         """load_index method load documents to specified index in constructor. 
-        It can stream the load or just load all data passing a `iterable` as parameter.
+        It can stream the load or just load all data passing an `iterable` as parameter.
         The difference between of these two methods is that if you want that your data assume specified
         type you have to stream but if you don't care about this you can simply bulk data that 
         elasticsearch will infer the types of your document.

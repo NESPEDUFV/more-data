@@ -10,21 +10,6 @@ def load_json(json_object):
 	return json.loads(json.dumps(json_object))
 
 
-class StreamArray(list):
-	def __init__(self, generator):
-		self.generator = generator
-		self._len = 1
-
-	def __iter__(self):
-		self._len = 0
-		for item in self.generator:
-			yield item
-			self._len += 1  
-
-	def __len__(self):
-		return self._len
-
-
 def grouper(iterable, n, fillvalue=None):
 	from itertools import zip_longest
 

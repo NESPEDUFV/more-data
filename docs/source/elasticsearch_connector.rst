@@ -3,9 +3,7 @@
 
 Elasticsearch Connector
 =======================
-Connector that will enrich data based on elasticsearch API. 
-Elasticsearch is a search server with inverted index that provides some features to
-enrich data. This package uses enrich processor combined with pipeline file to process all
+Connector that will enrich data based on elasticsearch API. This package uses enrich processor combined with pipeline file to process all
 the requirements. 
 
 

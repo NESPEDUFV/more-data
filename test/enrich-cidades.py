@@ -54,7 +54,7 @@ if __name__ == "__main__":
         timeout = 10000
     )
 
-    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
+    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json", unstructured_data=True)
 
     # bulk_user(es, user)
 

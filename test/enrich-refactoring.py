@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('..'))
 from enrichment.enricher import Enricher, EnricherBuilder
 from enrichment.enricher.elasticsearch_connector import ElasticsearchConnector, IndexHandler, ReindexHandler, Pipeline, PipelineHandler
 from enrichment.models.data import Data
-from enrichment.parser import parse_user
+from enrichment.parser import parse_document
 
 from elasticsearch import Elasticsearch
 
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         timeout = 10000
     )
 
-    user = Data(data_file=USER_DATA, parser_func=parse_user, data_type="json")
+    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json", unstructured_data=True)
 
     elk_local_enricher = Enricher(connector=ElasticsearchConnector(
         index_handler=IndexHandler(client=es, index="locals", doc_type="local"),

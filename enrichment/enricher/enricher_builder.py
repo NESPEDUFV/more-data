@@ -57,7 +57,7 @@ class EnricherBuilder(Builder):
 
     def get_result(self, **kwargs):
 
-        def __pipe(data, funcs, **kwargs):
+        def pipe(data, funcs, **kwargs):
             for func in funcs:
                 data = func(data=data, **kwargs)
             return data
@@ -71,4 +71,4 @@ class EnricherBuilder(Builder):
         -------
         This method returns the implementations of each :func:`~enricher.Enricher.enrich` that is a Json structure.
         """
-        return __pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs)
+        return pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs)
