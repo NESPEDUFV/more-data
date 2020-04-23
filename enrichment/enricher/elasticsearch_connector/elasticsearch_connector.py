@@ -6,7 +6,9 @@ from .index_handler import ReindexHandler
 
 class ElasticsearchConnector(IEnricherConnector):
     """ElasticsearchConnector implements interface IEnricherConnector, 
-    so this is a connector that can be used to enrich some data.
+    so this is a connector that can be used to enrich some data. 
+    ElasticsearchConnector implements handlers for `index`, `pipeline` and `policy`,
+    all are requirement to enrich your data using elasticsearch. 
 
     Parameters
     ----------

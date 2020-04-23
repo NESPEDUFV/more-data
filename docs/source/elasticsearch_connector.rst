@@ -3,8 +3,6 @@
 
 Elasticsearch Connector
 =======================
-Connector that will enrich data based on elasticsearch API. This package uses enrich processor combined with pipeline file to process all
-the requirements. 
 
 
 Elasticsearch Connector

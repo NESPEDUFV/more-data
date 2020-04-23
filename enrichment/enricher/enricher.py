@@ -4,8 +4,8 @@ from typing import List
 from ..models.data import Data
 
 class Enricher:
-    """Enricher is a wrapper class of interface IEnricherConnector
-
+    """Enricher is a wrapper class of interface IEnricherConnector       
+        
     Parameters
     ----------
     connector: :obj:`IEnricherConnector`
@@ -50,6 +50,8 @@ class Enricher:
 
 
 class IEnricherConnector(ABC):
+    """IEnricherConnector is an interface that provides the abstract method enrich.
+    """
     
     @abstractmethod
     def enrich(self, data, **kwargs) -> Data:
