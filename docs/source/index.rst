@@ -27,6 +27,12 @@ that enricher need.
 
 Firstly, you have to insert your data into elasticsearch, so using ``index_handler``:
 
+Here, you have created a Data with a function that parse your document, that function is a default, but you
+can create your own parser function that implements some nice features for your enrichment. After that, you 
+instantiate an index_handler and use load_index method, passing a parser and others kwargs. We will enrich a
+specific geo_location enrichment so we need the geo_location and code_h3 equals true. The code_h3 is to get the point
+and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the lat/long is in array object you have to pass the name of this field.
+
 .. code-block:: python
    
    
@@ -39,11 +45,10 @@ Firstly, you have to insert your data into elasticsearch, so using ``index_handl
    index_handler = IndexHandler(client, "users", "user")
    index_handler.load_index(parser=data.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
-Here, you have created a Data with a function that parse your document, that function is a default, but you
-can create your own parser function that implements some nice features for your enrichment. After that, you 
-instantiate an index_handler and use load_index method, passing a parser and others kwargs. We will enrich a
-specific geo_location enrichment so we need the geo_location and code_h3 equals true. The code_h3 is to get the point
-and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the lat/long is in array object you have to pass the name of this field.
+
+Here we have a geo_location enrichment based on latitude and longitude, and has a query with `CONTAINS`, 
+so every point in `points_of_interest` will be enriched if this point is contained by a geo shape that is a field
+defined by the policy of city-policy.
 
 .. code-block:: python
    
@@ -62,18 +67,39 @@ and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the 
                                                                   target_index="users-city-enriched",
                                                                   pipeline_name="user-city-enricher")))
 
-Here we have a geo_location enrichment based on latitude and longitude, and has a query with `CONTAINS`, 
-so every point in `points_of_interest` will be enriched if this point is contained by a geo shape that is a field
-defined by the policy of city-policy.
+Here it's returning the result of enrichment to `user_enriched` variable without fields that are created 
+in Enricher, `geo_location` and `code_h3`.
+
+.. code-block:: python
+   
+   user_enriched = \
+      EnricherBuilder(user) \
+      .with_enrichment(elk_city_enricher) \
+      .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
+
+
+With the code below it's written the result of enrichment in two formats json or csv. 
+It's up to developer choose what type of file it'll be written.
+
+.. code-block:: python
+
+   import enrichment.utils.util as util
+   util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
+   util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
+
+
+
+Contents
+========
 
 .. toctree::
    :maxdepth: 2
 
    models
    enricher
-   elasticsearch_connector
    api_connector
-
+   elasticsearch_connector
+   
 
 Indices and tables
 ==================
