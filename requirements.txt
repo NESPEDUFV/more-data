@@ -3,7 +3,6 @@ h3
 pandas
 numpy
 elasticsearch
-simplejson
 sphinx
 sphinx-rtd-theme
 jinja2

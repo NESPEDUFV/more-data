@@ -1,4 +1,4 @@
-import simplejson as json
+import json
 import csv
 
 def read_json_from_file(file):
