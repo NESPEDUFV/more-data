@@ -17,7 +17,7 @@ class ApiConnector(IEnricherConnector):
 		url_pattern is the route of the api to retrieve values 
 		which will enrich the data.
 
-	params: dict
+	params: Dict
 		params are a dict that has key as the variable in route and name is 
 		where to retrieve the data value to assign in route.
 
@@ -28,15 +28,14 @@ class ApiConnector(IEnricherConnector):
 	url_pattern: str
 
 	params: dict
- 
 	"""
 
-	def __init__(self, response_parser: Callable, url_pattern: str, params: Dict):
+	def __init__(self, response_parser, url_pattern, params):
 		self.response_parser = response_parser
 		self.url_pattern = url_pattern
 		self.params = params
 
-	def _handle_params(cls, pattern: str, params: Dict) -> str:
+	def _handle_params(cls, pattern, params):
 		"""
 		Replace all variables inside pattern string with params 
 		values to build the url to request.
@@ -61,9 +60,9 @@ class ApiConnector(IEnricherConnector):
 		
 		return pattern  
 
-	def _make_request(cls, url: str, *args, **kwargs):
+	def _make_request(cls, url, *args, **kwargs):
 		"""
-		Using requests package this method will do the request and return tha json.
+		Using requests package this method will do the request and return that json.
 		
 		Parameters
 		----------
@@ -79,7 +78,7 @@ class ApiConnector(IEnricherConnector):
 
 		return requests.get(url, verify=False).json()
 
-	def enrich(self, data: Data, **kwargs):
+	def enrich(self, data, **kwargs):
 		"""Method overrided of interface. This interface do enrichment using 
         API as a enricher and return all data enriched as Json. This method
 		has a cache that will store as dict the url as key and the response parsed as value

@@ -1,6 +1,4 @@
-from __future__ import annotations
 from abc import ABC, abstractproperty, abstractmethod
-from typing import Any, List
 from .enricher import Enricher
 from ..models.data import Data
 
@@ -10,7 +8,7 @@ class Builder(ABC):
     """
 
     @abstractmethod
-    def with_enrichment(self, connector: Enricher):
+    def with_enrichment(self, connector):
         """This method is suppose to add enrichments to :obj:`Data` class
         Parameters
         ----------
@@ -36,10 +34,10 @@ class EnricherBuilder(Builder):
      
     """
 
-    def __init__(self, data: Data) -> None:
+    def __init__(self, data):
         self._data = data
 
-    def with_enrichment(self, connector: Enricher):
+    def with_enrichment(self, connector):
         """Implementation of abstract method of :obj:`Builder`
         This method add to :obj:`Data` array attribute :obj:`Enricher` objects
        

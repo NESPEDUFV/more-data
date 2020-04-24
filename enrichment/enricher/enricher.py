@@ -1,8 +1,5 @@
-from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import List
 from ..models.data import Data
-
 class Enricher:
     """Enricher is a wrapper class of interface IEnricherConnector       
         
@@ -17,11 +14,11 @@ class Enricher:
         Interface that connects an implementation of enrichment to the class :Enricher:   
 
     """
-    def __init__(self, connector: IEnricherConnector) -> None:
+    def __init__(self, connector):
         self._connector = connector
 
     @property
-    def connector(self) -> IEnricherConnector:
+    def connector(self):
         """
         Returns
         -------
@@ -30,10 +27,10 @@ class Enricher:
         return self._connector
 
     @connector.setter
-    def connector(self, connector: IEnricherConnector) -> None:
+    def connector(self, connector):
         self._connector = connector
 
-    def enrich(self, data: Data, **kwargs) -> Data:
+    def enrich(self, data, **kwargs):
         """Call enrich function of interface :obj:`IEnricherConnector`
         
         Parameters
@@ -54,5 +51,5 @@ class IEnricherConnector(ABC):
     """
     
     @abstractmethod
-    def enrich(self, data, **kwargs) -> Data:
+    def enrich(self, data, **kwargs):
         pass

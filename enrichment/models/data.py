@@ -35,6 +35,6 @@ class Data:
         
         return self.parser(self.data_file, self.unstructured_data, **kwargs)
 
-    def add(self, enricher) -> None:
+    def add(self, enricher):
         """add enricher in enrichers attribute"""
         self.enrichers.append(enricher)
