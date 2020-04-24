@@ -1,7 +1,6 @@
 from ..enricher import IEnricherConnector
 from ...models.data import Data
 from ...utils.util import load_json
-from typing import Callable, Dict
 
 class ApiConnector(IEnricherConnector):
 	"""ApiConnector implements interface IEnricherConnector, 

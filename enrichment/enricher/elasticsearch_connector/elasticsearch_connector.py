@@ -34,7 +34,7 @@ class ElasticsearchConnector(IEnricherConnector):
         self.pipeline = pipeline
         self.reindex_handler = reindex_handler
 
-    def enrich(self, data: Data, **kwargs) -> Data:
+    def enrich(self, data, **kwargs):
         """Method overrided of interface. This interface do enrichment using 
         elasticsearch as a enricher: create a pipeline, reindex with a pipeline
         specified to enrich and return all data enriched as Json.
