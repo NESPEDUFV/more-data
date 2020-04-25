@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 from enrichment.enricher import EnricherBuilder, Enricher
 from enrichment.enricher.api_connector import ApiConnector
 from enrichment.models.data import Data
-from enrichment.parser import csv_generator, parse_document
+from enrichment.parser import parse_document
 from enrichment.utils.util import read_json_from_file, Converter
 
 DATASETS_DIR = "../../../datasets/"
