@@ -18,7 +18,7 @@ docs_requires = [
 setup(
     name = "enrichment",
     version = '0.1',
-    packages = ['enrichment'],
+    packages = find_packages(where="."),
     python_requires=">=3.6",
     install_requires = install_requires,
     extras_require={
