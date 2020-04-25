@@ -22,7 +22,7 @@ setup(
     python_requires=">=3.6",
     install_requires = install_requires,
     extras_require={
-        "develop": install_require + docs_require,
-        "docs": docs_require,
+        "develop": install_requires + docs_requires,
+        "docs": docs_requires,
     },
 )
