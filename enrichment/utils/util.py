@@ -28,31 +28,19 @@ class Converter:
 	def json_enriched_to_csv(path, output_path):
 		import pandas as pd
 		from glob import glob
-		from flatten_json import flatten
 
 		files = glob(path)
 
-		for i, file in enumerate(files):
-			dic_flattened = []
-			for d in read_json_from_file(file):
-				try:
-					dic_flattened.append(flatten(d))
-				except AssertionError as e:
-					pass
-			df = pd.DataFrame(dic_flattened)
-			df.to_csv(output_path+str(i)+".csv")
+		for i, file in enumerate(files):		
+			try:
+				df = pd.read_json(file, orient='records')
+				df.to_csv(output_path+str(i)+".csv")
+			except AttributeError as e:
+				pass
 
 	@staticmethod
 	def csv_to_json(file, output_file):
-		import csv
-		csv.field_size_limit(2147483647)
+		import pandas as pd
 
-		arr = []
-
-		with open(file) as f:
-			reader = csv.DictReader(f)
-			for row in reader:
-				arr.append(row)
-
-		with open(output_file, "w+") as out:
-			json.dump(arr, out, ensure_ascii=False)
+		df = pd.read_csv(file)
+		df.to_json(output_file, orient="records")

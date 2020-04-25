@@ -91,4 +91,4 @@ if __name__ == '__main__':
     
 
     import enrichment.utils.util as util
-    util.write_json_generator_to_file("../../data/output/user-enriched.json", user_enriched)
+    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 

@@ -1,18 +1,18 @@
 from setuptools import setup, find_packages
 
 install_requires = [
-    "requests",
-    "h3",
-    "pandas",
-    "numpy",
-    "elasticsearch",
+    "requests==2.22.0",
+    "h3==3.4.3",
+    "pandas==1.0.1",
+    "numpy==1.18.1",
+    "elasticsearch==7.5.1",
+    "shapely==1.7.0",
 ]
-
 docs_requires = [
-    "sphinx",
-    "sphinx-rtd-theme",
-    "jinja2",
-    "sphinxcontrib-napoleon",
+    "sphinx==2.4.0",
+    "sphinx-rtd-theme==0.4.3",
+    "jinja2==2.11.1",
+    "sphinxcontrib-napoleon==0.7",
 ]
 
 setup(

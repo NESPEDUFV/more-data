@@ -107,7 +107,8 @@ class ApiConnector(IEnricherConnector):
 					response_value = self.response_parser(self._make_request(url))
 					responses_cache[url] = response_value
 
-				for k, v in response_value.items():
-					d[k] = v
+				if response_value != None:
+					for k, v in response_value.items():
+						d[k] = v
 
 				yield d
