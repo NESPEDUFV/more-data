@@ -1,0 +1,17 @@
+Enrichment-Data
+===============
+
+Its goal is to provide a framework with high extensability for data enrichments
+
+Installation
+------------
+
+Install the ``enrichment-data`` package with pip:
+
+    pip install git+ssh://git@gitlab.com/nesped/enriquecedor-es.git
+
+
+Example Use
+-----------
+
+TODO
