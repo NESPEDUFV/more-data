@@ -22,7 +22,7 @@ MAPPING_DIR = ELK_MAPS_DIR + "mappings/"
 DATASETS_DIR = "../../../datasets/"
 
 APP_DATA = DATASETS_DIR + "ranking_apps.csv"
-USER_DATA = DATASETS_DIR + "user_profile_17092019.json"
+USER_DATA = DATASETS_DIR + "user_profile_17092019_preprocessed.json"
 CENSUS_DATA = DATASETS_DIR + "df_census_2010.csv"
 
 LOCALS_DIR = DATASETS_DIR + "Locais_OSM/geojson/"
@@ -33,14 +33,10 @@ CIDADES_DIR = DATASETS_DIR + "cidades_info_polygon.csv"
 MAPPING_LOCAL_FILE = MAPPING_DIR + "points-interests/locals.json"
 MAPPING_APPS_FILE = MAPPING_DIR + "apps/app.json"
 
-def read_json(file):
-    with open(file, "r") as f:
-        return json.loads(f.read())
-
-# def bulk_user(client):
-#     user = models.Data(data_file=USER_DATA, parser_func=parser.parse_document, data_type="json", unstructured_data=True)
-#     query_user = models.Query(client, "users", "user")
-#     query_user.load_index(user.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
+def bulk_user(client):
+    user = models.Data(data_file=USER_DATA, parser_func=parser.parse_document, data_type="json")
+    index_handler = IndexHandler(client, "users", "user")
+    index_handler.load_index(user.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 def bulk_app(client):
     import enrichment.utils.util as util
@@ -54,42 +50,43 @@ def bulk_app(client):
 
     index_handler.load_index(parser=app.parse, streaming=True)    
 
-# def bulk_locals(client):
-#     query = models.Query(client, "locals", "local")
+def bulk_locals(client):
+    import enrichment.utils.util as util
+    
+    index_handler = IndexHandler(client, "locals", "local")
+    mapping = read_json_from_file(MAPPING_LOCAL_FILE)
 
-#     mapping = read_json(MAPPING_LOCAL_FILE)
+    index_handler.create_index(mapping)
 
-#     query.create_index(mapping)
+    import glob
 
-#     import glob
+    dir = LOCALS_DIR + "*.geojson"
+    files = glob.glob(dir)
 
-#     dir = LOCALS_DIR + "*.geojson"
-#     files = glob.glob(dir)
+    for file in files:
+        locals = models.Data(data_file=file, parser_func=parsers.parse_local_geojson, data_type="json")
+        index_handler.load_index(parser=locals.parse, streaming=True)
 
-#     for file in files:
-#         locals = models.Data(data_file=file, parser_func=parsers.parse_local_geojson, data_type="json")
-#         query.load_index(parser=locals.parse, streaming=True)
+def bulk_census_data(client):
+    census = models.Data(data_file=CENSUS_DATA, parser_func=parsers.parse_census, data_type="csv")
+    index_handler = IndexHandler(client, "census", "sector")
+    index_handler.load_index(census.parse)
 
-# def bulk_census_data(client):
-#     census = models.Data(data_file=CENSUS_DATA, parser_func=parsers.parse_census, data_type="csv")
-#     query = models.Query(client, "census", "sector")
-#     query.load_index(census.parse)
+def bulk_h3_sectors_data(client, data_type):
 
-# def bulk_h3_sectors_data(client, data_type):
+    import glob
+    dir = SETORES_DIR+"*."+data_type
+    files = glob.glob(dir)
+    
+    index_handler = IndexHandler(client, "sectors", "h3_sector")
 
-#     import glob
-#     dir = SETORES_DIR+"*."+data_type
-#     files = glob.glob(dir)
-
-#     for file in files:
-#         print(file)
-#         sector = models.Data(data_file=file, parser_func=parser.parsers.parse_setores, data_type="csv")
-#         query = models.Query(client, "sectors", "h3_sector")
-#         query.load_index(sector.parse)
+    for file in files:
+        sector = models.Data(data_file=file, parser_func=parser.parsers.parse_setores, data_type="csv")
+        index_handler.load_index(sector.parse)
 
 if __name__ == '__main__':
     es = Elasticsearch(
         hosts=[{'host': host, 'port': 9200}]
     )
 
-    bulk_app(es)
+    # Put your functions here.
