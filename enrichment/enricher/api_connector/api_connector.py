@@ -55,7 +55,7 @@ class ApiConnector(IEnricherConnector):
 		routes = regex.findall(pattern)
 
 		for route in routes:
-			pattern = pattern.replace(route, params[route[1:len(route)-1]])
+			pattern = pattern.replace(route, str(params[route[1:len(route)-1]]))
 		
 		return pattern  
 
