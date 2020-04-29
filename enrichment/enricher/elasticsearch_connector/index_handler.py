@@ -62,21 +62,24 @@ class IndexHandler:
         streaming: bool
             If streaming load_index method will do streaming bulk instead of bulk all data.
         """
-        try:
             if streaming:
-                for ok, response in streaming_bulk(self.client, index=self.index, actions=parser(**kwargs)):
-                    if not ok:
-                        # failure inserting
-                        print(response)
+                try:
+                    for ok, response in streaming_bulk(self.client, index=self.index, actions=parser(**kwargs)):
+                        if not ok:
+                            # failure inserting
+                            print(response)
+                except BulkIndexError as e:
+                    pass
             else:
-                bulk(
-                    self.client,
-                    parser(**kwargs),
-                    index=self.index,
-                    doc_type=self.doc_type
-                )
-        except BulkIndexError as e:
-            pass
+                try:
+                    bulk(
+                        self.client,
+                        parser(**kwargs),
+                        index=self.index,
+                        doc_type=self.doc_type
+                    )
+                except BulkIndexError as e:
+                    pass
 
     def _remove_fields_preprocessed(self, data, **kwargs):
         array_point_field = kwargs.get('array_point_field')
