@@ -76,7 +76,7 @@ class IndexHandler:
                     doc_type=self.doc_type
                 )
         except BulkIndexError as e:
-            raise(e)
+            pass
 
     def _remove_fields_preprocessed(self, data, **kwargs):
         array_point_field = kwargs.get('array_point_field')
