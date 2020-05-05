@@ -24,8 +24,20 @@ def write_json_generator_to_json(file, data, n):
 			json.dump(list(group), outfile, ensure_ascii=False)
 
 class Converter:
+
 	@staticmethod
 	def json_enriched_to_csv(path, output_path):
+		""" Get the output of json and converts to csv file.
+
+		Parameters
+		----------
+
+		path: str
+			path where json files are.
+		
+		output_path: str
+			path where the conversion files will be.
+		"""
 		import pandas as pd
 		from glob import glob
 
@@ -40,6 +52,17 @@ class Converter:
 
 	@staticmethod
 	def csv_to_json(file, output_file):
+		"""Get the output of csv and converts to json file.
+
+		Parameters
+		----------
+
+		file: str
+			name of file which you want to convert.
+		
+		output_file: str
+			name of output_file.
+		"""
 		import pandas as pd
 
 		df = pd.read_csv(file)

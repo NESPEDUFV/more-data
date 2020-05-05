@@ -4,7 +4,15 @@ sys.path.insert(0, os.path.abspath('../..'))
 
 
 from enrichment.enricher import Enricher, EnricherBuilder
-from enrichment.enricher.elasticsearch_connector import ElasticsearchConnector, IndexHandler, ReindexHandler, Pipeline, PipelineHandler, PolicyHandler, Policy
+from enrichment.enricher.elasticsearch_connector import (
+    ElasticsearchConnector, 
+    IndexHandler,
+    ReindexHandler, 
+    Pipeline, 
+    PipelineHandler, 
+    PolicyHandler, 
+    Policy,
+)
 from enrichment.models.data import Data
 from enrichment.parser import csv_generator, parse_document
 from enrichment.utils.util import read_json_from_file

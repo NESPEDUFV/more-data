@@ -2,8 +2,9 @@ from ..enricher import IEnricherConnector
 from ...models.data import Data
 from ...utils.util import load_json
 
-class ApiConnector(IEnricherConnector):
-	"""ApiConnector implements interface IEnricherConnector, 
+
+class ApiConnector (IEnricherConnector):
+    """ApiConnector implements interface IEnricherConnector,
 	so this connector can be used to enrich some data.
 
 	Parameters
@@ -29,13 +30,13 @@ class ApiConnector(IEnricherConnector):
 	params: dict
 	"""
 
-	def __init__(self, response_parser, url_pattern, params):
-		self.response_parser = response_parser
-		self.url_pattern = url_pattern
-		self.params = params
+    def __init__(self, response_parser, url_pattern, params):
+        self.response_parser = response_parser
+        self.url_pattern = url_pattern
+        self.params = params
 
-	def _handle_params(cls, pattern, params):
-		"""
+    def _handle_params(cls, pattern, params):
+        """
 		Replace all variables inside pattern string with params 
 		values to build the url to request.
 
@@ -49,18 +50,18 @@ class ApiConnector(IEnricherConnector):
 		-------
 		url: str
 		"""
-		import re
+        import re
 
-		regex = re.compile('\{.*?\}')
-		routes = regex.findall(pattern)
+        regex = re.compile ('\{.*?\}')
+        routes = regex.findall (pattern)
 
-		for route in routes:
-			pattern = pattern.replace(route, str(params[route[1:len(route)-1]]))
-		
-		return pattern  
+        for route in routes:
+            pattern = pattern.replace (route, str (params[route[1:len (route) - 1]]))
 
-	def _make_request(cls, url, *args, **kwargs):
-		"""
+        return pattern
+
+    def _make_request(cls, url, *args, **kwargs):
+        """
 		Using requests package this method will do the request and return that json.
 		
 		Parameters
@@ -71,17 +72,17 @@ class ApiConnector(IEnricherConnector):
 		-------
 		json: Json
 		"""
-		import requests
-		from urllib3.exceptions import InsecureRequestWarning
-		requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+        import requests
+        from urllib3.exceptions import InsecureRequestWarning
+        requests.packages.urllib3.disable_warnings (category=InsecureRequestWarning)
 
-		return requests.get(url, verify=False).json()
+        return requests.get (url, verify=False).json ()
 
-	def enrich(self, data, **kwargs):
-		"""Method overrided of interface. This interface do enrichment using 
-        API as a enricher and return all data enriched as Json. This method
+    def enrich(self, data, **kwargs):
+        """Method overrided of interface. This interface do enrichment using
+		API as a enricher and return all data enriched as Json. This method
 		has a cache that will store as dict the url as key and the response parsed as value
-		for don't spend time with requests that are already done previously. 
+		for don't spend time with requests that are already done previously.
 
 		Parameters
 		----------
@@ -90,25 +91,24 @@ class ApiConnector(IEnricherConnector):
 		Yields
 		------
 		data: Dict
-		
 		"""
 
-		responses_cache = {}
+        responses_cache = {}
 
-		for d in data.parse(**kwargs):
-			if self.params["fields"]:
-				for field in self.params["fields"]:
-					self.params[field["key"]] = d[field["name"]]
+        for d in data.parse (**kwargs):
+            if self.params["fields"]:
+                for field in self.params["fields"]:
+                    self.params[field["key"]] = d[field["name"]]
 
-				url = self._handle_params(self.url_pattern, self.params)
-				if url in responses_cache.keys():
-					response_value = responses_cache[url]
-				else:
-					response_value = self.response_parser(self._make_request(url))
-					responses_cache[url] = response_value
+                url = self._handle_params (self.url_pattern, self.params)
+                if url in responses_cache.keys ():
+                    response_value = responses_cache[url]
+                else:
+                    response_value = self.response_parser (self._make_request (url))
+                    responses_cache[url] = response_value
 
-				if response_value != None:
-					for k, v in response_value.items():
-						d[k] = v
+                if response_value != None:
+                    for k, v in response_value.items ():
+                        d[k] = v
 
-				yield d
+                yield d
