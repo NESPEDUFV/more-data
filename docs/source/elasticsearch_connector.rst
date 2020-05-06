@@ -17,6 +17,32 @@ Elasticsearch Connector
 Index Handler
 -------------
 
+Examples
+~~~~~~~~
+
+With index handler we can insert data into elasticsearch. When you want to define your `mapping <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_ you should send data with optional argument ``streaming`` equals `True`. If you don't know mapping of the data even so you can load data without that optional argument and elasticsearch will infer the types of your data. 
+
+.. code-block:: python
+    
+    import enrichment.parser as parser
+    import enrichment.models as models
+    from enrichment.enricher.elasticsearch_connector import IndexHandler
+    from enrichment.utils.util import read_json_from_file
+    
+    from elasticsearch import Elasticsearch
+
+    es = Elasticsearch(
+        hosts=[{'host': 'localhost', 'port': 9200}]
+    )
+
+    index_handler = IndexHandler(client, "apps-json", "app")
+
+    mapping = read_json_from_file(MAPPING_APPS_FILE)
+    index_handler.create_index(mapping=mapping)
+
+    index_handler.load_index(parser=app.parse, streaming=True)  
+
+
 .. py:module:: enrichment.enricher.elasticsearch_connector.index_handler
 
 .. autoclass:: IndexHandler
