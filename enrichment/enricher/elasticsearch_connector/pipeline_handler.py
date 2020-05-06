@@ -62,6 +62,23 @@ class PipelineHandler():
                     }
                 ]
             }
+
+            if kwargs.get('remove_field'):
+                remove_processor = {
+                            "foreach": {
+                                "field": kwargs.get('field_array'),
+                                "processor": {
+                                    "remove": {
+                                    "field": "_ingest._value."+kwargs.get('remove_field'),
+                                    "ignore_missing": True
+                                    }
+                                },
+                                "ignore_failure": True
+                            }
+                        }
+                self._json["processors"].append(remove_processor)
+
+
         
             if kwargs.get('max_matches'):
                 self._json['processors'][0]['foreach']["processor"]['enrich']['max_matches'] = kwargs.get('max_matches')
@@ -77,16 +94,31 @@ class PipelineHandler():
                             "policy_name": policy_name,
                             "field": match_field,
                             "target_field": target_field_name,
+                            "ignore_missing": True
                         }
                     }
                 ]
             }
+            
+            if kwargs.get('remove_field'):
+                remove_processor = {
+                                "processor": {
+                                    "remove": {
+                                    "field": kwargs.get('remove_field'),
+                                    "ignore_missing": True
+                                    }
+                                },
+                                "ignore_failure": True
+                            }
+
+                self._json["processors"].append(remove_processor)
 
             if kwargs.get('max_matches'):
                 self._json['processors'][0]['enrich']['max_matches'] = kwargs.get('max_matches')
             
             if kwargs.get('shape_relation'):
                 self._json['processors'][0]['enrich']['shape_relation'] = kwargs.get('shape_relation')
+    
     
     def import_json(self, data):
         pass

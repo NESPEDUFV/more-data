@@ -14,7 +14,7 @@ from enrichment.enricher.elasticsearch_connector import (
     Policy,
 )
 from enrichment.models.data import Data
-from enrichment.parser import csv_generator, parse_document
+from enrichment.parser import parse_document
 from enrichment.utils.util import read_json_from_file
 
 from elasticsearch import Elasticsearch
@@ -41,6 +41,13 @@ def bulk_user(client, data):
     index_handler.load_index(parser=data.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 def bulk_cidades(client):
+    def csv_generator(data):
+        import csv
+        csv.field_size_limit(2147483647)
+        with open(data, "r") as f:
+            reader = csv.DictReader(f)
+            for cnt, row in enumerate(reader):
+                yield row
     cidades = Data(data_file=CIDADES_DIR, parser_func=csv_generator, data_type="csv")
     
     index_handler = IndexHandler(client, "cities", "city")
@@ -62,7 +69,7 @@ if __name__ == "__main__":
         timeout = 10000
     )
 
-    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json", unstructured_data=True)
+    user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
     # bulk_user(es, user)
 
@@ -79,6 +86,7 @@ if __name__ == "__main__":
                                 target_field_name="city",
                                 policy_name="city-policy",
                                 field_array="points_of_interest",
+                                remove_field="city.geometry",
                                 shape_relation="CONTAINS")),
         reindex_handler=ReindexHandler(index="users",
                                        target_index="users-city-enriched",
@@ -89,7 +97,7 @@ if __name__ == "__main__":
         .with_enrichment(elk_city_enricher) \
         .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
     
-    import enrichment.utils.util as util
-    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
-    util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
+    # import enrichment.utils.util as util
+    # util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
+    # util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
     
