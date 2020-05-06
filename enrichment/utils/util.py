@@ -51,6 +51,32 @@ class Converter:
 				pass
 
 	@staticmethod
+	def json_enriched_to_parquet(path, output_path):
+		""" Get the output of json and converts to parquet file.
+
+		Parameters
+		----------
+
+		path: str
+			path where json files are.
+		
+		output_path: str
+			path where the conversion files will be.
+		"""
+		import pandas as pd
+		from glob import glob
+
+		files = glob(path)
+
+		for i, file in enumerate(files):		
+			try:
+				df = pd.read_json(file, orient='records')
+				df.to_parquet(output_path+str(i)+".parquet")
+			except AttributeError as e:
+				pass
+
+
+	@staticmethod
 	def csv_to_json(file, output_file):
 		"""Get the output of csv and converts to json file.
 
@@ -67,3 +93,21 @@ class Converter:
 
 		df = pd.read_csv(file)
 		df.to_json(output_file, orient="records")
+	
+	@staticmethod
+	def parquet_to_json(file, output_file):
+		"""Get the output of parquet and converts to json file.
+
+		Parameters
+		----------
+
+		file: str
+			name of file which you want to convert.
+		
+		output_file: str
+			name of output_file.
+		"""
+		import pandas as pd
+
+		df = pd.read_parquet(file)
+		df.to_json(output_file, orient='records')
