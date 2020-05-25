@@ -9,17 +9,14 @@ def read_json_from_file(file):
 def load_json(json_object):
 	return json.loads(json.dumps(json_object))
 
-
-def grouper(iterable, n, fillvalue=None):
-	from itertools import zip_longest
-
-	args = [iter(iterable)] * n
-	return zip_longest(fillvalue=fillvalue, *args)
-
+def chunks(iterable, size=10):
+	from itertools import chain, islice
+	iterator = iter(iterable)
+	for first in iterator:
+		yield chain([first], islice(iterator, size - 1))
 
 def write_json_generator_to_json(file, data, n):
-
-	for i, group in enumerate(grouper(data, n)):
+	for i, group in enumerate(chunks(data, n)):
 		with open(file + '-{}.json'.format(i), 'w') as outfile:
 			json.dump(list(group), outfile, ensure_ascii=False)
 
@@ -39,16 +36,18 @@ class Converter:
 			path where the conversion files will be.
 		"""
 		import pandas as pd
+		import json
 		from glob import glob
 
 		files = glob(path)
 
-		for i, file in enumerate(files):		
+		for i, file in enumerate(files):
 			try:
 				df = pd.read_json(file, orient='records')
-				df.to_csv(output_path+str(i)+".csv")
+				df.to_csv(output_path+str(i)+".csv", encoding='utf-8', index=False)
 			except AttributeError as e:
-				pass
+				print(file)
+				raise(e)
 
 	@staticmethod
 	def json_enriched_to_parquet(path, output_path):
@@ -71,7 +70,7 @@ class Converter:
 		for i, file in enumerate(files):		
 			try:
 				df = pd.read_json(file, orient='records')
-				df.to_parquet(output_path+str(i)+".parquet")
+				df.to_parquet(output_path+str(i)+".parquet", encoding='utf-8', index=False)
 			except AttributeError as e:
 				pass
 

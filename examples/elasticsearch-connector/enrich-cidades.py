@@ -97,7 +97,7 @@ if __name__ == "__main__":
         .with_enrichment(elk_city_enricher) \
         .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
     
-    # import enrichment.utils.util as util
-    # util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
-    # util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
+    import enrichment.utils.util as util
+    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
+    util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
     
