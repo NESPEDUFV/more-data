@@ -102,13 +102,10 @@ class PipelineHandler():
             
             if kwargs.get('remove_field'):
                 remove_processor = {
-                                "processor": {
                                     "remove": {
-                                    "field": kwargs.get('remove_field'),
-                                    "ignore_missing": True
+                                        "field": kwargs.get('remove_field'),
+                                        "ignore_missing": True
                                     }
-                                },
-                                "ignore_failure": True
                             }
 
                 self._json["processors"].append(remove_processor)
