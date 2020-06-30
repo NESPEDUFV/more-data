@@ -1,6 +1,7 @@
 from geopy.geocoders import Nominatim
 from shapely.ops import polygonize
 from shapely import geometry
+import shapely.wkt
 import pandas as pd
 import numpy as np
 import geopandas
@@ -10,10 +11,11 @@ from shapely.ops import linemerge
 import requests
 import json
 
-class OSM_downloader():        
+class OSM_util():        
     
     #Realiza a consulta coletando os três tipos de geometria (Node, Way e Relation) já setando a saída como JSON.
-    def get_places_overpy(self, place_name, key, value):    
+    @staticmethod
+    def get_places_overpy(key, value, place_name):    
         api = overpy.Overpass()
         result = api.query("""
             [out:json][timeout:3600];
@@ -30,7 +32,8 @@ class OSM_downloader():
         return result
     
     #Corrige polígonos que são formados por vários polígonos 
-    def to_polygon(self, geom, geom_size):
+    @staticmethod
+    def to_polygon(geom, geom_size):
         if geom_size > 1: #Se possui somente uma componente não faz nada
             try:
                 geom = geometry.Polygon(linemerge(geom))
@@ -53,7 +56,8 @@ class OSM_downloader():
             geom = geometry.Polygon(geom)
         return geom
     
-    def get_places(self, place_name, key, value, tags=("name","geom")):
+    @staticmethod
+    def get_places(key, value, place_name, tags=("name","geom")):
         
         result = self.get_places_overpy(place_name, key, value) # demora!!!
         
@@ -109,5 +113,4 @@ class OSM_downloader():
         
         df["key"] = key
         df["value"] = value
-        return df.reset_index(drop=True)  
-    
+        return df.reset_index(drop=True)     
