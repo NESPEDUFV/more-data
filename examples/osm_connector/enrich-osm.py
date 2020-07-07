@@ -25,4 +25,4 @@ if __name__ == "__main__":
 	  .get_result(keys=["points_of_interest"]) 
 
     import enrichment.utils.util as util
-    util.write_json_generator_to_json("../../data/output/osm/user-enriched", user_enriched, 48000) 
+    util.write_json_generator_to_json("../../data/output/osm/user-enriched", user_enriched, 100000) 

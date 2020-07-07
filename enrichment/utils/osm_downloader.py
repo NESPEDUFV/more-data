@@ -11,29 +11,35 @@ from shapely.ops import linemerge
 import requests
 import json
 
-class OSM_util():        
-    
+class OSM_util: 
+    def _get_place_ID(self, place_name):
+        geolocator = Nominatim(user_agent="city_compare")
+        geoResults = geolocator.geocode(place_name, exactly_one=False, limit=3, timeout = 600)
+        for r in geoResults:
+            if r.raw.get("osm_type") == "relation":
+                city = r
+            break
+
+        place_ID = int(city.raw.get("osm_id")) + 3600000000     #Calcula o ID do local escolhido utilizando\n",
+        return place_ID
+
     #Realiza a consulta coletando os três tipos de geometria (Node, Way e Relation) já setando a saída como JSON.
-    @staticmethod
-    def get_places_overpy(key, value, place_name):    
+    def _get_places_overpy(self, place_name,key,value): 
+        place_id = self._get_place_ID(place_name)
         api = overpy.Overpass()
         result = api.query("""
             [out:json][timeout:3600];
-            {{geocodeArea: %s}}->.searchArea;
+            area(%s)->.searchArea;
             (
-              node[%s=%s](area.searchArea);
               way[%s=%s](area.searchArea);
               relation[%s=%s](area.searchArea);
             );
             out geom;
-            >;
-            out skel qt;
-            """ % (place_name, key, value, key, value, key, value))
+            """ % (place_id,key,value,key,value))
         return result
     
     #Corrige polígonos que são formados por vários polígonos 
-    @staticmethod
-    def to_polygon(geom, geom_size):
+    def _to_polygon(self, geom, geom_size):
         if geom_size > 1: #Se possui somente uma componente não faz nada
             try:
                 geom = geometry.Polygon(linemerge(geom))
@@ -56,10 +62,9 @@ class OSM_util():
             geom = geometry.Polygon(geom)
         return geom
     
-    @staticmethod
-    def get_places(key, value, place_name, tags=("name","geom")):
+    def get_places(self, place_name,key,value,tags=("name","geom")):
         
-        result = self.get_places_overpy(place_name, key, value) # demora!!!
+        result = self._get_places_overpy(place_name,key,value) # demora!!!
         
         df = pd.DataFrame(columns=tags)
 
@@ -84,9 +89,7 @@ class OSM_util():
                     if t != "geom":
                         line.append(w.tags.get(t, np.nan))
                     else:
-                        print(w.tags.get("name",np.nan))
-                        print(w.tags.get("name",np.nan))
-                        line.append(geometry.Polygon([[p.lon, p.lat] for p in w.nodes]))
+                        line.append(geometry.Polygon([[p.lon, p.lat] for p in w.get_nodes(resolve_missing=True)]))
 
                 df = df.append(pd.DataFrame([line],columns=tags))
 
@@ -108,9 +111,9 @@ class OSM_util():
                     
                 geom = geom.union(geometry.LineString(coords))
 
-            line.append(self.to_polygon(geom,cont))
+            line.append(self._to_polygon(geom,cont))
             df = df.append(pd.DataFrame([line],columns=tags))
         
         df["key"] = key
         df["value"] = value
-        return df.reset_index(drop=True)     
+        return df.reset_index(drop=True)  
