@@ -4,6 +4,10 @@ from ...utils import OSM_util
 import pandas as pd
 from shapely import wkt
 import geopandas
+import pyproj
+from shapely.geometry import MultiPolygon, Polygon
+from shapely.ops import transform as sh_transform
+from functools import partial
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
@@ -12,18 +16,33 @@ from shapely.geometry import shape
 
 class OSMConnector(IEnricherConnector):
 
-    def __init__(self, key=None, value=None, place_name="Brasil", file=None):
+    def __init__(self, key=None, value=None, place_name="Brasil", file=None, radius=None):
         self.key = key
         self.value = value
         self.place_name = place_name
         self.file = file
+        self.radius = radius
         if self.file is not None:
             self._df = pd.read_csv(file)
-        
+            self._df["geom"] = self._df["geom"].apply(wkt.loads)
+
+    def _pol_buff_on_globe(self, pol, radius):
+        wgs84_globe = pyproj.Proj(proj='latlong', ellps='WGS84')
+
+        _lon, _lat = pol.centroid.coords[0]
+        aeqd = pyproj.Proj(proj='aeqd', ellps='WGS84', datum='WGS84',
+                        lat_0=_lat, lon_0=_lon)
+        project_pol = sh_transform(partial(pyproj.transform, wgs84_globe, aeqd), pol)
+        return sh_transform( partial(pyproj.transform, aeqd, wgs84_globe),
+                            project_pol.buffer(radius))
+            
     def _get_polygons(self):
         self.array_polygons = []
         for index, row in self._df.iterrows():
-            self.array_polygons.append(row["geom"])
+            pol = row["geom"]
+            if self.radius is not None:
+                pol = self._pol_buff_on_globe(pol, self.radius)
+            self.array_polygons.append(pol)
 
         self.idx = rtreeindex.Index()
         for pos, poly in enumerate(self.array_polygons):
@@ -72,8 +91,8 @@ class OSMConnector(IEnricherConnector):
             osm_util = OSM_util()
         
             self._df = osm_util.get_places(self.place_name, self.key, self.value)
-            
-        self._df = geopandas.GeoDataFrame(self._df, geometry='geom')
+            self._df = geopandas.GeoDataFrame(self._df, geometry='geom')
+
         self._df.crs = from_epsg(4326)
         self._get_polygons()
 
