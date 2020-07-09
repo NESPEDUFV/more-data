@@ -1,7 +1,6 @@
 from geopy.geocoders import Nominatim
 from shapely.ops import polygonize
 from shapely import geometry
-import shapely.wkt
 import pandas as pd
 import numpy as np
 import geopandas

@@ -3,6 +3,7 @@ from ...utils import OSM_util
 
 import pandas as pd
 from shapely import wkt
+import geopandas
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
@@ -11,18 +12,18 @@ from shapely.geometry import shape
 
 class OSMConnector(IEnricherConnector):
 
-    def __init__(self, key, value, place_name="Brasil", file=None):
+    def __init__(self, key=None, value=None, place_name="Brasil", file=None):
         self.key = key
         self.value = value
         self.place_name = place_name
-        if file is not None:
+        self.file = file
+        if self.file is not None:
             self._df = pd.read_csv(file)
         
     def _get_polygons(self):
         self.array_polygons = []
         for index, row in self._df.iterrows():
-            h=wkt.loads(row["geom"])
-            self.array_polygons.append(h)
+            self.array_polygons.append(row["geom"])
 
         self.idx = rtreeindex.Index()
         for pos, poly in enumerate(self.array_polygons):
@@ -33,7 +34,7 @@ class OSMConnector(IEnricherConnector):
         for j in self.idx.intersection(point.coords[0]):
             print(j)
             if point.within(shape(self.array_polygons[j])):
-                return self._df.iloc[j] # FIX: ValueError: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+                return self._df.iloc[j]
         return -1        
 
     def _traverse_dict(self, dict, keys):
@@ -67,12 +68,13 @@ class OSMConnector(IEnricherConnector):
         from fiona.crs import from_epsg
         import geopandas
 
-        # osm_util = OSM_util()
-    
-        # self._df = osm_util.get_places(self.place_name, self.key, self.value)
-        # self._df = geopandas.GeoDataFrame(self._df, geometry='geom')
-        # self._df.crs = from_epsg(4326)
-
+        if self.file is None:
+            osm_util = OSM_util()
+        
+            self._df = osm_util.get_places(self.place_name, self.key, self.value)
+            
+        self._df = geopandas.GeoDataFrame(self._df, geometry='geom')
+        self._df.crs = from_epsg(4326)
         self._get_polygons()
 
         for d in data.parse(**kwargs):

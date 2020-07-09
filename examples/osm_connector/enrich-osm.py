@@ -17,7 +17,7 @@ if __name__ == "__main__":
     
     user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
-    osm_enricher = Enricher(connector=OSMConnector(file=HOSPITAL_DIR, key="shop", value="mall"))
+    osm_enricher = Enricher(connector=OSMConnector(key="shop", value="mall"))
 
     user_enriched = \
 	  EnricherBuilder(user) \
