@@ -40,7 +40,7 @@ class OSMConnector(IEnricherConnector):
     def _get_polygons(self):
         self.array_polygons = []
         for index, row in self._df.iterrows():
-            pol = row["geom"]
+            pol = row["geometry"]
             self.array_polygons.append(pol)
 
         self.idx = rtreeindex.Index()
@@ -48,6 +48,7 @@ class OSMConnector(IEnricherConnector):
             self.idx.insert(pos, poly.bounds) 
 
     def _fence_check_local(self, point): 
+        
         if self.radius is not None:
             shp = Polygon(self._geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
         else:
@@ -56,9 +57,9 @@ class OSMConnector(IEnricherConnector):
         for j in self.idx.intersection(shp.bounds):
             if self.radius is None:
                 if shp.within(shape(self.array_polygons[j])):
-                    return self._df.iloc[j]
+                    return self._df.iloc[j, ]
             else:
-                return self._df.iloc[j]
+                return self._df.iloc[j].to_frame().T
         return -1        
 
     def _traverse_dict(self, dict, keys):
@@ -69,17 +70,17 @@ class OSMConnector(IEnricherConnector):
                 return None
         return dict
 
-    def _enrich_point(self, point):           
+    def _enrich_point(self, point):      
         polygon_metadata = self._fence_check_local(point)
+        
         if not isinstance(polygon_metadata, int):
-            polygon_metadata = polygon_metadata.to_dict()
+            polygon_metadata["key"] = self.key
+            polygon_metadata["value"] = self.value
 
-            if "geom" in polygon_metadata.keys():
-                polygon_metadata.pop("geom", None)
             if not "local" in point.keys():
                 point["local"] = []
-            point["local"].append(polygon_metadata)
-        print(point)
+            point["local"].append(*polygon_metadata[["name", "key", "value"]].to_dict("records"))
+            print(point["local"])
             
     def enrich(self, data, **kwargs):
         print(self.value)
@@ -93,11 +94,8 @@ class OSMConnector(IEnricherConnector):
 
         if self.file is None:
             osm_util = OSM_util()
-        
             self._df = osm_util.get_places(self.place_name, self.key, self.value)
-            self._df = geopandas.GeoDataFrame(self._df, geometry='geom')
 
-        self._df.crs = from_epsg(4326)
         self._get_polygons()
 
         for d in data.parse(**kwargs):
