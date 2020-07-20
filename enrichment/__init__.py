@@ -7,6 +7,7 @@ from .enricher.elasticsearch_connector import (
 )
 
 from .enricher.api_connector import ApiConnector
+from .enricher.osm_connector import OSMConnector
 from .enricher import Enricher, EnricherBuilder, IEnricherConnector
 
 from .models import Data
@@ -20,6 +21,7 @@ __all__ = [
     "PipelineHandler",
     "PolicyHandler",
     "ApiConnector",
+    "OSMConnector"
     "Enricher",
     "EnricherBuilder",
     "IEnricherConnector",
