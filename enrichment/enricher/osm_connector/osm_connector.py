@@ -15,12 +15,13 @@ from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
 class OSMConnector(IEnricherConnector):
 
-    def __init__(self, key=None, value=None, place_name="Brasil", file=None, radius=None):
+    def __init__(self, dict_keys, key, value, place_name="Brasil", file=None, radius=None):
         self.key = key
         self.value = value
         self.place_name = place_name
         self.file = file
         self.radius = radius
+        self.dict_keys = dict_keys
         if self.file is not None:
             self._df = pd.read_csv(file)
             self._df["geom"] = self._df["geom"].apply(wkt.loads)
@@ -80,14 +81,8 @@ class OSMConnector(IEnricherConnector):
             if not "local" in point.keys():
                 point["local"] = []
             point["local"].append(*polygon_metadata[["name", "key", "value"]].to_dict("records"))
-            print(point["local"])
             
     def enrich(self, data, **kwargs):
-        print(self.value)
-        if kwargs.get('keys'):
-            keys = kwargs.get('keys')
-        else:
-            raise Exception
 
         from fiona.crs import from_epsg
         import geopandas
