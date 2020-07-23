@@ -12,15 +12,15 @@ services:
             MYSQL_DATABASE: nesped
             MYSQL_ROOT_PASSWORD: root
 
-    # elasticsearch:
-    #     image: elasticsearch:7.6.2
-    #     environment:
-    #         - discovery.type=single-node
-    #     ports:
-    #         - 9200:9200
-    #         - 9300:9300
-    #     volumes:
-    #         - elasticsearch-enrichment:/usr/share/elasticsearch/data
+    elasticsearch:
+        image: elasticsearch:7.6.2
+        environment:
+            - discovery.type=single-node
+        ports:
+            - 9200:9200
+            - 9300:9300
+        volumes:
+            - elasticsearch-enrichment:/usr/share/elasticsearch/data
 volumes:
-    # elasticsearch-enrichment:
+    elasticsearch-enrichment:
     mysql-enrichment:

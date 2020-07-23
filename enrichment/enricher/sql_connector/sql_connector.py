@@ -50,19 +50,19 @@ class SqlConnector(IEnricherConnector):
     def enrich(self, data, **kwargs):
         for d in data.parse(**kwargs):
             objects = d[self.dict_keys[0]]
-            # for k in range(1, len(dict_keys)):
-            #     try:
-            #         objects = objects[k]
-            #     except KeyError as e:
-            #         return None
+            for k in range(1, len(dict_keys)-1):
+                try:
+                    objects = objects[self.dict_keys[k]]
+                except KeyError as e:
+                    return None
 
             if isinstance(objects, list):
                 if isinstance(objects[0], dict):
                     for obj in objects:
-                        obj[self.result_attr] = self._enrich_object(obj)
+                        obj[self.result_attr] = self._enrich_object(obj[self.dict_keys[-1]])
                 else: 
                     d[self.result_attr] = self._enrich_object(objects)             
             else:
-                obj[self.result_attr] = self._enrich_object(obj)    
+                d[self.result_attr] = self._enrich_object(objects)    
 
             yield d

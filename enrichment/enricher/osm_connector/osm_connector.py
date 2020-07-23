@@ -97,7 +97,7 @@ class OSMConnector(IEnricherConnector):
             points = d[keys[0]]
             for k in range(1, len(keys)):
                 try:
-                    points = points[k]
+                    points = points[keys[k]]
                 except KeyError as e:
                     return None
 
