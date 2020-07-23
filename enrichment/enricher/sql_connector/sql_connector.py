@@ -12,7 +12,6 @@ class SqlConnector(IEnricherConnector):
 
         if connection_url is not None:
             self.engine = sqlalchemy.create_engine(connection_url)
-            #connection?
         
         self.table = sqlalchemy.Table(table_name, sqlalchemy.MetaData(), autoload_with=self.engine)
         self.column = column
