@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 
 install_requires = [
     "requests==2.22.0",
+    "SQLAlchemy==1.3.18",
+    "PyMySQL==0.10.0",
     "h3==3.4.3",
     "osm2geojson==0.1.27",
     "Rtree==0.9.4",
@@ -22,7 +24,7 @@ docs_requires = [
 
 setup(
     name = "enrichment",
-    version = '0.2',
+    version = '1.0.0',
     packages = find_packages(where="."),
     python_requires=">=3.6",
     install_requires = install_requires,
