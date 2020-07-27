@@ -22,7 +22,8 @@ __all__ = [
     "PipelineHandler",
     "PolicyHandler",
     "ApiConnector",
-    "OSMConnector"
+    "OSMConnector",
+    "Sqlconnector",
     "Enricher",
     "EnricherBuilder",
     "IEnricherConnector",

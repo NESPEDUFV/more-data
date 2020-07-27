@@ -14,6 +14,42 @@ from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
 class OSMConnector(IEnricherConnector):
+    """OSMconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
+    
+    Parameters
+    ----------
+    dict_keys: List[str]
+        dict_keys is the principal argument to the connector. The connector doesn't know where to get data to make the relationship, so you have to pass the keys or if your data isn't nested, just one key to the connector reach at the the right attribute.
+
+    key: str
+        class of OSM. eg.: 'amenity', 'leisure'.
+
+    value: str
+        value of location of OSM. eg.: 'hospital', 'stadium'.
+
+    place_name: str
+        name of local. eg.: 'Brasil', 'São Paulo'.
+
+    file: str, optional
+        name of file in CSV of downloaded polygons with must columns: key, value, polygon.
+
+    radius: numeric, optional
+        radius to around of point to intersect the polygon.
+
+    Attributes
+    ----------
+    dict_keys: List[str]
+
+    key: str
+
+    value: str
+
+    place_name: str
+
+    file: str, optional
+
+    radius: numeric, optional
+    """
 
     def __init__(self, dict_keys, key, value, place_name="Brasil", file=None, radius=None):
         self.key = key
@@ -83,6 +119,12 @@ class OSMConnector(IEnricherConnector):
             point["local"].append(*polygon_metadata[["name", "key", "value"]].to_dict("records"))
             
     def enrich(self, data, **kwargs):
+        """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
+        
+        Parameters
+        ----------
+        data: :obj:`Data`
+        """
 
         from fiona.crs import from_epsg
         import geopandas

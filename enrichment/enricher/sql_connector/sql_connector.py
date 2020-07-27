@@ -3,6 +3,42 @@ import sqlalchemy
 import decimal
 
 class SqlConnector(IEnricherConnector):
+    """SQLconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
+
+    Parameters
+    ----------
+    table_name: str
+        name of table that will be used to enrich
+
+    dict_keys: List[str]
+        dict_keys is the principal argument to the connector. The connector doesn't know where to get data to make the relationship, so you have to pass the keys or if your data isn't nested, just one key to the connector reach at the the right attribute.
+
+    result_attr: str
+        where tha enriched data it supposed to be  
+
+    column: str
+        name of table column to build the relation.
+
+    engine: :obj:`sqlalchemy.engine.Engine`
+        an engine already created by sqlalchemy
+    
+    connection_url: str
+        the string of connection with host, port, password and database.
+
+    Attributes
+    ----------
+    table_name: str
+
+    dict_keys: List
+
+    result_attr: str
+
+    column: str
+
+    engine: :obj:`sqlalchemy.engine.Engine`, optional
+    
+    connection_url: str, optional
+    """
     def __init__(self, table_name, dict_keys, result_attr, column, engine=None, connection_url=None):
         if engine is None and connection_url is None:
             raise Exception
@@ -47,6 +83,12 @@ class SqlConnector(IEnricherConnector):
             
 
     def enrich(self, data, **kwargs):
+        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.  
+
+        Parameters
+        ----------
+        data: :obj:`Data`
+        """
         for d in data.parse(**kwargs):
             objects = d[self.dict_keys[0]]
             for k in range(1, len(dict_keys)-1):
