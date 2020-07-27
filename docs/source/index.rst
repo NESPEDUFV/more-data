@@ -112,6 +112,8 @@ Contents
    enricher
    api_connector
    elasticsearch_connector
+   osm_connector
+   sql_connector
    conversion
    
 
