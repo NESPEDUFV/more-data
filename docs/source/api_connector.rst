@@ -5,9 +5,6 @@ API Connector
 =============
 Connector that will enrich data based on API connector. This package uses requests package. 
 
-
-API Connector
--------------
 Examples
 ~~~~~~~~
 
@@ -51,6 +48,9 @@ Remember to edit the file path (``CIDADES_DIR_CSV`` and ``CIDADES_DIR_JSON``) fo
 .. code-block:: bash
     
     $ python api-ibge.py
+
+API Connector
+-------------
     
 .. py:module:: enrichment.enricher.api_connector.api_connector
 

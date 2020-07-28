@@ -60,7 +60,7 @@ class OSMConnector(IEnricherConnector):
         self.dict_keys = dict_keys
         if self.file is not None:
             self._df = pd.read_csv(file)
-            self._df["geom"] = self._df["geom"].apply(wkt.loads)
+            self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
 
     def _geodesic_point_buffer(self, lat, lon, radius):
         proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')

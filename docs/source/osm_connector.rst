@@ -2,16 +2,13 @@
 
 OSM Connector
 =============
-
-
-OSM Connector
--------------
 Examples
 ~~~~~~~~
 
-This example enrich implements the use of OSM Connector...
+This example implements the use of OSM Connector. The framework works with two manners to enrich data, one with radius around point and another without the radius. The first acts increasing the point resulting a polygon like a circle with this radius. The second doesn't buffer the point and verify if the point is within the polygons downloaded using OSM. You can use a file that you've already downloaded with restriction, you must have at least one column in your CSV: "geometry". 
+The arguments `key` and `value` is available in `Map Features <https://wiki.openstreetmap.org/wiki/Map_Features>`_.  
 
-..code-block:: python
+.. code-block:: python
     
     # name of file: enrich-osm.py
 
@@ -37,6 +34,9 @@ This example enrich implements the use of OSM Connector...
 .. code-block:: bash
     
     $ python enrich-osm.py
+
+OSM Connector
+-------------
 
 .. py:module:: enrichment.enricher.osm_connector.osm_connector
 
