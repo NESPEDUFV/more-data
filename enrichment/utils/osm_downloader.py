@@ -12,7 +12,7 @@ import json
 import osm2geojson
 
 class OSM_util: 
-    def _get_place_ID(self, place_name):
+    def get_place_ID(self, place_name):
         geolocator = Nominatim(user_agent="city_compare")
         geoResults = geolocator.geocode(place_name, exactly_one=False, limit=3, timeout = 600)
         for r in geoResults:
@@ -23,10 +23,14 @@ class OSM_util:
         place_ID = int(city.raw.get("osm_id")) + 3600000000     #Calcula o ID do local escolhido utilizando\n",
         return place_ID
 
-    #Realiza a consulta coletando os três tipos de geometria (Node, Way e Relation) já setando a saída como JSON.
-    def _get_places_overpy(self, place_name,key,value): 
-        place_id = self._get_place_ID(place_name)
-        result = requests.get("http://overpass-api.de/api/interpreter", data={"data":"""
+    def _get_places_overpy(self, query):         
+        result = requests.get("http://overpass-api.de/api/interpreter", data={"data":query}).json()    
+        return osm2geojson.json2geojson(result)
+    
+    def get_places(self, place_name, key, value, query=None, tags=("name","geom")):
+        if query is None:
+            place_id = self.get_place_ID(place_name)
+            query = """
             [out:json][timeout:3600];
             area(%s)->.searchArea;
             (
@@ -34,12 +38,9 @@ class OSM_util:
                 relation[%s=%s](area.searchArea);
             );
             out geom;
-            """ % (place_id, key, value, key, value)}).json()    
-        return osm2geojson.json2geojson(result)
-    
-    def get_places(self, place_name, key, value, tags=("name","geom")):
+            """ % (place_id, key, value, key, value)
         
-        result = self._get_places_overpy(place_name,key,value)
+        result = self._get_places_overpy(query)
 
         for data in result["features"]:
             properties = data["properties"]
