@@ -26,7 +26,7 @@ class OSM_util:
             result = requests.get("http://overpass-api.de/api/interpreter", data={"data":query}).json()
             return osm2geojson.json2geojson(result)
         except:
-            return ""
+            return []
         
     
     def get_places(self, place_name, key, value, query=None, tags=("name","geom")):
