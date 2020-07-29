@@ -21,9 +21,13 @@ class OSM_util:
         place_ID = int(city.raw.get("osm_id")) + 3600000000     #Calcula o ID do local escolhido utilizando\n",
         return place_ID
 
-    def _get_places_overpy(self, query):         
-        result = requests.get("http://overpass-api.de/api/interpreter", data={"data":query}).json()    
-        return osm2geojson.json2geojson(result)
+    def _get_places_overpy(self, query):
+        try
+            result = requests.get("http://overpass-api.de/api/interpreter", data={"data":query}).json()
+            return osm2geojson.json2geojson(result)
+        except:
+            return ""
+        
     
     def get_places(self, place_name, key, value, query=None, tags=("name","geom")):
         if query is None:
