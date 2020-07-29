@@ -22,7 +22,7 @@ class OSM_util:
         return place_ID
 
     def _get_places_overpy(self, query):
-        try
+        try:
             result = requests.get("http://overpass-api.de/api/interpreter", data={"data":query}).json()
             return osm2geojson.json2geojson(result)
         except:
