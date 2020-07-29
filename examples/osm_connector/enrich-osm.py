@@ -26,4 +26,4 @@ if __name__ == "__main__":
 
     import enrichment.utils.util as util
 
-    util.write_json_generator_to_json("../../data/output/osm/amenity-cafe-mg", user_enriched, 100000) 
+    util.write_json_generator_to_json("../../data/output/osm/amenity-hospital-sp", user_enriched, 100000) 

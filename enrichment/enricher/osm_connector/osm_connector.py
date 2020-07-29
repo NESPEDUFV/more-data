@@ -85,6 +85,7 @@ class OSMConnector(IEnricherConnector):
             self.idx.insert(pos, poly.bounds) 
 
     def _fence_check_local(self, point): 
+        polygon_metadata = []
         
         if self.radius is not None:
             shp = Polygon(self._geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
@@ -94,10 +95,10 @@ class OSMConnector(IEnricherConnector):
         for j in self.idx.intersection(shp.bounds):
             if self.radius is None:
                 if shp.within(shape(self.array_polygons[j])):
-                    return self._df.iloc[j, ]
+                    polygon_metadata.append(self._df.iloc[j].to_frame().T)
             else:
-                return self._df.iloc[j].to_frame().T
-        return -1        
+                polygon_metadata.append(self._df.iloc[j].to_frame().T)
+        return polygon_metadata        
 
     def _traverse_dict(self, dict, keys):
         for k in keys:
@@ -109,14 +110,14 @@ class OSMConnector(IEnricherConnector):
 
     def _enrich_point(self, point):      
         polygon_metadata = self._fence_check_local(point)
-        
-        if not isinstance(polygon_metadata, int):
-            polygon_metadata["key"] = self.key
-            polygon_metadata["value"] = self.value
+
+        for p in polygon_metadata:
+            p["key"] = self.key
+            p["value"] = self.value
 
             if not "local" in point.keys():
                 point["local"] = []
-            point["local"].append(*polygon_metadata[["name", "key", "value"]].to_dict("records"))
+            point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
             
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
@@ -136,10 +137,10 @@ class OSMConnector(IEnricherConnector):
         self._get_polygons()
 
         for d in data.parse(**kwargs):
-            points = d[keys[0]]
-            for k in range(1, len(keys)):
+            points = d[self.dict_keys[0]]
+            for k in range(1, len(self.dict_keys)):
                 try:
-                    points = points[keys[k]]
+                    points = points[self.dict_keys[k]]
                 except KeyError as e:
                     return None
 
