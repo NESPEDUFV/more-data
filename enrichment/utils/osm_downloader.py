@@ -4,8 +4,6 @@ from shapely import geometry
 import pandas as pd
 import numpy as np
 import geopandas as gpd
-import overpy
-import folium
 from shapely.ops import linemerge
 import requests
 import json
