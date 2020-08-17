@@ -13,7 +13,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
-class OSMConnector(IEnricherConnector):
+class OSMPlacesConnector(IEnricherConnector):
     """OSMconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
     
     Parameters
@@ -118,7 +118,7 @@ class OSMConnector(IEnricherConnector):
             if not "local" in point.keys():
                 point["local"] = []
             point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
-            
+
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
         

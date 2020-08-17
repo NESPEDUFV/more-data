@@ -10,11 +10,11 @@ if __name__ == "__main__":
     osm = OSM_util()
     place_id = osm.get_place_ID("Brasil")
     print(place_id)
-    key = "aeroway"
-    value = "aerodrome"
+    key = "tourism"
+    value = "museum"
 
     query = """
-    [out:json][timeout:3600];
+    [out:json];
     area(%s)->.searchArea;
     (
         node[%s=%s](area.searchArea);

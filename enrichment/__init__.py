@@ -6,8 +6,10 @@ from .enricher.elasticsearch_connector import (
     PolicyHandler
 )
 
+from .enricher.osm.osm_places_connector import OSMPlacesConnector 
+from .enricher.osm.functional_region_connector import FunctionalRegionConnector
+
 from .enricher.api_connector import ApiConnector
-from .enricher.osm_connector import OSMConnector
 from .enricher.sql_connector import SqlConnector
 from .enricher import Enricher, EnricherBuilder, IEnricherConnector
 
@@ -22,7 +24,8 @@ __all__ = [
     "PipelineHandler",
     "PolicyHandler",
     "ApiConnector",
-    "OSMConnector",
+    "OSMPlacesConnector",
+    "FunctionalRegionConnector",
     "Sqlconnector",
     "Enricher",
     "EnricherBuilder",
