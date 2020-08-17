@@ -58,13 +58,14 @@ class FunctionalRegionConnector(IEnricherConnector):
 
         return count        
 
-    def _enrich_point(self, point):      
-        amount = self._fence_check_local(point)
+    def _enrich_point(self, point):  
+        if "latitude" in point.keys() and "longitude" in point.keys(): 
+            amount = self._fence_check_local(point)
 
-        if not self.key is point.keys():
-            point[self.key] = amount
-        else:
-            point[self.key] += amount
+            if not self.key in point.keys():
+                point[self.key] = amount
+            else:
+                point[self.key] += amount
         
             
     def enrich(self, data, **kwargs):

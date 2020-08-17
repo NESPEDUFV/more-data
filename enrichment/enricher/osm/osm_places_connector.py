@@ -108,16 +108,17 @@ class OSMPlacesConnector(IEnricherConnector):
                 return None
         return dict
 
-    def _enrich_point(self, point):      
-        polygon_metadata = self._fence_check_local(point)
+    def _enrich_point(self, point):   
+        if "latitude" in point.keys() and "longitude" in point.keys():    
+            polygon_metadata = self._fence_check_local(point)
 
-        for p in polygon_metadata:
-            p["key"] = self.key
-            p["value"] = self.value
+            for p in polygon_metadata:
+                p["key"] = self.key
+                p["value"] = self.value
 
-            if not "local" in point.keys():
-                point["local"] = []
-            point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
+                if not "local" in point.keys():
+                    point["local"] = []
+                point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
