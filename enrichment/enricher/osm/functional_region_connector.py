@@ -16,10 +16,8 @@ from rtree import index as rtreeindex
 
 class FunctionalRegionConnector(IEnricherConnector):
 
-    def __init__(self, file, radius, dict_keys):
-        self.key = os.path.basename(file).split("-")[0]
-        self.value = os.path.basename(file).split("-")[1]
-        
+    def __init__(self, file, radius, key, dict_keys):
+        self.key = key
         self.radius = radius
         self.dict_keys = dict_keys
 
