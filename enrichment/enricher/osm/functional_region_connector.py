@@ -26,16 +26,17 @@ class FunctionalRegionConnector(IEnricherConnector):
         self.idx = rtreeindex.Index()
 
         for f in self.files:
-            _df = pd.read_csv(file)
-            _df["geometry"] = _df["geometry"].apply(wkt.loads)  
+            if os.path.getsize(f) > 3:
+                _df = pd.read_csv(f)
+                _df["geometry"] = _df["geometry"].apply(wkt.loads)  
 
-            array_polygons = []
-            for index, row in _df.iterrows():
-                pol = row["geometry"]
-                array_polygons.append(pol)
+                array_polygons = []
+                for index, row in _df.iterrows():
+                    pol = row["geometry"]
+                    array_polygons.append(pol)
 
-            for pos, poly in enumerate(array_polygons):
-                self.idx.insert(pos, poly.bounds)  
+                for pos, poly in enumerate(array_polygons):
+                    self.idx.insert(pos, poly.bounds)  
 
     def _fence_check_local(self, point):        
         count = 0
