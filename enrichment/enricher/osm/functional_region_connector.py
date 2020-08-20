@@ -16,23 +16,26 @@ from rtree import index as rtreeindex
 
 class FunctionalRegionConnector(IEnricherConnector):
 
-    def __init__(self, file, radius, key, dict_keys):
+    def __init__(self, files, radius, key, dict_keys):
         self.key = key
         self.radius = radius
         self.dict_keys = dict_keys
-
-        self._df = pd.read_csv(file)
-        self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
+        self.files = files
 
     def _get_polygons(self):
-        self.array_polygons = []
-        for index, row in self._df.iterrows():
-            pol = row["geometry"]
-            self.array_polygons.append(pol)
-
         self.idx = rtreeindex.Index()
-        for pos, poly in enumerate(self.array_polygons):
-            self.idx.insert(pos, poly.bounds)  
+
+        for f in self.files:
+            _df = pd.read_csv(file)
+            _df["geometry"] = _df["geometry"].apply(wkt.loads)  
+
+            array_polygons = []
+            for index, row in _df.iterrows():
+                pol = row["geometry"]
+                array_polygons.append(pol)
+
+            for pos, poly in enumerate(array_polygons):
+                self.idx.insert(pos, poly.bounds)  
 
     def _fence_check_local(self, point):        
         count = 0
