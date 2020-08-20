@@ -24,18 +24,6 @@ class FunctionalRegionConnector(IEnricherConnector):
         self._df = pd.read_csv(file)
         self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
 
-    def _geodesic_point_buffer(self, lat, lon, radius):
-        proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
-
-        # Azimuthal equidistant projection
-        aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
-        project = partial(
-            pyproj.transform,
-            pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)),
-            proj_wgs84)
-        buf = Point(0, 0).buffer(radius)  # distance in meters
-        return transform(project, buf).exterior.coords[:]
-
     def _get_polygons(self):
         self.array_polygons = []
         for index, row in self._df.iterrows():
@@ -49,11 +37,9 @@ class FunctionalRegionConnector(IEnricherConnector):
     def _fence_check_local(self, point):        
         count = 0
         
-        shp = Polygon(self._geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
-
+        shp=wkt.loads(point["area_point"])
         for j in self.idx.intersection(shp.bounds):
             count += 1
-
         return count        
 
     def _enrich_point(self, point):  
@@ -68,7 +54,8 @@ class FunctionalRegionConnector(IEnricherConnector):
             
     def enrich(self, data, **kwargs):
         self._get_polygons()
-
+        
+        count = 0
         for d in data.parse(**kwargs):
             points = d[self.dict_keys[0]]
             for k in range(1, len(self.dict_keys)):
@@ -76,11 +63,11 @@ class FunctionalRegionConnector(IEnricherConnector):
                     points = points[self.dict_keys[k]]
                 except KeyError as e:
                     return None
-
+            
             if isinstance(points, list):
                 for point in points:
-                    self._enrich_point(point)          
+                    self._enrich_point(point)
             else:
                 self._enrich_point(points)
 
-            yield d      
+            yield d  
