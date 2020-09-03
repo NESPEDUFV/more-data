@@ -29,11 +29,11 @@ class FunctionalRegionConnector(IEnricherConnector):
             if os.path.getsize(f) > 3:
                 print(f)
                 _df = pd.read_csv(f)
-                _df["geometry"] = _df["geometry"].apply(wkt.loads) 
+                _df["geom"] = _df["geom"].apply(wkt.loads) 
 
                 array_polygons = []
                 for index, row in _df.iterrows():
-                    pol = row["geometry"]
+                    pol = row["geom"]
                     if isinstance(pol, Polygon) or isinstance(pol, Point):
                         array_polygons.append(pol)
 
