@@ -38,7 +38,8 @@ The arguments `key` and `value` is available in `Map Features <https://wiki.open
 OSM Connector
 -------------
 
-.. py:module:: enrichment.enricher.osm_connector.osm_connector
+.. py:module:: enrichment.enricher.osm.osm_places_connector
 
-.. autoclass:: OSMConnector
+.. autoclass:: OSMPlacesConnector
     :members:
+

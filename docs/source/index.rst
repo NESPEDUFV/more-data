@@ -8,7 +8,7 @@ Enrichment Framework
 Its goal is to provide a framework with high extensability for data enrichments
 
 Enricher
-----------
+--------
 Can contains some connectors
 :class:`~enrichment.enricher.elasticsearch_connector.elasticsearch_connector`,
 :class:`~enrichment.enricher.api_connector.api_connector`. You can choose the enricher appropiately
@@ -93,7 +93,7 @@ in Enricher, `geo_location` and `code_h3`.
       .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 
-With the code below it's written the result of enrichment in two formats json or csv. This library supports three conversions file type: parquet, json and csv. You can see more about this here: :ref:`conversion`
+With the code below it's written the result of enrichment in two formats json or csv. This library supports three conversions file type: parquet, json and csv. You can see more about this here: :ref:`util`
 It's up to developer choose what type of file it'll be written.
 
 .. code-block:: python
@@ -113,8 +113,9 @@ Contents
    api_connector
    elasticsearch_connector
    osm_connector
+   functional_connector
    sql_connector
-   conversion
+   util
    
 
 Indices and tables
