@@ -13,6 +13,8 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
+
+from ...utils.util import geodesic_point_buffer
 class OSMPlacesConnector(IEnricherConnector):
     """OSMconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
     
@@ -62,18 +64,6 @@ class OSMPlacesConnector(IEnricherConnector):
             self._df = pd.read_csv(file)
             self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
 
-    def _geodesic_point_buffer(self, lat, lon, radius):
-        proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
-
-        # Azimuthal equidistant projection
-        aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
-        project = partial(
-            pyproj.transform,
-            pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)),
-            proj_wgs84)
-        buf = Point(0, 0).buffer(radius)  # distance in meters
-        return transform(project, buf).exterior.coords[:]
-
     def _get_polygons(self):
         self.array_polygons = []
         for index, row in self._df.iterrows():
@@ -88,7 +78,7 @@ class OSMPlacesConnector(IEnricherConnector):
         polygon_metadata = []
         
         if self.radius is not None:
-            shp = Polygon(self._geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
+            shp = Polygon(geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
         else:
             shp = Point(point["longitude"], point["latitude"])
 

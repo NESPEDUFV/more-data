@@ -1,5 +1,27 @@
 import json
 
+def geodesic_point_buffer(lat, lon, radius):
+	"""This method implements a geodesical point bufferization. It creates a circle with radius around the lat/long. It uses the azhimutal projection to fix the problem of distances proportions on globe.
+
+	Parameters
+	----------
+	lat: float
+
+	lon: float
+
+	radius: float
+		distance in meters
+	"""
+	proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
+
+	# Azimuthal equidistant projection
+	aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
+	project = partial(
+		pyproj.transform,
+		pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)),
+		proj_wgs84)
+	buf = Point(0, 0).buffer(radius)  # distance in meters
+	return transform(project, buf).exterior.coords[:]
 
 def read_json_from_file(file):
 	with open(file, "r") as f:
