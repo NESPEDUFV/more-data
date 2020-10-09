@@ -35,7 +35,7 @@ class FunctionalRegionConnector(IEnricherConnector):
     key: str
     """
 
-    def __init__(self, files, key, dict_keys):
+    def __init__(self, files, key, dict_keys=[]):
         self.key = key
         self.dict_keys = dict_keys
         self.files = files
@@ -84,7 +84,7 @@ class FunctionalRegionConnector(IEnricherConnector):
         count = 0
         for d in data.parse(**kwargs):
 
-            if len(self.dict_keys) > 0:
+            if not self.dict_keys:
                 points = d[self.dict_keys[0]]
                 for k in range(1, len(self.dict_keys)):
                     try:
@@ -93,7 +93,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                         return None
             else:
                 points = d  
-                
+
             if isinstance(points, list):
                 for point in points:
                     self._enrich_point(point)
