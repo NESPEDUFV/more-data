@@ -4,8 +4,6 @@ import pandas as pd
 import os
 from shapely import wkt
 import geopandas
-import pyproj
-from functools import partial
 
 from shapely.geometry import MultiPolygon, Polygon
 from shapely.ops import transform
