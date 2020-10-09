@@ -83,13 +83,17 @@ class FunctionalRegionConnector(IEnricherConnector):
         
         count = 0
         for d in data.parse(**kwargs):
-            points = d[self.dict_keys[0]]
-            for k in range(1, len(self.dict_keys)):
-                try:
-                    points = points[self.dict_keys[k]]
-                except KeyError as e:
-                    return None
-            
+
+            if len(self.dict_keys) > 0:
+                points = d[self.dict_keys[0]]
+                for k in range(1, len(self.dict_keys)):
+                    try:
+                        points = points[self.dict_keys[k]]
+                    except KeyError as e:
+                        return None
+            else:
+                points = d  
+                
             if isinstance(points, list):
                 for point in points:
                     self._enrich_point(point)
