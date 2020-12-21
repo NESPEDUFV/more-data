@@ -74,7 +74,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 point[self.key] = amount
             else:
                 point[self.key] += amount
-         else:
+        else:
             raise Exception('area_point polygon was not found. Please use function geodesic_point_buffer present in utils package and try again.')
         
             
