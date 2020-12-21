@@ -67,13 +67,15 @@ class FunctionalRegionConnector(IEnricherConnector):
         return count        
 
     def _enrich_point(self, point):  
-        if "latitude" in point.keys() and "longitude" in point.keys(): 
+        if "area_point" in point.keys(): 
             amount = self._fence_check_local(point)
 
             if not self.key in point.keys():
                 point[self.key] = amount
             else:
                 point[self.key] += amount
+         else:
+            raise Exception('area_point polygon was not found. Please use function geodesic_point_buffer present in utils package and try again.')
         
             
     def enrich(self, data, **kwargs):
