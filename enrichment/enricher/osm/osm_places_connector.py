@@ -53,13 +53,14 @@ class OSMPlacesConnector(IEnricherConnector):
     radius: numeric, optional
     """
 
-    def __init__(self, dict_keys, key, value, place_name="Brasil", file=None, radius=None, geometry_intersected=False):
+    def __init__(self, key, value, dict_keys=[], place_name="Brasil", file=None, radius=None, geometry_intersected=False):
         self.key = key
         self.value = value
         self.place_name = place_name
         self.file = file
         self.radius = radius
         self.dict_keys = dict_keys
+        self.geometry = geometry_intersected
         if self.file is not None:
             self._df = pd.read_csv(file)
             self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
@@ -98,7 +99,7 @@ class OSMPlacesConnector(IEnricherConnector):
                 return None
         return dict
 
-    def _enrich_point(self, point, geometry=False):   
+    def _enrich_point(self, point):   
         if "latitude" in point.keys() and "longitude" in point.keys():    
             polygon_metadata = self._fence_check_local(point)
 
@@ -108,11 +109,11 @@ class OSMPlacesConnector(IEnricherConnector):
 
                 if not "local" in point.keys():
                     point["local"] = []
-                if not "geometry_intersected" in point.keys() and geometry:
+                if not "geometry_intersected" in point.keys() and self.geometry:
                     point['geometry_intersected'] = []
 
-                if geometry:
-                    polygon_intersected = Polygon(p['geometry'])
+                if self.geometry:
+                    polygon_intersected = Polygon(p['geom'])
                     point['geometry_intersected'].append(polygon_intersected)
 
                 point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
