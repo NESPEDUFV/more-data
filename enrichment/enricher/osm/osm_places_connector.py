@@ -53,7 +53,7 @@ class OSMPlacesConnector(IEnricherConnector):
     radius: numeric, optional
     """
 
-    def __init__(self, dict_keys, key, value, place_name="Brasil", file=None, radius=None):
+    def __init__(self, dict_keys, key, value, place_name="Brasil", file=None, radius=None, geometry_intersected=False):
         self.key = key
         self.value = value
         self.place_name = place_name
@@ -98,7 +98,7 @@ class OSMPlacesConnector(IEnricherConnector):
                 return None
         return dict
 
-    def _enrich_point(self, point):   
+    def _enrich_point(self, point, geometry=False):   
         if "latitude" in point.keys() and "longitude" in point.keys():    
             polygon_metadata = self._fence_check_local(point)
 
@@ -108,6 +108,11 @@ class OSMPlacesConnector(IEnricherConnector):
 
                 if not "local" in point.keys():
                     point["local"] = []
+
+                if geometry:
+                    polygon_intersected = Polygon(p['geometry'])
+                    point['geometry_intersected'].append(polygon_intersected)
+
                 point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
     def enrich(self, data, **kwargs):
