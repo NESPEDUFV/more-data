@@ -113,8 +113,9 @@ class OSMPlacesConnector(IEnricherConnector):
                     point['geometry_intersected'] = []
 
                 if self.geometry:
-                    polygon_intersected = Polygon(p['geometry'])
-                    point['geometry_intersected'].append(polygon_intersected)
+                    polygons_intersected = list(p['geometry'])
+                    for polygon in polygons_intersected:
+                        point['geometry_intersected'].append(str(polygon))
 
                 point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
