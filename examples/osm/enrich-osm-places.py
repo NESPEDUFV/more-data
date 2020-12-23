@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
-    osm_enricher = Enricher(connector=OSMPlacesConnector(key="leisure", value="fitness_centre", file=FITNESS_CENTRE, radius=100, dict_keys=["points_of_interest"], functional_area=True))
+    osm_enricher = Enricher(connector=OSMPlacesConnector(key="leisure", value="fitness_centre", file=FITNESS_CENTRE, radius=100, dict_keys=["points_of_interest"]))
 
     user_enriched = \
 	  EnricherBuilder(user) \
