@@ -1,5 +1,5 @@
 More Data
-===============
+=========
 
 Its goal is to provide a framework with high extensability for data enrichments. 
 The documentation page is in `docs.zip`, for now.
@@ -7,9 +7,9 @@ The documentation page is in `docs.zip`, for now.
 Installation
 ------------
 
-Install the ``enrichment-data`` package with pip:
-
-    pip install git+ssh://git@gitlab.com/nesped/enriquecedor-es.git
+Install the ``more-data`` package:
+    apt install libspatialindex-dev
+    pip install moredata
 
 
 Example Use

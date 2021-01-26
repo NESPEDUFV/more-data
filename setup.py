@@ -24,6 +24,8 @@ docs_requires = [
 
 setup(
     name = "moredata",
+    url = 'https://github.com/gegen07/more-data',
+    download_url='https://github.com/gegen07/more-data/archive/v_01.tar.gz',
     version = '0.1',
     packages = find_packages(where="."),
     python_requires=">=3.6",
