@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
 
-from enrichment.utils.osm_downloader import OSM_util
+from moredata.utils.osm_downloader import OSM_util
 import csv
 import pandas as pd
 

@@ -7,10 +7,10 @@ from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
-import enrichment.parser as parser
-import enrichment.models as models
-from enrichment.enricher.elasticsearch_connector import IndexHandler
-from enrichment.utils.util import read_json_from_file
+import moredata.parser as parser
+import moredata.models as models
+from moredata.enricher.elasticsearch_connector import IndexHandler
+from moredata.utils.util import read_json_from_file
 
 import parsers
 
@@ -39,7 +39,7 @@ def bulk_user(client):
     index_handler.load_index(user.parse, array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
 def bulk_app(client):
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
     util.Converter.csv_to_json(APP_DATA, DATASETS_DIR+"ranking_apps.json")
     app = models.Data(data_file=DATASETS_DIR+"ranking_apps.json", parser_func=parser.parse_document, data_type="csv")
     
@@ -51,7 +51,7 @@ def bulk_app(client):
     index_handler.load_index(parser=app.parse, streaming=True)    
 
 def bulk_locals(client):
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
     
     index_handler = IndexHandler(client, "locals", "local")
     mapping = read_json_from_file(MAPPING_LOCAL_FILE)

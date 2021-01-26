@@ -2,11 +2,11 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
-from enrichment.enricher import EnricherBuilder, Enricher
-from enrichment.enricher.api_connector import ApiConnector
-from enrichment.models.data import Data
-from enrichment.parser import parse_document
-from enrichment.utils.util import read_json_from_file, Converter
+from moredata.enricher import EnricherBuilder, Enricher
+from moredata.enricher.api_connector import ApiConnector
+from moredata.models.data import Data
+from moredata.parser import parse_document
+from moredata.utils.util import read_json_from_file, Converter
 
 DATASETS_DIR = "../../../datasets/"
 
@@ -41,7 +41,7 @@ if __name__ == "__main__":
 	  .with_enrichment(api_ibge_enricher) \
 	  .get_result()
 
-	import enrichment.utils.util as util
+	import moredata.utils.util as util
 	util.write_json_generator_to_json("../../data/output/cidades/json/cidades-enriched", cidades_enriched, 1024) 
 	util.Converter.json_enriched_to_csv("../../data/output/cidades/json/*.json", "../../data/output/cidades/csv/")
   

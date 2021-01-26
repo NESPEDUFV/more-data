@@ -3,10 +3,10 @@ import sys
 sys.path.insert(0, os.path.abspath('../../'))
 
 
-from enrichment.enricher import Enricher, EnricherBuilder
-from enrichment.enricher.elasticsearch_connector import ElasticsearchConnector, IndexHandler, ReindexHandler, Pipeline, PipelineHandler
-from enrichment.models.data import Data
-from enrichment.parser import parse_document
+from moredata.enricher import Enricher, EnricherBuilder
+from moredata.enricher.elasticsearch_connector import ElasticsearchConnector, IndexHandler, ReindexHandler, Pipeline, PipelineHandler
+from moredata.models.data import Data
+from moredata.parser import parse_document
 
 from elasticsearch import Elasticsearch
 
@@ -90,5 +90,5 @@ if __name__ == '__main__':
         .get_result()
     
 
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
     util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 

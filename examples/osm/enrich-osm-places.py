@@ -2,11 +2,11 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
 
-from enrichment.enricher import EnricherBuilder, Enricher
-from enrichment.enricher.osm.osm_places_connector import OSMPlacesConnector 
-from enrichment.models.data import Data
-from enrichment.parser import parse_document
-from enrichment.utils.util import read_json_from_file, Converter
+from moredata.enricher import EnricherBuilder, Enricher
+from moredata.enricher.osm.osm_places_connector import OSMPlacesConnector 
+from moredata.models.data import Data
+from moredata.parser import parse_document
+from moredata.utils.util import read_json_from_file, Converter
 
 DATASETS_DIR = "../../../datasets/"
 FITNESS_CENTRE = DATASETS_DIR + "Locais_OSM/csv/leisure-fitness_centre.csv"

@@ -3,8 +3,8 @@ import sys
 sys.path.insert(0, os.path.abspath('../..'))
 
 
-from enrichment.enricher import Enricher, EnricherBuilder
-from enrichment.enricher.elasticsearch_connector import (
+from moredata.enricher import Enricher, EnricherBuilder
+from moredata.enricher.elasticsearch_connector import (
     ElasticsearchConnector, 
     IndexHandler,
     ReindexHandler, 
@@ -13,9 +13,9 @@ from enrichment.enricher.elasticsearch_connector import (
     PolicyHandler, 
     Policy,
 )
-from enrichment.models.data import Data
-from enrichment.parser import parse_document
-from enrichment.utils.util import read_json_from_file
+from moredata.models.data import Data
+from moredata.parser import parse_document
+from moredata.utils.util import read_json_from_file
 
 from elasticsearch import Elasticsearch
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         .with_enrichment(elk_city_enricher) \
         .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
     
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
     util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
     util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
     
