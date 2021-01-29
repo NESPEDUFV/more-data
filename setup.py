@@ -31,7 +31,7 @@ else:
 setup(
     name = "moredata",
     url = 'https://github.com/gegen07/more-data',
-    download_url='https://github.com/gegen07/more-data/archive/v_01.tar.gz',
+    download_url='https://github.com/gegen07/more-data/archive/v0.1.tar.gz',
     version = '0.1',
     packages = find_packages(where="."),
     python_requires=">=3.6",
