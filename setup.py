@@ -6,7 +6,7 @@ install_requires = [
     "PyMySQL==0.10.0",
     "h3==3.4.3",
     "osm2geojson==0.1.27",
-    "Rtree==0.9.4",
+    "Rtree==0.9.7",
     "pyproj==2.4.2.post1",
     "geopandas==0.7.0",
     "geopy==2.0.0",
