@@ -60,3 +60,17 @@ html_theme_options = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
+
+autodoc_mock_imports = ["requests",
+                        "SQLAlchemy",
+                        "PyMySQL",
+                        "osm2geojson",
+                        "h3",
+                        "Rtree",
+                        "pyproj",
+                        "geopandas",
+                        "geopy",
+                        "pandas",
+                        "numpy",
+                        "elasticsearch",
+                        "shapely"]
