@@ -3,12 +3,14 @@ import os
 
 if os.environ.get("READTHEDOCS", False) == "True":
     INSTALL_REQUIRES = []
+    DOCS_REQUIRES = []
 else: 
     INSTALL_REQUIRES = [
         "requests==2.22.0",
         "SQLAlchemy==1.3.18",
         "PyMySQL==0.10.0",
         "osm2geojson==0.1.27",
+        "h3==3.4.3",
         "Rtree==0.9.7",
         "pyproj==2.4.2.post1",
         "geopandas==0.7.0",
