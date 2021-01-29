@@ -4,4 +4,6 @@ data/output/
 docs/build
 *.bat
 
+dist/
+moredata.egg-info/
 .idea/
