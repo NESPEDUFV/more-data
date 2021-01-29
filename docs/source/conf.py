@@ -62,11 +62,11 @@ html_theme_options = {
 html_static_path = []
 
 autodoc_mock_imports = ["requests",
-                        "SQLAlchemy",
-                        "PyMySQL",
+                        "sqlalchemy",
+                        "pymysql",
                         "osm2geojson",
                         "h3",
-                        "Rtree",
+                        "rtree",
                         "pyproj",
                         "geopandas",
                         "geopy",
