@@ -14,11 +14,11 @@ This example implements the use of the IBGE API and the conversion between the d
     
     # name of file: api-ibge.py
     
-    from enrichment.enricher import EnricherBuilder, Enricher
-    from enrichment.enricher.api_connector import ApiConnector
-    from enrichment.models.data import Data
-    from enrichment.parser import parse_document
-    from enrichment.utils.util import read_json_from_file, Converter
+    from moredata.enricher import EnricherBuilder, Enricher
+    from moredata.enricher.api_connector import ApiConnector
+    from moredata.models.data import Data
+    from moredata.parser import parse_document
+    from moredata.utils.util import read_json_from_file, Converter
 
 
     URL_PATTERN = r'https://servicodados.ibge.gov.br/api/v1/pesquisas/-/indicadores/47001/resultados/{localidade}'
@@ -52,7 +52,7 @@ Remember to edit the file path (``CIDADES_DIR_CSV`` and ``CIDADES_DIR_JSON``) fo
 API Connector
 -------------
     
-.. py:module:: enrichment.enricher.api_connector.api_connector
+.. py:module:: moredata.enricher.api_connector.api_connector
 
 .. autoclass:: ApiConnector 
     :members:

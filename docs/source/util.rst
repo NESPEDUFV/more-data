@@ -3,7 +3,7 @@
 Conversion 
 ----------
 
-.. py:module:: enrichment.utils.util.Converter
+.. py:module:: moredata.utils.util.Converter
 
 .. autofunction:: json_enriched_to_csv
 
@@ -20,7 +20,7 @@ Here it's a example of use of point bufferization with 500 meters of radius. Aft
 
 .. code-block:: python
 
-    from enrichment.utils.util import geodesic_point_buffer
+    from moredata.utils.util import geodesic_point_buffer
 
     import json
 
@@ -39,7 +39,7 @@ Here it's a example of use of point bufferization with 500 meters of radius. Aft
         with open("./data/amenity-restaurant-0.json", 'w') as outfile:
             json.dump(data, outfile, ensure_ascii=False)
 
-.. py:module:: enrichment.utils.util
+.. py:module:: moredata.utils.util
 
 .. autofunction:: geodesic_point_buffer
 

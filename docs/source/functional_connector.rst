@@ -12,11 +12,11 @@ This example implements the use of Functional Region Connector. It uses a simple
     import sys
     sys.path.insert(0, os.path.abspath('../../'))
 
-    from enrichment.enricher import EnricherBuilder, Enricher
-    from enrichment.models.data import Data
-    from enrichment.parser import parse_document
-    from enrichment.utils.util import read_json_from_file, Converter
-    from enrichment.enricher.osm.functional_region_connector import FunctionalRegionConnector
+    from moredata.enricher import EnricherBuilder, Enricher
+    from moredata.models.data import Data
+    from moredata.parser import parse_document
+    from moredata.utils.util import read_json_from_file, Converter
+    from moredata.enricher.osm.functional_region_connector import FunctionalRegionConnector
 
     DATASETS_DIR = "../../../datasets/"
     FITNESS_CENTRE = DATASETS_DIR + "Locais_OSM/csv/leisure-fitness_centre.csv"
@@ -34,7 +34,7 @@ This example implements the use of Functional Region Connector. It uses a simple
         .with_enrichment(osm_enricher) \
         .get_result() 
 
-        import enrichment.utils.util as util
+        import moredata.utils.util as util
 
         util.write_json_generator_to_json("../../data/output/osm/functional-fitness-centre", user_enriched, 100000) 
 
@@ -45,7 +45,7 @@ This example implements the use of Functional Region Connector. It uses a simple
 Functional Region Connector
 ---------------------------
 
-.. py:module:: enrichment.enricher.osm.functional_region_connector
+.. py:module:: moredata.enricher.osm.functional_region_connector
 
 .. autoclass:: FunctionalRegionConnector
     :members:

@@ -12,11 +12,11 @@ The arguments `key` and `value` is available in `Map Features <https://wiki.open
     
     # name of file: enrich-osm.py
 
-    from enrichment.enricher import EnricherBuilder, Enricher
-    from enrichment.enricher.osm_connector import OSMConnector
-    from enrichment.models.data import Data
-    from enrichment.parser import parse_document
-    from enrichment.utils.util import read_json_from_file, Converter
+    from moredata.enricher import EnricherBuilder, Enricher
+    from moredata.enricher.osm_connector import OSMConnector
+    from moredata.models.data import Data
+    from moredata.parser import parse_document
+    from moredata.utils.util import read_json_from_file, Converter
 
     user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
@@ -27,7 +27,7 @@ The arguments `key` and `value` is available in `Map Features <https://wiki.open
 	  .with_enrichment(osm_enricher) \
 	  .get_result() 
 
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
 
     util.write_json_generator_to_json("../../data/output/osm/amenity-cafe-mg", user_enriched, 100000) 
 
@@ -38,7 +38,7 @@ The arguments `key` and `value` is available in `Map Features <https://wiki.open
 OSM Connector
 -------------
 
-.. py:module:: enrichment.enricher.osm.osm_places_connector
+.. py:module:: moredata.enricher.osm.osm_places_connector
 
 .. autoclass:: OSMPlacesConnector
     :members:

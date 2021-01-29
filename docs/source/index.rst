@@ -3,15 +3,15 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Enrichment Framework
+More Data
 ====================
 Its goal is to provide a framework with high extensability for data enrichments
 
 Enricher
 --------
 Can contains some connectors
-:class:`~enrichment.enricher.elasticsearch_connector.elasticsearch_connector`,
-:class:`~enrichment.enricher.api_connector.api_connector`. You can choose the enricher appropiately
+:class:`~moredata.enricher.elasticsearch_connector.elasticsearch_connector`,
+:class:`~moredata.enricher.api_connector.api_connector`. You can choose the enricher appropiately
 for your application. 
 
 Elasticsearch
@@ -19,10 +19,10 @@ Elasticsearch
 
 If you want to enrich with elasticsearch you have to provide a client to the enricher, 
 and others classes 
-:class:`~enrichment.enricher.elasticsearch_connector.index_handler`, 
-:class:`~enrichment.enricher.elasticsearch_connetor.index_handler.reindex_handler`,
-:class:`~enrichment.enricher.elasticsearch_connector.pipeline_handler`,
-:class:`~enrichment.enricher.elasticsearch_connector.policy_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.index_handler`, 
+:class:`~moredata.enricher.elasticsearch_connetor.index_handler.reindex_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.pipeline_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.policy_handler`,
 that enricher need.
 
 Firstly, you have to insert your data into elasticsearch, so using ``index_handler``:
@@ -35,8 +35,8 @@ and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the 
 
 .. code-block:: python
    
-   from enrichment.enricher import Enricher, EnricherBuilder
-   from enrichment.enricher.elasticsearch_connector import (
+   from moredata.enricher import Enricher, EnricherBuilder
+   from moredata.enricher.elasticsearch_connector import (
       ElasticsearchConnector, 
       IndexHandler,
       ReindexHandler, 
@@ -45,9 +45,9 @@ and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the 
       PolicyHandler, 
       Policy,
    )
-   from enrichment.models.data import Data
-   from enrichment.parser import parse_document
-   from enrichment.utils.util import read_json_from_file
+   from moredata.models.data import Data
+   from moredata.parser import parse_document
+   from moredata.utils.util import read_json_from_file
 
    from elasticsearch import Elasticsearch
    
@@ -98,7 +98,7 @@ It's up to developer choose what type of file it'll be written.
 
 .. code-block:: python
 
-   import enrichment.utils.util as util
+   import moredata.utils.util as util
    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
    util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
 

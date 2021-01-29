@@ -3,7 +3,7 @@
 Data
 ----
 
-.. py:module:: enrichment.models
+.. py:module:: moredata.models
 
 .. autoclass:: Data
     :members:

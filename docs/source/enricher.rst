@@ -10,7 +10,7 @@ of connector with a lot of database like elasticsearch, mySQL, Redis others.
 Enricher
 --------
 
-.. py:module:: enrichment.enricher.enricher
+.. py:module:: moredata.enricher.enricher
 
 .. autoclass:: Enricher
     :members:
@@ -19,7 +19,7 @@ Enricher
 Enrich Builder
 --------------
 
-.. py:module:: enrichment.enricher.enricher_builder
+.. py:module:: moredata.enricher.enricher_builder
 
 .. autoclass:: EnricherBuilder
     :members:

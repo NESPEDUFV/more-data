@@ -8,10 +8,10 @@ Example
 
 If you want to enrich with elasticsearch you have to provide a client to the enricher, 
 and others classes 
-:class:`~enrichment.enricher.elasticsearch_connector.index_handler`, 
-:class:`~enrichment.enricher.elasticsearch_connetor.index_handler.reindex_handler`,
-:class:`~enrichment.enricher.elasticsearch_connector.pipeline_handler`,
-:class:`~enrichment.enricher.elasticsearch_connector.policy_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.index_handler`, 
+:class:`~moredata.enricher.elasticsearch_connetor.index_handler.reindex_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.pipeline_handler`,
+:class:`~moredata.enricher.elasticsearch_connector.policy_handler`,
 that enricher need.
 
 Firstly, you have to insert your data into elasticsearch, so using ``index_handler``:
@@ -24,8 +24,8 @@ and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the 
 
 .. code-block:: python
    
-   from enrichment.enricher import Enricher, EnricherBuilder
-   from enrichment.enricher.elasticsearch_connector import (
+   from moredata.enricher import Enricher, EnricherBuilder
+   from moredata.enricher.elasticsearch_connector import (
       ElasticsearchConnector, 
       IndexHandler,
       ReindexHandler, 
@@ -34,9 +34,9 @@ and hashing this point using `h3 library <https://github.com/uber/h3>`_. If the 
       PolicyHandler, 
       Policy,
    )
-   from enrichment.models.data import Data
-   from enrichment.parser import parse_document
-   from enrichment.utils.util import read_json_from_file
+   from moredata.models.data import Data
+   from moredata.parser import parse_document
+   from moredata.utils.util import read_json_from_file
 
    from elasticsearch import Elasticsearch
    
@@ -81,13 +81,12 @@ in Enricher, `geo_location` and `code_h3`.
       .with_enrichment(elk_city_enricher) \
       .get_result(array_point_field="points_of_interest", geo_location=True, code_h3=True)
 
-
 With the code below it's written the result of enrichment in two formats json or csv. This library supports three conversions file type: parquet, json and csv. You can see more about this here: :ref:`conversion`
 It's up to developer choose what type of file it'll be written.
 
 .. code-block:: python
 
-   import enrichment.utils.util as util
+   import moredata.utils.util as util
    util.write_json_generator_to_json("../../data/output/json/user-enriched", user_enriched, 1000) 
    util.Converter.json_enriched_to_csv("../../data/output/json/*.json", "../data/output/csv/")
 
@@ -96,7 +95,7 @@ It's up to developer choose what type of file it'll be written.
 Elasticsearch Connector
 -----------------------
 
-.. py:module:: enrichment.enricher.elasticsearch_connector.elasticsearch_connector
+.. py:module:: moredata.enricher.elasticsearch_connector.elasticsearch_connector
 
 .. autoclass:: ElasticsearchConnector 
     :members:
@@ -106,16 +105,16 @@ Index Handler
 -------------
 
 Example
-~~~~~~~~
+~~~~~~~
 
 With index handler we can insert data into elasticsearch. When you want to define your `mapping <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html>`_ you should send data with optional argument ``streaming`` equals `True`. If you don't know mapping of the data even so you can load data without that optional argument and elasticsearch will infer the types of your data. 
 
 .. code-block:: python
     
-    import enrichment.parser as parser
-    import enrichment.models as models
-    from enrichment.enricher.elasticsearch_connector import IndexHandler
-    from enrichment.utils.util import read_json_from_file
+    import moredata.parser as parser
+    import moredata.models as models
+    from moredata.enricher.elasticsearch_connector import IndexHandler
+    from moredata.utils.util import read_json_from_file
     
     from elasticsearch import Elasticsearch
 
@@ -131,7 +130,7 @@ With index handler we can insert data into elasticsearch. When you want to defin
     index_handler.load_index(parser=app.parse, streaming=True)  
 
 
-.. py:module:: enrichment.enricher.elasticsearch_connector.index_handler
+.. py:module:: moredata.enricher.elasticsearch_connector.index_handler
 
 .. autoclass:: IndexHandler
     :members:
@@ -201,7 +200,7 @@ positions defined by ``max_matches``. The argument ``policy_name`` specifies wha
                         policy_name="apps-json",
                         max_matches=128))
 
-.. py:module:: enrichment.enricher.elasticsearch_connector.pipeline_handler
+.. py:module:: moredata.enricher.elasticsearch_connector.pipeline_handler
 
 .. autoclass:: Pipeline
     :members:
@@ -230,7 +229,7 @@ Here we are defining a policy for enrich some documents with city. So, all field
                                                         enrich_fields=enrich_fields))
 
 
-.. py:module:: enrichment.enricher.elasticsearch_connector.policy_handler
+.. py:module:: moredata.enricher.elasticsearch_connector.policy_handler
 
 .. autoclass::Policy
     :members:

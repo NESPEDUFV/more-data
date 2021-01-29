@@ -17,11 +17,11 @@ Besides that, this example use a table named `apps` and a column to query named 
 
     URL = "mysql+pymysql://root:root@localhost:3306/database"
 
-    from enrichment.enricher import EnricherBuilder, Enricher
-    from enrichment.enricher.sql_connector import SqlConnector
-    from enrichment.models.data import Data
-    from enrichment.parser import parse_document
-    from enrichment.utils.util import read_json_from_file, Converter
+    from moredata.enricher import EnricherBuilder, Enricher
+    from moredata.enricher.sql_connector import SqlConnector
+    from moredata.models.data import Data
+    from moredata.parser import parse_document
+    from moredata.utils.util import read_json_from_file, Converter
 
     user = Data(data_file=USER_DATA, parser_func=parse_document, data_type="json")
 
@@ -32,7 +32,7 @@ Besides that, this example use a table named `apps` and a column to query named 
 	  .with_enrichment(sql_enricher) \
 	  .get_result() 
 
-    import enrichment.utils.util as util
+    import moredata.utils.util as util
 
     util.write_json_generator_to_json("../../data/output/sql/test", user_enriched, 100000) 
 
@@ -43,7 +43,7 @@ Besides that, this example use a table named `apps` and a column to query named 
 SQL Connector
 -------------
 
-.. py:module:: enrichment.enricher.sql_connector.sql_connector
+.. py:module:: moredata.enricher.sql_connector.sql_connector
 
 .. autoclass:: SqlConnector
     :members:
