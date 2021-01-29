@@ -6,7 +6,7 @@ dependencies:
 - pip
 
 - pip:
-  - sphinx-rtd-theme=0.4.3
-  - sphinxcontrib-napoleon=0.7
-  - sphinx=2.4.0
-  - jinja2=2.11.1
+  - sphinx-rtd-theme==0.4.3
+  - sphinxcontrib-napoleon==0.7
+  - sphinx==2.4.0
+  - jinja2==2.11.1
