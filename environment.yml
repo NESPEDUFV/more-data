@@ -7,12 +7,13 @@ dependencies:
 - PyMySQL=0.10.0
 - Rtree=0.9.7
 - pyproj=2.4.2.post1
-- geopandas=0.7.0
+- geopandas>=0.7.0
 - geopy=2.0.0
-- pandas=1.0.1
+- pandas>=1.0.1
 - numpy=1.18.1
-- elasticsearch=7.5.1
+- elasticsearch>=7.5.1
 - shapely=1.7.0
+- pytest>=6.2.3
 - pip
 
 - pip:
