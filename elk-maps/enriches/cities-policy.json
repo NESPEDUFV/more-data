@@ -1,7 +1,0 @@
-{
-    "geo_match": {
-        "indices": "cities",
-        "match_field": "geometry",
-        "enrich_fields": ["name", "Nome da Grande Região", "Nome da Mesorregião", "Nome da Microrregião", "Nome da Região Rural"]
-    }
-}

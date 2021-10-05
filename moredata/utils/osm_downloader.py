@@ -13,11 +13,13 @@ class OSM_util:
     def get_place_ID(self, place_name):
         geolocator = Nominatim(user_agent="city_compare")
         geoResults = geolocator.geocode(place_name, exactly_one=False, limit=3, timeout = 600)
+        city = None
         for r in geoResults:
             if r.raw.get("osm_type") == "relation":
                 city = r
-            break
-
+                break
+        if city is None:
+            raise Exception("city not found")
         place_ID = int(city.raw.get("osm_id")) + 3600000000     #Calcula o ID do local escolhido utilizando\n",
         return place_ID
 

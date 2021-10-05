@@ -13,11 +13,11 @@ else:
         "h3==3.4.3",
         "Rtree==0.9.7",
         "pyproj==2.4.2.post1",
-        "geopandas==0.7.0",
+        "geopandas>=0.7.0",
         "geopy==2.0.0",
-        "pandas==1.0.1",
-        "numpy==1.18.1",
-        "elasticsearch==7.5.1",
+        "pandas>=1.0.1",
+        "numpy>=1.18.1",
+        "elasticsearch>=7.5.1",
         "shapely==1.7.0",
     ]
 
@@ -29,13 +29,13 @@ else:
     ]
 
 setup(
-    name = "moredata",
-    url = 'https://github.com/gegen07/more-data',
-    download_url='https://github.com/gegen07/more-data/archive/v0.1.tar.gz',
-    version = '0.1',
-    packages = find_packages(where="."),
+    name="moredata",
+    url='https://github.com/gegen07/more-data',
+    download_url='https://github.com/gegen07/more-data/archive/v0.1.2.tar.gz',
+    version='0.1.2',
+    packages=find_packages(where="."),
     python_requires=">=3.6",
-    install_requires = INSTALL_REQUIRES,
+    install_requires=INSTALL_REQUIRES,
     extras_require={
         "develop": INSTALL_REQUIRES + DOCS_REQUIRES,
         "docs": DOCS_REQUIRES,
