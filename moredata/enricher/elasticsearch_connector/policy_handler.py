@@ -1,5 +1,5 @@
 from elasticsearch.client.enrich import EnrichClient
-from ...utils import util
+from ...utils import load_json
 
 
 class PolicyHandler:
@@ -74,7 +74,7 @@ class Policy:
 		""" create_policy is a method to create policy file
 		"""
 		try:
-			self.enrich_client.put_policy(self.name, util.load_json(self._policy_handler._json))
+			self.enrich_client.put_policy(self.name, load_json(self._policy_handler._json))
 		except Exception as e:
 			raise(e)
 	

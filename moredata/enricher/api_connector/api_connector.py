@@ -1,6 +1,6 @@
 from ..enricher import IEnricherConnector
 from ...models.data import Data
-from ...utils.util import load_json
+from ...utils import load_json
 
 
 class ApiConnector (IEnricherConnector):

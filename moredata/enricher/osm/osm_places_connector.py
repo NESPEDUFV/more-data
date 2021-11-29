@@ -14,7 +14,7 @@ from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
 
-from ...utils.util import geodesic_point_buffer
+from ...utils import geodesic_point_buffer
 class OSMPlacesConnector(IEnricherConnector):
     """OSMconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
     
