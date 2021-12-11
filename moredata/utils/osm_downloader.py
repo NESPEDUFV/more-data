@@ -57,6 +57,7 @@ class OSM_util:
                 for item in tags.items():
                     key, value = item[0], item[1]
                     properties[key] = value
+                    properties['key'] = key
             
         df = gpd.GeoDataFrame.from_features(result["features"], crs="EPSG:4326")
         return df
