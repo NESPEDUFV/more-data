@@ -115,8 +115,6 @@ class OSMPlacesConnector(IEnricherConnector):
             polygon_metadata = self._fence_check_local(point)
 
             for p in polygon_metadata:
-                p["value"] = p[p["value"].values[0]]
-
                 if not "local" in point.keys():
                     point["local"] = []
                 if not "geometry_intersected" in point.keys() and self.geometry:
@@ -139,12 +137,10 @@ class OSMPlacesConnector(IEnricherConnector):
 
         from fiona.crs import from_epsg
         import geopandas
-
+        
         if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
             self._df = osm_util.get_places(self.place_name, self.key, self.value)
-        else:
-            raise Exception()
             
         self._get_polygons()
 
@@ -165,4 +161,4 @@ class OSMPlacesConnector(IEnricherConnector):
             else:
                 self._enrich_point(points)
 
-            yield d        
+            yield d                        print('tags',tags.items())
