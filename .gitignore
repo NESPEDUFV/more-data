@@ -8,3 +8,6 @@ dist/
 moredata.egg-info/
 .idea/
 **.json
+
+*.csv.gz
+.examples/osm/.ipynb_checkpoints

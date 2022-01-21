@@ -161,4 +161,4 @@ class OSMPlacesConnector(IEnricherConnector):
             else:
                 self._enrich_point(points)
 
-            yield d                        print('tags',tags.items())
+            yield d                      
