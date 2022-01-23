@@ -38,6 +38,12 @@ class OSMPlacesConnector(IEnricherConnector):
     radius: numeric, optional
         radius to around of point to intersect the polygon.
 
+    buffered: boolean
+        True if the region is already buffered;
+        False if you want buffer the region;
+
+    files: List[str]
+
     Attributes
     ----------
     dict_keys: List[str]
@@ -53,16 +59,20 @@ class OSMPlacesConnector(IEnricherConnector):
     radius: numeric, optional
     """
 
-    def __init__(self, key, value, dict_keys=[], place_name="Brasil", file=None, radius=None, geometry_intersected=False):
+    def __init__(self, key=None, value=None, dict_keys=[], place_name="Brasil", files=None, radius=None, geometry_intersected=False, buffered=False):
         self.key = key
         self.value = value
         self.place_name = place_name
-        self.file = file
+        self.files = files
         self.radius = radius
         self.dict_keys = dict_keys
         self.geometry = geometry_intersected
-        if self.file is not None:
-            self._df = pd.read_csv(file)
+        self.buffered = buffered
+        if self.files is not None:
+            readTemp = []
+            for file in self.files:
+                readTemp.append(pd.read_csv(file))
+            self._df = pd.concat(readTemp)
             self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
 
     def _get_polygons(self):
@@ -77,8 +87,9 @@ class OSMPlacesConnector(IEnricherConnector):
 
     def _fence_check_local(self, point): 
         polygon_metadata = []
-        
-        if self.radius is not None:
+        if self.buffered:
+            shp =wkt.loads(point["area_point"]);
+        elif self.radius is not None:
             shp = Polygon(geodesic_point_buffer(point["latitude"], point["longitude"], self.radius))
         else:
             shp = Point(point["longitude"], point["latitude"])
@@ -104,9 +115,6 @@ class OSMPlacesConnector(IEnricherConnector):
             polygon_metadata = self._fence_check_local(point)
 
             for p in polygon_metadata:
-                p["key"] = self.key
-                p["value"] = self.value
-
                 if not "local" in point.keys():
                     point["local"] = []
                 if not "geometry_intersected" in point.keys() and self.geometry:
@@ -129,11 +137,11 @@ class OSMPlacesConnector(IEnricherConnector):
 
         from fiona.crs import from_epsg
         import geopandas
-
-        if self.file is None:
+        
+        if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
             self._df = osm_util.get_places(self.place_name, self.key, self.value)
-
+            
         self._get_polygons()
 
         for d in data.parse(**kwargs):
@@ -153,4 +161,4 @@ class OSMPlacesConnector(IEnricherConnector):
             else:
                 self._enrich_point(points)
 
-            yield d        
+            yield d                      
