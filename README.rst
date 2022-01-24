@@ -8,8 +8,8 @@ Installation
 ------------
 
 Install the ``more-data`` package:
-    apt install libspatialindex-dev
-    pip install moredata
+    - ``apt install libspatialindex-dev``
+    - ``pip install moredata``
 
 
 Example Use
