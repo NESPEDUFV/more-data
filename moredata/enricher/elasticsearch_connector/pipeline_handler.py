@@ -1,5 +1,5 @@
 from elasticsearch.client.ingest import IngestClient
-from ...utils import util
+from ...utils import load_json
 
 class PipelineHandler():
     """
@@ -158,6 +158,6 @@ class Pipeline:
         with processors specified in pipeline_handler json.
         """
         try:
-            self.ingest_client.put_pipeline(self._name, util.load_json(self._pipeline_handler._json))
+            self.ingest_client.put_pipeline(self._name, load_json(self._pipeline_handler._json))
         except Exception as e:
             raise(e)

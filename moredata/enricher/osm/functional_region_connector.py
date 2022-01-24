@@ -45,7 +45,6 @@ class FunctionalRegionConnector(IEnricherConnector):
 
         for f in self.files:
             if os.path.getsize(f) > 3:
-                print(f)
                 _df = pd.read_csv(f)
                 _df["geom"] = _df["geom"].apply(wkt.loads) 
 
