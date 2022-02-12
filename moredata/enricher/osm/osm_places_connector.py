@@ -1,3 +1,4 @@
+from moredata.models.data import GeopandasData, JsonData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
 
@@ -159,22 +160,26 @@ class OSMPlacesConnector(IEnricherConnector):
             self._df = osm_util.get_places(self.place_name, self.key, self.value)
 
         self._get_polygons()
+        if isinstance(data,JsonData):
+            for d in data.parse(**kwargs):
+                
+                if not self.dict_keys:
+                    points = d  
+                else:
+                    points = d[self.dict_keys[0]]
+                    for k in range(1, len(self.dict_keys)):
+                        try:
+                            points = points[self.dict_keys[k]]
+                        except KeyError as e:
+                            return None
 
-        for d in data.parse(**kwargs):
-            if not self.dict_keys:
-                points = d
-            else:
-                points = d[self.dict_keys[0]]
-                for k in range(1, len(self.dict_keys)):
-                    try:
-                        points = points[self.dict_keys[k]]
-                    except KeyError as e:
-                        return None
+                if isinstance(points, list):
+                    for point in points:
+                        self._enrich_point(point)          
+                else:
+                    self._enrich_point(points)
 
-            if isinstance(points, list):
-                for point in points:
-                    self._enrich_point(point)
-            else:
-                self._enrich_point(points)
-
-            yield d
+                yield d
+        
+        # elif isinstance(data,GeopandasData):
+                        

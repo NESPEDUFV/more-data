@@ -1,6 +1,7 @@
 from abc import ABC, abstractproperty, abstractmethod
+from logging import raiseExceptions
 from .enricher import Enricher
-from ..models.data import Data
+from ..models.data import Data, JsonData
 
 
 class Builder(ABC):
@@ -34,7 +35,10 @@ class EnricherBuilder(Builder):
     """
 
     def __init__(self, data):
+        if isinstance(data,JsonData):
+            raise Exception
         self._data = data
+            
 
     def with_enrichment(self, connector):
         """Implementation of abstract method of :obj:`Builder`
