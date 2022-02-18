@@ -28,27 +28,28 @@ class Data:
         self.data_file = data_file
         self.data_type = data_type
         self.enrichers = []
-
+    @classmethod
     def add(self, enricher):
         """add enricher in enrichers attribute"""
         self.enrichers.append(enricher)
     
 class GeopandasData (Data):
+    def __init__(self, data_type, data_file):
+        super().__init__(data_type, data_file)
 
-    @classmethod
     def from_geodataframe(self,geodataframe):
         self.data =  geodataframe
         return self
 
-    @classmethod
     def from_path(self, path):
         self.data = geopandas.read_file(path) 
         return self
 
 class JsonData (Data):
-    def __init__(self,  parsefunction):
-        self.parser = parsefunction
-        
+    def __init__(self, data_type, data_file, parser):
+        super().__init__( data_type, data_file)
+        self.parser = parser
+    
     def parse(self, **kwargs):
         """parse calls the parser_func attribute"""
         return self.parser(self.data_file, **kwargs)
