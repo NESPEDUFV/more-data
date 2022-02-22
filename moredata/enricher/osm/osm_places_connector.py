@@ -149,16 +149,14 @@ class OSMPlacesConnector(IEnricherConnector):
         ----------
         data: :obj:`Data`
         """
-        from fiona.crs import from_epsg
-        import geopandas
-        import fiona
-        print('enrich')
+
         if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
             self._df = osm_util.get_places(
                 self.place_name, self.key, self.value)
 
         self._get_polygons()
+
         if isinstance(data, JsonData):
             for d in data.parse(**kwargs):
 
@@ -178,9 +176,7 @@ class OSMPlacesConnector(IEnricherConnector):
                 else:
                     self._enrich_point(points)
 
-                yield d
+                yield d 
 
         elif isinstance(data, GeopandasData):
-
-            for d in data:
-                print(d)
+            pass
