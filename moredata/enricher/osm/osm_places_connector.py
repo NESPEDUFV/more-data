@@ -1,3 +1,4 @@
+from moredata.models.data import GeopandasData, JsonData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
 
@@ -86,6 +87,7 @@ class OSMPlacesConnector(IEnricherConnector):
                 readTemp.append(pd.read_csv(file))
             self._df = pd.concat(readTemp)
             self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
+            self._df = geopandas.GeoDataFrame(self._df)
 
     def _get_polygons(self):
         self.array_polygons = []
@@ -143,24 +145,15 @@ class OSMPlacesConnector(IEnricherConnector):
 
                 point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
-    def enrich(self, data, **kwargs):
-        """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
+    def enrichGeoPandasData(self, data):
+        spatial_joined = geopandas.sjoin(
+            data, self._df, how="left", predicate="intersects"
+        )
+        return spatial_joined
 
-        Parameters
-        ----------
-        data: :obj:`Data`
-        """
-
-        from fiona.crs import from_epsg
-        import geopandas
-
-        if self.files is None and self.key is not None and self.value is not None:
-            osm_util = OSM_util()
-            self._df = osm_util.get_places(self.place_name, self.key, self.value)
-
-        self._get_polygons()
-
+    def enrichJsonData(self, data, **kwargs):
         for d in data.parse(**kwargs):
+
             if not self.dict_keys:
                 points = d
             else:
@@ -178,3 +171,23 @@ class OSMPlacesConnector(IEnricherConnector):
                 self._enrich_point(points)
 
             yield d
+
+    def enrich(self, data, **kwargs):
+        """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
+
+        Parameters
+        ----------
+        data: :obj:`Data`
+        """
+
+        if self.files is None and self.key is not None and self.value is not None:
+            osm_util = OSM_util()
+            self._df = osm_util.get_places(self.place_name, self.key, self.value)
+
+        self._get_polygons()
+
+        if isinstance(data, GeopandasData):
+            return self.enrichGeoPandasData(data.data)
+
+        elif isinstance(data, JsonData):
+            return self.enrichJsonData(data, **kwargs)
