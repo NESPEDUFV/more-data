@@ -9,4 +9,4 @@ dependencies:
 - h3-py
 
 - pip:
-  - -r requirements_dev.txt
+  - -r requirements.txt
