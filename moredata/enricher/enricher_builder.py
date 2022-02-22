@@ -35,10 +35,9 @@ class EnricherBuilder(Builder):
     """
 
     def __init__(self, data):
-        if isinstance(data,JsonData):
+        if isinstance(data, JsonData):
             raise Exception
         self._data = data
-            
 
     def with_enrichment(self, connector):
         """Implementation of abstract method of :obj:`Builder`

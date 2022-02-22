@@ -104,8 +104,11 @@ class OSMPlacesConnector(IEnricherConnector):
         if self.buffered:
             shp = wkt.loads(point["area_point"])
         elif self.radius is not None:
-            shp = Polygon(geodesic_point_buffer(
-                point["latitude"], point["longitude"], self.radius))
+            shp = Polygon(
+                geodesic_point_buffer(
+                    point["latitude"], point["longitude"], self.radius
+                )
+            )
         else:
             shp = Point(point["longitude"], point["latitude"])
 
@@ -140,12 +143,12 @@ class OSMPlacesConnector(IEnricherConnector):
                     for polygon in polygons_intersected:
                         point["geometry_intersected"].append(str(polygon))
 
-                point["local"].append(
-                    *p[["name", "key", "value"]].to_dict("records"))
+                point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
     def enrichGeoPandasData(self, data):
         spatial_joined = geopandas.sjoin(
-            data, self._df, how="left", predicate="intersects")
+            data, self._df, how="left", predicate="intersects"
+        )
         return spatial_joined
 
     def enrichJsonData(self, data, **kwargs):
@@ -179,8 +182,7 @@ class OSMPlacesConnector(IEnricherConnector):
 
         if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
-            self._df = osm_util.get_places(
-                self.place_name, self.key, self.value)
+            self._df = osm_util.get_places(self.place_name, self.key, self.value)
 
         self._get_polygons()
 

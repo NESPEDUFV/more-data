@@ -35,8 +35,7 @@ class Data:
         self.enrichers.append(enricher)
 
 
-class GeopandasData (Data):
-
+class GeopandasData(Data):
     @classmethod
     def from_geodataframe(cls, geodataframe):
         geopandasData = GeopandasData()
@@ -50,7 +49,7 @@ class GeopandasData (Data):
         return geopandasData
 
 
-class JsonData (Data):
+class JsonData(Data):
     def __init__(self, data_file, parser):
         self.data_file = data_file
         self.parser = parser
