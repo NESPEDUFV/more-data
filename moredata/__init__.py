@@ -3,10 +3,10 @@ from .enricher.elasticsearch_connector import (
     IndexHandler,
     ReindexHandler,
     PipelineHandler,
-    PolicyHandler
+    PolicyHandler,
 )
 
-from .enricher.osm.osm_places_connector import OSMPlacesConnector 
+from .enricher.osm.osm_places_connector import OSMPlacesConnector
 from .enricher.osm.functional_region_connector import FunctionalRegionConnector
 
 from .enricher.api_connector import ApiConnector

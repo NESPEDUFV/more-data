@@ -2,6 +2,7 @@ from ..enricher import IEnricherConnector
 import sqlalchemy
 import decimal
 
+
 class SqlConnector(IEnricherConnector):
     """SQLconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
 
@@ -14,14 +15,14 @@ class SqlConnector(IEnricherConnector):
         dict_keys is the principal argument to the connector. The connector doesn't know where to get data to make the relationship, so you have to pass the keys or if your data isn't nested, just one key to the connector reach at the the right attribute.
 
     result_attr: str
-        where tha enriched data it supposed to be  
+        where tha enriched data it supposed to be
 
     column: str
         name of table column to build the relation.
 
     engine: :obj:`sqlalchemy.engine.Engine`
         an engine already created by sqlalchemy
-    
+
     connection_url: str
         the string of connection with host, port, password and database.
 
@@ -36,20 +37,31 @@ class SqlConnector(IEnricherConnector):
     column: str
 
     engine: :obj:`sqlalchemy.engine.Engine`, optional
-    
+
     connection_url: str, optional
     """
-    def __init__(self, table_name, dict_keys, result_attr, column, engine=None, connection_url=None):
+
+    def __init__(
+        self,
+        table_name,
+        dict_keys,
+        result_attr,
+        column,
+        engine=None,
+        connection_url=None,
+    ):
         if engine is None and connection_url is None:
             raise Exception
-        
+
         if engine is not None:
             self.engine = engine
 
         if connection_url is not None:
             self.engine = sqlalchemy.create_engine(connection_url)
-        
-        self.table = sqlalchemy.Table(table_name, sqlalchemy.MetaData(), autoload_with=self.engine)
+
+        self.table = sqlalchemy.Table(
+            table_name, sqlalchemy.MetaData(), autoload_with=self.engine
+        )
         self.column = column
         self.dict_keys = dict_keys
         self.result_attr = result_attr
@@ -58,12 +70,12 @@ class SqlConnector(IEnricherConnector):
         def get_value(obj):
             query = self.table.select().where(self.table.c[self.column] == obj)
             result = self.engine.execute(query)
-            
+
             first = result.first()
 
             if first is not None:
                 result_dict = dict(first)
-           
+
                 if result_dict is not None:
                     for k, _ in result_dict.items():
                         if isinstance(result_dict[k], decimal.Decimal):
@@ -78,12 +90,11 @@ class SqlConnector(IEnricherConnector):
             for o in obj:
                 result_dict.append(get_value(o))
             return result_dict
-        
+
         return get_value(obj)
-            
 
     def enrich(self, data, **kwargs):
-        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.  
+        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.
 
         Parameters
         ----------
@@ -91,7 +102,7 @@ class SqlConnector(IEnricherConnector):
         """
         for d in data.parse(**kwargs):
             objects = d[self.dict_keys[0]]
-            for k in range(1, len(dict_keys)-1):
+            for k in range(1, len(dict_keys) - 1):
                 try:
                     objects = objects[self.dict_keys[k]]
                 except KeyError as e:
@@ -100,10 +111,12 @@ class SqlConnector(IEnricherConnector):
             if isinstance(objects, list):
                 if isinstance(objects[0], dict):
                     for obj in objects:
-                        obj[self.result_attr] = self._enrich_object(obj[self.dict_keys[-1]])
-                else: 
-                    d[self.result_attr] = self._enrich_object(objects)             
+                        obj[self.result_attr] = self._enrich_object(
+                            obj[self.dict_keys[-1]]
+                        )
+                else:
+                    d[self.result_attr] = self._enrich_object(objects)
             else:
-                d[self.result_attr] = self._enrich_object(objects)    
+                d[self.result_attr] = self._enrich_object(objects)
 
             yield d

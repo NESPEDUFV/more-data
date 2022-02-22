@@ -1,19 +1,22 @@
 from abc import ABC, abstractmethod
 from ..models.data import Data
+
+
 class Enricher:
-    """Enricher is a wrapper class of interface IEnricherConnector       
-        
+    """Enricher is a wrapper class of interface IEnricherConnector
+
     Parameters
     ----------
     connector: :obj:`IEnricherConnector`
-        Interface that connects an implementation of enrichment to the class :Enricher: 
+        Interface that connects an implementation of enrichment to the class :Enricher:
 
     Attributes
     ----------
     connector: :obj:`IEnricherConnector`
-        Interface that connects an implementation of enrichment to the class :Enricher:   
+        Interface that connects an implementation of enrichment to the class :Enricher:
 
     """
+
     def __init__(self, connector):
         self._connector = connector
 
@@ -32,7 +35,7 @@ class Enricher:
 
     def enrich(self, data, **kwargs):
         """Call enrich function of interface :obj:`IEnricherConnector`
-        
+
         Parameters
         ----------
         data: :obj:`Data`
@@ -47,9 +50,8 @@ class Enricher:
 
 
 class IEnricherConnector(ABC):
-    """IEnricherConnector is an interface that provides the abstract method enrich.
-    """
-    
+    """IEnricherConnector is an interface that provides the abstract method enrich."""
+
     @abstractmethod
     def enrich(self, data, **kwargs):
         pass

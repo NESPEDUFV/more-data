@@ -3,22 +3,22 @@ from ...models.data import Data
 from ...utils import load_json
 
 
-class ApiConnector (IEnricherConnector):
+class ApiConnector(IEnricherConnector):
     """ApiConnector implements interface IEnricherConnector,
     so this connector can be used to enrich some data.
 
     Parameters
     ----------
     response_parser: Callable
-        a function that will parse the response of the request 
+        a function that will parse the response of the request
         and returns a dict with the values which will enrich the data.
 
     url_pattern: str
-        url_pattern is the route of the api to retrieve values 
+        url_pattern is the route of the api to retrieve values
         which will enrich the data.
 
     params: Dict
-        params are a dict that has key as the variable in route and name is 
+        params are a dict that has key as the variable in route and name is
         where to retrieve the data value to assign in route.
 
     Attributes
@@ -37,7 +37,7 @@ class ApiConnector (IEnricherConnector):
 
     def _handle_params(cls, pattern, params):
         """
-        Replace all variables inside pattern string with params 
+        Replace all variables inside pattern string with params
         values to build the url to request.
 
         Parameters
@@ -52,18 +52,18 @@ class ApiConnector (IEnricherConnector):
         """
         import re
 
-        regex = re.compile('\{.*?\}')
+        regex = re.compile("\{.*?\}")
         routes = regex.findall(pattern)
 
         for route in routes:
-            pattern = pattern.replace(route, str(params[route[1:len(route) - 1]]))
+            pattern = pattern.replace(route, str(params[route[1 : len(route) - 1]]))
 
         return pattern
 
     def _make_request(cls, url, *args, **kwargs):
         """
         Using requests package this method will do the request and return that json.
-        
+
         Parameters
         ----------
         url: str
@@ -74,6 +74,7 @@ class ApiConnector (IEnricherConnector):
         """
         import requests
         from urllib3.exceptions import InsecureRequestWarning
+
         requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
         return requests.get(url, verify=False).json()

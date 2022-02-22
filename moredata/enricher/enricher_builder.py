@@ -4,8 +4,7 @@ from ..models.data import Data
 
 
 class Builder(ABC):
-    """Design pattern Builder interface
-    """
+    """Design pattern Builder interface"""
 
     @abstractmethod
     def with_enrichment(self, connector):
@@ -13,7 +12,7 @@ class Builder(ABC):
         Parameters
         ----------
 
-        connector: :obj:`Enricher` 
+        connector: :obj:`Enricher`
             a connector that will implement enrich method
         """
         pass
@@ -31,7 +30,7 @@ class EnricherBuilder(Builder):
     Attributes
     ----------
     data: :obj:`Data`
-     
+
     """
 
     def __init__(self, data):
@@ -40,10 +39,10 @@ class EnricherBuilder(Builder):
     def with_enrichment(self, connector):
         """Implementation of abstract method of :obj:`Builder`
         This method add to :obj:`Data` array attribute :obj:`Enricher` objects
-       
+
         Parameters
         ----------
-        connector: :obj:`Enricher` 
+        connector: :obj:`Enricher`
             a connector that will implement :func:`~enricher.Enricher.enrich`
 
         Returns
@@ -54,13 +53,11 @@ class EnricherBuilder(Builder):
         return self
 
     def get_result(self, **kwargs):
-
         def pipe(data, funcs, **kwargs):
             for func in funcs:
                 data = func(data=data, **kwargs)
             return data
 
-        
         """Implements a chaining method like `f(g(h(data)))`. So,
         this method call all of enrichments functions that are 
         saved as array attribute in data class. 

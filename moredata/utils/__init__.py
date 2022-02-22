@@ -19,14 +19,13 @@ def geodesic_point_buffer(lat, lon, radius):
     radius: float
         distance in meters
     """
-    proj_wgs84 = pyproj.Proj('+proj=longlat +datum=WGS84')
+    proj_wgs84 = pyproj.Proj("+proj=longlat +datum=WGS84")
 
     # Azimuthal equidistant projection
-    aeqd_proj = '+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0'
+    aeqd_proj = "+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0"
     project = partial(
-        pyproj.transform,
-        pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)),
-        proj_wgs84)
+        pyproj.transform, pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)), proj_wgs84
+    )
     buf = Point(0, 0).buffer(radius)  # distance in meters
     return transform(project, buf).exterior.coords[:]
 
@@ -42,6 +41,7 @@ def load_json(json_object):
 
 def chunks(iterable, size=10):
     from itertools import chain, islice
+
     iterator = iter(iterable)
     for first in iterator:
         yield chain([first], islice(iterator, size - 1))
@@ -49,15 +49,14 @@ def chunks(iterable, size=10):
 
 def write_json_generator_to_json(file, data, n):
     for i, group in enumerate(chunks(data, n)):
-        with open(file + '-{}.json'.format(i), 'w') as outfile:
+        with open(file + "-{}.json".format(i), "w") as outfile:
             json.dump(list(group), outfile, ensure_ascii=False)
 
 
 class Converter:
-
     @staticmethod
     def json_enriched_to_csv(path, output_path):
-        """ Get the output of json and converts to csv file.
+        """Get the output of json and converts to csv file.
 
         Parameters
         ----------
@@ -76,15 +75,15 @@ class Converter:
 
         for i, file in enumerate(files):
             try:
-                df = pd.read_json(file, orient='records')
-                df.to_csv(output_path + str(i) + ".csv", encoding='utf-8', index=False)
+                df = pd.read_json(file, orient="records")
+                df.to_csv(output_path + str(i) + ".csv", encoding="utf-8", index=False)
             except AttributeError as e:
                 print(file)
                 raise (e)
 
     @staticmethod
     def json_enriched_to_parquet(path, output_path):
-        """ Get the output of json and converts to parquet file.
+        """Get the output of json and converts to parquet file.
 
         Parameters
         ----------
@@ -102,8 +101,10 @@ class Converter:
 
         for i, file in enumerate(files):
             try:
-                df = pd.read_json(file, orient='records')
-                df.to_parquet(output_path + str(i) + ".parquet", encoding='utf-8', index=False)
+                df = pd.read_json(file, orient="records")
+                df.to_parquet(
+                    output_path + str(i) + ".parquet", encoding="utf-8", index=False
+                )
             except AttributeError as e:
                 pass
 
@@ -141,4 +142,4 @@ class Converter:
         import pandas as pd
 
         df = pd.read_parquet(file)
-        df.to_json(output_file, orient='records')
+        df.to_json(output_file, orient="records")
