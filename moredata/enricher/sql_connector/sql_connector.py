@@ -86,7 +86,6 @@ class SqlConnector(IEnricherConnector):
 
         if isinstance(obj, list):
             result_dict = []
-            print(obj)
             for o in obj:
                 result_dict.append(get_value(o))
             return result_dict
@@ -102,7 +101,7 @@ class SqlConnector(IEnricherConnector):
         """
         for d in data.parse(**kwargs):
             objects = d[self.dict_keys[0]]
-            for k in range(1, len(dict_keys) - 1):
+            for k in range(1, len(self.dict_keys) - 1):
                 try:
                     objects = objects[self.dict_keys[k]]
                 except KeyError as e:
