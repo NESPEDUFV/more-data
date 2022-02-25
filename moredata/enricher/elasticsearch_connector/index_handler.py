@@ -63,12 +63,11 @@ class IndexHandler:
         """
         try:
             if streaming:
-                for ok, response in streaming_bulk(
+                for ok, _ in streaming_bulk(
                     self.client, index=self.index, actions=parser(**kwargs)
                 ):
                     if not ok:
-                        # failure inserting
-                        print(response)
+                        raise Exception
             else:
                 bulk(
                     self.client,

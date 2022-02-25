@@ -6,7 +6,6 @@ dependencies:
 - python=3.8
 - h3-py
 - pip
-- h3-py
 
 - pip:
   - -r requirements.txt

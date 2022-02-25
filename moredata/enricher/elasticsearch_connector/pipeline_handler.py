@@ -1,5 +1,6 @@
-from elasticsearch.client.ingest import IngestClient
-from ...utils import load_json
+from elasticsearch.client import IngestClient
+from json import dump
+from ...utils import load_json, read_json_from_file
 
 
 class PipelineHandler:
@@ -126,11 +127,12 @@ class PipelineHandler:
                     "shape_relation"
                 )
 
-    def import_json(self, data):
-        pass
+    def import_json(self, filename):
+        self._json = read_json_from_file(filename)
 
-    def export_json(self):
-        pass
+    def export_json(self, filename):
+        with open(filename, "w", encoding="utf-8") as f:
+            dump(self._json, f, ensure_ascii=False, indent=4)
 
 
 class Pipeline:
