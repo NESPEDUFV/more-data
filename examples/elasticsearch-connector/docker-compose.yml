@@ -1,0 +1,16 @@
+version: '3.1'
+
+services:
+    elasticsearch:
+        image: elasticsearch:8.0.0
+        environment:
+            - discovery.type=single-node
+            - "ES_JAVA_OPTS=-Xms750m -Xmx750m"
+            - xpack.security.enabled=false
+        ports:
+            - 9200:9200
+            - 9300:9300
+        volumes:
+            - elasticsearch-enrichment:/usr/share/elasticsearch/data
+volumes:
+    elasticsearch-enrichment:

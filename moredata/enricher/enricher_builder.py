@@ -1,5 +1,9 @@
 from abc import ABC, abstractproperty, abstractmethod
 from logging import raiseExceptions
+
+from moredata.enricher.elasticsearch_connector.elasticsearch_connector import (
+    ElasticsearchConnector,
+)
 from .enricher import Enricher
 from ..models.data import Data, JsonData
 
@@ -35,8 +39,6 @@ class EnricherBuilder(Builder):
     """
 
     def __init__(self, data):
-        if isinstance(data, JsonData):
-            raise Exception
         self._data = data
 
     def with_enrichment(self, connector):
@@ -52,6 +54,12 @@ class EnricherBuilder(Builder):
         -------
         This method return the :obj:`Data`
         """
+
+        if isinstance(self._data, JsonData) and not isinstance(
+            connector, ElasticsearchConnector
+        ):
+            raise Exception
+
         self._data.add(connector)
         return self
 

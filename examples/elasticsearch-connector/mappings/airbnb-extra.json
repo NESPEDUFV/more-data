@@ -1,0 +1,21 @@
+{
+    "mappings": {
+        "properties": {
+            "id": {
+                "type": "text"
+            },
+            "amenities": {
+                "type": "text"
+            },
+            "accommodates": {
+                "type": "float"
+            },
+            "beds": {
+                "type": "float"
+            },
+            "bedrooms": {
+                "type": "text"
+            }
+        }
+    }
+}

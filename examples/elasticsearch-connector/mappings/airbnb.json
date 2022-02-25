@@ -1,0 +1,36 @@
+{
+    "mappings": {
+        "properties": {
+            "id": {
+                "type": "text"
+            },
+            "name": {
+                "type": "text"
+            },
+            "neighbourhood": {
+                "type": "text"
+            },
+            "neighbourhood_cleansed": {
+                "type": "text"
+            },
+            "room_type": {
+                "type": "text"
+            },
+            "Private room": {
+                "type": "text"
+            },
+            "price": {
+                "type": "text"
+            },
+            "latitude": {
+                "type": "float"
+            },
+            "longitude": {
+                "type": "float"
+            },
+            "geo_location": {
+                "type": "geo_point"
+            }
+        }
+    }
+}
