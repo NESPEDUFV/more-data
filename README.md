@@ -1,5 +1,5 @@
 More Data
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gegen07/more-data/master?labpath=examples)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gegen07/more-data/main?labpath=examples)
 =========
 
 
