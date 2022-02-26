@@ -1,0 +1,342 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>OSM Connector &mdash; More Data  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Functional Connector" href="functional_connector.html" />
+    <link rel="prev" title="Elasticsearch Connector" href="elasticsearch_connector.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> More Data
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="enricher.html">Enricher</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_connector.html">API Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="elasticsearch_connector.html">Elasticsearch Connector</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OSM Connector</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#examples">Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">OSM Connector</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="functional_connector.html">Functional Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sql_connector.html">SQL Connector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">Conversion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html#geodesic-point-buffer">Geodesic Point Buffer</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">More Data</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>OSM Connector</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/osm_connector.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <section id="osm-connector">
+<span id="id1"></span><h1>OSM Connector<a class="headerlink" href="#osm-connector" title="Permalink to this headline">¶</a></h1>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>This example implements the use of OSM Connector. The framework works with two manners to enrich data, one with radius around point and another without the radius. The first acts increasing the point resulting a polygon like a circle with this radius. The second doesn’t buffer the point and verify if the point is within the polygons downloaded using OSM. You can use a file that you’ve already downloaded with restriction, you must have at least one column in your CSV: “geometry”.
+The arguments <cite>key</cite> and <cite>value</cite> is available in <a class="reference external" href="https://wiki.openstreetmap.org/wiki/Map_Features">Map Features</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># name of file: enrich-osm.py</span>
+
+<span class="kn">from</span> <span class="nn">moredata.enricher</span> <span class="kn">import</span> <span class="n">EnricherBuilder</span><span class="p">,</span> <span class="n">Enricher</span>
+<span class="kn">from</span> <span class="nn">moredata.enricher.osm_connector</span> <span class="kn">import</span> <span class="n">OSMConnector</span>
+<span class="kn">from</span> <span class="nn">moredata.models.data</span> <span class="kn">import</span> <span class="n">Data</span>
+<span class="kn">from</span> <span class="nn">moredata.parser</span> <span class="kn">import</span> <span class="n">parse_document</span>
+<span class="kn">from</span> <span class="nn">moredata.utils.util</span> <span class="kn">import</span> <span class="n">read_json_from_file</span><span class="p">,</span> <span class="n">Converter</span>
+
+<span class="n">user</span> <span class="o">=</span> <span class="n">Data</span><span class="p">(</span><span class="n">data_file</span><span class="o">=</span><span class="n">USER_DATA</span><span class="p">,</span> <span class="n">parser_func</span><span class="o">=</span><span class="n">parse_document</span><span class="p">,</span> <span class="n">data_type</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+
+<span class="n">osm_enricher</span> <span class="o">=</span> <span class="n">Enricher</span><span class="p">(</span><span class="n">connector</span><span class="o">=</span><span class="n">OSMConnector</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;amenity&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s2">&quot;hospital&quot;</span><span class="p">,</span> <span class="n">place_name</span><span class="o">=</span><span class="s2">&quot;São Paulo&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">dict_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;points_of_interest&quot;</span><span class="p">]))</span>
+
+<span class="n">user_enriched</span> <span class="o">=</span> \
+      <span class="n">EnricherBuilder</span><span class="p">(</span><span class="n">user</span><span class="p">)</span> \
+      <span class="o">.</span><span class="n">with_enrichment</span><span class="p">(</span><span class="n">osm_enricher</span><span class="p">)</span> \
+      <span class="o">.</span><span class="n">get_result</span><span class="p">()</span>
+
+<span class="kn">import</span> <span class="nn">moredata.utils.util</span> <span class="k">as</span> <span class="nn">util</span>
+
+<span class="n">util</span><span class="o">.</span><span class="n">write_json_generator_to_json</span><span class="p">(</span><span class="s2">&quot;../../data/output/osm/amenity-cafe-mg&quot;</span><span class="p">,</span> <span class="n">user_enriched</span><span class="p">,</span> <span class="mi">100000</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ python enrich-osm.py
+</pre></div>
+</div>
+<section id="id2">
+<h3>OSM Connector<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-moredata.enricher.osm.osm_places_connector"></span><dl class="class">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector">
+<em class="property">class </em><code class="sig-prename descclassname">moredata.enricher.osm.osm_places_connector.</code><code class="sig-name descname">OSMPlacesConnector</code><span class="sig-paren">(</span><em class="sig-param">key=None</em>, <em class="sig-param">value=None</em>, <em class="sig-param">dict_keys=[]</em>, <em class="sig-param">place_name='Brasil'</em>, <em class="sig-param">files=None</em>, <em class="sig-param">radius=None</em>, <em class="sig-param">geometry_intersected=False</em>, <em class="sig-param">buffered=False</em><span class="sig-paren">)</span><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector" title="Permalink to this definition">¶</a></dt>
+<dd><p>OSMconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – dict_keys is the principal argument to the connector. The connector doesn’t know where to get data to make the relationship, so you have to pass the keys or if your data isn’t nested, just one key to the connector reach at the the right attribute.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – class of OSM. eg.: ‘amenity’, ‘leisure’.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – value of location of OSM. eg.: ‘hospital’, ‘stadium’.</p></li>
+<li><p><strong>place_name</strong> (<em>str</em>) – name of local. eg.: ‘Brasil’, ‘São Paulo’.</p></li>
+<li><p><strong>file</strong> (<em>str</em><em>, </em><em>optional</em>) – name of file in CSV of downloaded polygons with must columns: key, value, polygon.</p></li>
+<li><p><strong>radius</strong> (<em>numeric</em><em>, </em><em>optional</em>) – radius to around of point to intersect the polygon.</p></li>
+<li><p><strong>buffered</strong> (<em>boolean</em>) – True if the region is already buffered;
+False if you want buffer the region;</p></li>
+<li><p><strong>files</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.dict_keys">
+<code class="sig-name descname">dict_keys</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.dict_keys" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.key">
+<code class="sig-name descname">key</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.key" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.value">
+<code class="sig-name descname">value</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.value" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.place_name">
+<code class="sig-name descname">place_name</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.place_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.file">
+<code class="sig-name descname">file</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.file" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.radius">
+<code class="sig-name descname">radius</code><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.radius" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>numeric, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.enrich">
+<code class="sig-name descname">enrich</code><span class="sig-paren">(</span><em class="sig-param">data</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#moredata.enricher.osm.osm_places_connector.OSMPlacesConnector.enrich" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Data</span></code>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="functional_connector.html" class="btn btn-neutral float-right" title="Functional Connector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="elasticsearch_connector.html" class="btn btn-neutral float-left" title="Elasticsearch Connector" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Germano Barcelos and Leonardo Alves
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

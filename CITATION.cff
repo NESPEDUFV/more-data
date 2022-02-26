@@ -8,11 +8,17 @@ url: "https://github.com/gegen07/more-data"
 preferred-citation:
   type: article
   authors:
-    - family-names: "dos Santos"
-      given-names: "Germano"
-      orcid: "https://orcid.org/0000-0002-4758-1776"
-    - family-names: "Figueiredo"
+    - family-names: "J. A. S Figueiredo"
       given-names: "Leonardo"
+    - family-names: "B. dos Santos"
+      given-names: "Germano"
+      orcid: "https://orcid.org/0000-0002-4758-1776" 
+    - family-names: "P. P. M. Souza"
+      given-names: "Raissa"
+    - family-names: "A. Silva"
+      given-names: "Fabricio"
+    - family-names: "R. M. Braga Silva"
+      given-names: "Thais"
   doi: "10.1145/3474717.3484210"
   journal: "Proceedings of the 29th International Conference on Advances in Geographic Information Systems"
   month: 11
