@@ -39,5 +39,22 @@ These commands above should be used befores using sql connector.
 
 ## Cite
 
-doi.org/10.1145/3474717.3484210
-
+```
+@inproceedings{
+    10.1145/3474717.3484210,
+    author = {Figueiredo, Leonardo J. A. S. and dos Santos, Germano B. and Souza, Raissa P. P. M. and Silva, Fabr\'{\i}cio A. and Silva, Thais R. M. Braga},
+    title = {MoreData: A Geospatial Data Enrichment Framework},
+    year = {2021},
+    isbn = {9781450386647},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://doi.org/10.1145/3474717.3484210},
+    doi = {10.1145/3474717.3484210},
+    booktitle = {Proceedings of the 29th International Conference on Advances in Geographic Information Systems},
+    pages = {419–422},
+    numpages = {4},
+    keywords = {geospatial data, semantic enrichment, framework},
+    location = {Beijing, China},
+    series = {SIGSPATIAL '21}
+} 
+```
