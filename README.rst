@@ -1,8 +1,6 @@
 More Data
 =========
-
-Its goal is to provide a framework with high extensability for data enrichments. 
-The documentation page is in `docs.zip`, for now.
+The package goal's is to provide a framework with high extensability for data enrichments. 
 
 Installation
 ------------
@@ -21,21 +19,22 @@ The first step is to clone/download the repository and open the project folder i
 
 .. code-block:: bash
     
-    $ pip3 install -r requirements.txt
+    $ pip install moredata
+    $ pip install jupyter-notebook
 
-
-Then go to examples directory and run the chosen example:
-
-.. code-block:: bash
-
-    $ python3 api-connector/api-ibge.py
-
-
-Reminder
-~~~~~~~~
-- Elasticsearch Examples in this repository it's only for show how the components interact because there are a lot of data used that you probably doesn't have.
-- If you want to run the elasticsearch examples, run the docker container:
+Then go to examples directory and open a new jupyter-notebook in examples directory:
 
 .. code-block:: bash
 
-    $ docker run -d -p 9200:9200 -p 9300:9300 --name elasticsearch-7.6 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    $ cd examples/
+
+If you want to run elasticsearch or SQL example you should have installed docker or have elasticsearch/MySQL in your machine, then:
+
+.. code-block:: bash
+    $ cd examples/
+    $ cd elasticsearch_connector
+    $ docker-compose up
+
+These commands above should be used befores using sql connector.
+
+

@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "More-Data"
+doi: doi.org/10.1145/3474717.3484210
+date-released: 2021-11-04
+url: "https://github.com/gegen07/more-data"
+
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "dos Santos"
+      given-names: "Germano"
+      orcid: "https://orcid.org/0000-0002-4758-1776"
+    - family-names: "Figueiredo"
+      given-names: "Leonardo"
+  doi: "10.1145/3474717.3484210"
+  journal: "Proceedings of the 29th International Conference on Advances in Geographic Information Systems"
+  month: 11
+  start: 419
+  end: 422
+  title: "MoreData: A Geospatial Data Enrichment Framework"
+  year: 2021
+
