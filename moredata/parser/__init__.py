@@ -23,7 +23,7 @@ def parse_document(data, **kwargs):
 
     for doc in read_json_from_file(data):
         if geo_location:
-            if array_point_field != None:
+            if array_point_field is not None:
                 doc[array_point_field] = [
                     _add_geo_location(points) for points in doc[array_point_field]
                 ]
@@ -31,7 +31,7 @@ def parse_document(data, **kwargs):
                 doc = _add_geo_location(doc)
 
         if code_h3:
-            if array_point_field != None:
+            if array_point_field is not None:
                 doc[array_point_field] = [
                     _add_code_point(points) for points in doc[array_point_field]
                 ]

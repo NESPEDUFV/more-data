@@ -52,7 +52,7 @@ class ApiConnector(IEnricherConnector):
         """
         import re
 
-        regex = re.compile("\{.*?\}")
+        regex = re.compile("{.*?}")
         routes = regex.findall(pattern)
 
         for route in routes:

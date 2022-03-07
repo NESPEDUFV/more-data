@@ -70,8 +70,8 @@ class EnricherBuilder(Builder):
             return data
 
         """Implements a chaining method like `f(g(h(data)))`. So,
-        this method call all of enrichments functions that are 
-        saved as array attribute in data class. 
+        this method call all of enrichments functions that are
+        saved as array attribute in data class.
 
         Returns
         -------

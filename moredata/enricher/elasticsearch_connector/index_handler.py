@@ -75,7 +75,7 @@ class IndexHandler:
                     index=self.index,
                     doc_type=self.doc_type,
                 )
-        except BulkIndexError as e:
+        except BulkIndexError:
             pass
 
     def _remove_fields_preprocessed(self, data, **kwargs):

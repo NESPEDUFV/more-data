@@ -4,7 +4,7 @@ import os
 if os.environ.get("READTHEDOCS", False) == "True":
     INSTALL_REQUIRES = []
     DOCS_REQUIRES = []
-else: 
+else:
     INSTALL_REQUIRES = [
         "requests==2.22.0",
         "SQLAlchemy==1.3.18",
@@ -30,9 +30,9 @@ else:
 
 setup(
     name="moredata",
-    url='https://github.com/gegen07/more-data',
-    download_url='https://github.com/gegen07/more-data/archive/v0.1.2.tar.gz',
-    version='0.1.2',
+    url="https://github.com/gegen07/more-data",
+    download_url="https://github.com/gegen07/more-data/archive/v0.1.2.tar.gz",
+    version="0.1.2",
     packages=find_packages(where="."),
     python_requires=">=3.6",
     install_requires=INSTALL_REQUIRES,

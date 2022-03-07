@@ -104,7 +104,7 @@ class SqlConnector(IEnricherConnector):
             for k in range(1, len(self.dict_keys) - 1):
                 try:
                     objects = objects[self.dict_keys[k]]
-                except KeyError as e:
+                except KeyError:
                     return None
 
             if isinstance(objects, list):

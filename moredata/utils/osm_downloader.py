@@ -34,7 +34,7 @@ class OSM_util:
                 "http://overpass-api.de/api/interpreter", data={"data": query}
             ).json()
             return osm2geojson.json2geojson(result)
-        except:
+        except Exception:
             return {"features": [], "type": "FeatureCollection"}
 
     def get_places(self, place_name, key, value, query=None, tags=("name", "geom")):

@@ -3,13 +3,9 @@ from ..enricher import IEnricherConnector
 import pandas as pd
 import os
 from shapely import wkt
-import geopandas
 
-from shapely.geometry import MultiPolygon, Polygon
-from shapely.ops import transform
+from shapely.geometry import Polygon
 from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
 
 
@@ -50,7 +46,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 _df["geometry"] = _df["geometry"].apply(wkt.loads)
 
                 array_polygons = []
-                for index, row in _df.iterrows():
+                for _, row in _df.iterrows():
                     pol = row["geometry"]
                     if isinstance(pol, Polygon) or isinstance(pol, Point):
                         array_polygons.append(pol)
@@ -62,7 +58,7 @@ class FunctionalRegionConnector(IEnricherConnector):
         count = 0
 
         shp = wkt.loads(point["area_point"])
-        for j in self.idx.intersection(shp.bounds):
+        for _ in self.idx.intersection(shp.bounds):
             count += 1
         return count
 
@@ -70,7 +66,7 @@ class FunctionalRegionConnector(IEnricherConnector):
         if "area_point" in point.keys():
             amount = self._fence_check_local(point)
 
-            if not self.key in point.keys():
+            if self.key not in point.keys():
                 point[self.key] = amount
             else:
                 point[self.key] += amount
@@ -83,7 +79,6 @@ class FunctionalRegionConnector(IEnricherConnector):
         """Method overrided of interface. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. For optimization purposes we recommend to buffer the point, using ``geodesic_point_buffer`` function, creating, necessarily, a label named ``area_point``, and save the file with points buffered to use as base of enrichment. After buffer the points, you can use the Functional Region Connector to create your enrichment passing proper attributes."""
         self._get_polygons()
 
-        count = 0
         for d in data.parse(**kwargs):
 
             if not self.dict_keys:
@@ -93,7 +88,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 for k in range(1, len(self.dict_keys)):
                     try:
                         points = points[self.dict_keys[k]]
-                    except KeyError as e:
+                    except KeyError:
                         return None
 
             if isinstance(points, list):

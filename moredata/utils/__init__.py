@@ -105,7 +105,7 @@ class Converter:
                 df.to_parquet(
                     output_path + str(i) + ".parquet", encoding="utf-8", index=False
                 )
-            except AttributeError as e:
+            except AttributeError:
                 pass
 
     @staticmethod

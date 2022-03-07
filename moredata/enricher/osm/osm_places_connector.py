@@ -5,14 +5,10 @@ from ...utils import OSM_util
 import pandas as pd
 from shapely import wkt
 import geopandas
-import pyproj
-from functools import partial
 
-from shapely.geometry import MultiPolygon, Polygon
-from shapely.ops import transform
+from shapely.geometry import Polygon
 from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-from shapely.geometry import shape, mapping
+from shapely.geometry import shape
 from rtree import index as rtreeindex
 
 from ...utils import geodesic_point_buffer
@@ -124,7 +120,7 @@ class OSMPlacesConnector(IEnricherConnector):
         for k in keys:
             try:
                 dict = dict[k]
-            except KeyError as e:
+            except KeyError:
                 return None
         return dict
 
@@ -133,9 +129,9 @@ class OSMPlacesConnector(IEnricherConnector):
             polygon_metadata = self._fence_check_local(point)
 
             for p in polygon_metadata:
-                if not "local" in point.keys():
+                if "local" not in point.keys():
                     point["local"] = []
-                if not "geometry_intersected" in point.keys() and self.geometry:
+                if "geometry_intersected" not in point.keys() and self.geometry:
                     point["geometry_intersected"] = []
 
                 if self.geometry:
@@ -161,7 +157,7 @@ class OSMPlacesConnector(IEnricherConnector):
                 for k in range(1, len(self.dict_keys)):
                     try:
                         points = points[self.dict_keys[k]]
-                    except KeyError as e:
+                    except KeyError:
                         return None
 
             if isinstance(points, list):
