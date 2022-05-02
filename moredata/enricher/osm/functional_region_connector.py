@@ -11,6 +11,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
+from moredata.models.data import GeopandasData, JsonData
 
 
 class FunctionalRegionConnector(IEnricherConnector):
@@ -79,11 +80,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 "area_point polygon was not found. Please use function geodesic_point_buffer present in utils package and try again."
             )
 
-    def enrich(self, data, **kwargs):
-        """Method overrided of interface. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. For optimization purposes we recommend to buffer the point, using ``geodesic_point_buffer`` function, creating, necessarily, a label named ``area_point``, and save the file with points buffered to use as base of enrichment. After buffer the points, you can use the Functional Region Connector to create your enrichment passing proper attributes."""
-        self._get_polygons()
-
-        count = 0
+    def enrichJsonData(self, data, **kwargs):
         for d in data.parse(**kwargs):
 
             if not self.dict_keys:
@@ -103,3 +100,41 @@ class FunctionalRegionConnector(IEnricherConnector):
                 self._enrich_point(points)
 
             yield d
+
+    def enrichGeoPandasData(self, data):
+
+        complete_df = pd.DataFrame()
+
+        for f in self.files:
+            if os.path.getsize(f) > 3:
+                _df = pd.read_csv(f)
+                _df["geometry"] = _df["geometry"].apply(wkt.loads)
+                complete_df = pd.concat([_df, complete_df], ignore_index=True)
+
+        complete_df = geopandas.GeoDataFrame(complete_df)
+        complete_df = complete_df.set_crs(epsg=4326).to_crs(epsg=3857)
+        data.reset_index(inplace=True)
+
+        # Realizar o spatial join
+        spatial_joined = geopandas.sjoin(
+            data, complete_df, how="inner", predicate="intersects"
+        )
+        print(spatial_joined.info())
+        # Contar quantos indices distintos existem
+        different_indices = spatial_joined.index.value_counts()
+        print(different_indices)
+        # Criar uma nova coluna com o nome key (passado pelo notebook)
+        data.set_index('index', inplace=True)
+        data[self.key] = different_indices
+        return GeopandasData.from_geodataframe(data)
+
+    def enrich(self, data, **kwargs):
+        """Method overrided of interface. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. For optimization purposes we recommend to buffer the point, using ``geodesic_point_buffer`` function, creating, necessarily, a label named ``area_point``, and save the file with points buffered to use as base of enrichment. After buffer the points, you can use the Functional Region Connector to create your enrichment passing proper attributes."""
+        self._get_polygons()
+
+        if isinstance(data, GeopandasData):
+
+            return self.enrichGeoPandasData(data.data)
+
+        elif isinstance(data, JsonData):
+            return self.enrichJsonData(data, **kwargs)
