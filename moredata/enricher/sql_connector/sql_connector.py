@@ -1,7 +1,7 @@
 from ..enricher import IEnricherConnector
 import sqlalchemy
 import decimal
-
+from moredata.models.data import GeopandasData, JsonData
 
 class SqlConnector(IEnricherConnector):
     """SQLconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
@@ -92,13 +92,11 @@ class SqlConnector(IEnricherConnector):
 
         return get_value(obj)
 
-    def enrich(self, data, **kwargs):
-        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.
+    def enrichGeoPandasData(self, data):
+        inner_join = pd.merge(self._df,data)
+        return inner_join
 
-        Parameters
-        ----------
-        data: :obj:`Data`
-        """
+    def enrichJsonData(self, data, **kwargs):
         for d in data.parse(**kwargs):
             objects = d[self.dict_keys[0]]
             for k in range(1, len(self.dict_keys) - 1):
@@ -119,3 +117,20 @@ class SqlConnector(IEnricherConnector):
                 d[self.result_attr] = self._enrich_object(objects)
 
             yield d
+
+
+    def enrich(self, data, **kwargs):
+        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.
+
+        Parameters
+        ----------
+        data: :obj:`Data`
+        """
+
+        if isinstance(data, GeopandasData):
+            return self.enrichGeoPandasData(data.data)
+
+        elif isinstance(data, JsonData):
+            return self.enrichJsonData(data, **kwargs)
+
+ 
