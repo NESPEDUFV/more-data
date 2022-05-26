@@ -1,5 +1,5 @@
 from ..enricher import IEnricherConnector
-from ...models.data import Data
+from ...models.data import  GeopandasData, JsonData
 from ...utils import load_json
 
 
@@ -79,21 +79,7 @@ class ApiConnector(IEnricherConnector):
 
         return requests.get(url, verify=False).json()
 
-    def enrich(self, data, **kwargs):
-        """Method overrided of interface. This interface do enrichment using
-        API as a enricher and return all data enriched as Json. This method
-        has a cache that will store as dict the url as key and the response parsed as value
-        for don't spend time with requests that are already done previously.
-
-        Parameters
-        ----------
-        data: Data
-
-        Yields
-        ------
-        data: Dict
-        """
-
+    def enrichJsonData(self, data, **kwargs):
         responses_cache = {}
 
         for d in data.parse(**kwargs):
@@ -113,3 +99,32 @@ class ApiConnector(IEnricherConnector):
                         d[k] = v
 
                 yield d
+
+
+    def enrichGeoPandasData(self, data):
+        url = self._handle_params(self.url_pattern, self.params)
+        for row in data.iterrows():
+            row['enriched'] =self._make_request(url)
+        return data
+
+    def enrich(self, data, **kwargs):
+        """Method overrided of interface. This interface do enrichment using
+        API as a enricher and return all data enriched as Json. This method
+        has a cache that will store as dict the url as key and the response parsed as value
+        for don't spend time with requests that are already done previously.
+
+        Parameters
+        ----------
+        data: Data
+
+        Yields
+        ------
+        data: Dict
+        """
+        if isinstance(data, GeopandasData):
+            return self.enrichGeoPandasData(data.data)
+
+        elif isinstance(data, JsonData):
+            return self.enrichJsonData(data, **kwargs)
+
+ 
