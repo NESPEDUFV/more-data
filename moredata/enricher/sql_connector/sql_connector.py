@@ -1,6 +1,7 @@
 from ..enricher import IEnricherConnector
 import sqlalchemy
 import decimal
+import pandas as pd
 from moredata.models.data import GeopandasData, JsonData
 
 class SqlConnector(IEnricherConnector):
@@ -12,7 +13,10 @@ class SqlConnector(IEnricherConnector):
         name of table that will be used to enrich
 
     dict_keys: List[str]
-        dict_keys is the principal argument to the connector. The connector doesn't know where to get data to make the relationship, so you have to pass the keys or if your data isn't nested, just one key to the connector reach at the the right attribute.
+        dict_keys is the principal argument to the connector. 
+        The connector doesn't know where to get data to make the relationship, 
+        so you have to pass the keys or if your data isn't nested, just one key 
+        to the connector reach at the the right attribute.
 
     result_attr: str
         where tha enriched data it supposed to be
@@ -49,6 +53,7 @@ class SqlConnector(IEnricherConnector):
         column,
         engine=None,
         connection_url=None,
+        df_column = None,
     ):
         if engine is None and connection_url is None:
             raise Exception
@@ -65,6 +70,7 @@ class SqlConnector(IEnricherConnector):
         self.column = column
         self.dict_keys = dict_keys
         self.result_attr = result_attr
+        self.df_column = df_column
 
     def _enrich_object(self, obj):
         def get_value(obj):
@@ -93,8 +99,14 @@ class SqlConnector(IEnricherConnector):
         return get_value(obj)
 
     def enrichGeoPandasData(self, data):
-        inner_join = pd.merge(self._df,data)
-        return inner_join
+        #iterar as linhas do geo pandas
+        #get coluna a ser enriquecida ID
+        #jogar na enrich object como obj
+        #que retorna um dict e jogar numa coluna "enriched"
+        #aplica o json normalize
+        for row in data.iterrows():
+            row['enriched'] =self._enrich_object(row[self.df_column])
+        return pd.json_normalize(data)
 
     def enrichJsonData(self, data, **kwargs):
         for d in data.parse(**kwargs):
@@ -120,7 +132,11 @@ class SqlConnector(IEnricherConnector):
 
 
     def enrich(self, data, **kwargs):
-        """Method overrided of interface. This method do enrichment using RDBMS as a enricher. It walk through the keys to reach at the data that will be used to create the relationship. After, if the object is a list it creates an attribute on parent object, if the object is just a dict it creates an attribute inside.
+        """Method overrided of interface. This method do enrichment using RDBMS 
+        as a enricher. It walk through the keys to reach at the data that will 
+        be used to create the relationship. After, if the object is a list it 
+        creates an attribute on parent object, if the object is just a dict it 
+        creates an attribute inside.
 
         Parameters
         ----------
@@ -128,6 +144,8 @@ class SqlConnector(IEnricherConnector):
         """
 
         if isinstance(data, GeopandasData):
+            if(self.df_column == None):
+                raise Exception('df_column is required in GeopandasData')
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):
