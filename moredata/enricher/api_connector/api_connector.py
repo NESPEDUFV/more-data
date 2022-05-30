@@ -1,6 +1,7 @@
 from ..enricher import IEnricherConnector
 from ...models.data import  GeopandasData, JsonData
 from ...utils import load_json
+import pandas as pd
 
 
 class ApiConnector(IEnricherConnector):
@@ -102,9 +103,12 @@ class ApiConnector(IEnricherConnector):
 
 
     def enrichGeoPandasData(self, data):
-        url = self._handle_params(self.url_pattern, self.params)
-        for row in data.iterrows():
-            row['enriched'] =self._make_request(url)
+        for _, row in data.iterrows():
+            if self.params["fields"]:
+                for field in self.params["fields"]:
+                    self.params[field["key"]] = row[field["name"]]
+                url = self._handle_params(self.url_pattern, self.params)
+                row['enriched'] = self.response_parser(self._make_request(url))
         return data
 
     def enrich(self, data, **kwargs):
