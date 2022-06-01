@@ -99,13 +99,8 @@ class SqlConnector(IEnricherConnector):
         return get_value(obj)
 
     def enrichGeoPandasData(self, data):
-        #iterar as linhas do geo pandas
-        #get coluna a ser enriquecida ID
-        #jogar na enrich object como obj
-        #que retorna um dict e jogar numa coluna "enriched"
-        #aplica o json normalize
-        for row in data.iterrows():
-            row['enriched'] =self._enrich_object(row[self.df_column])
+        for _,row in data.iterrows():
+            row.enriched =self._enrich_object(row[self.df_column])
         return pd.json_normalize(data)
 
     def enrichJsonData(self, data, **kwargs):
