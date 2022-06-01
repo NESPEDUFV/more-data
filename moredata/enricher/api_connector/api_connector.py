@@ -100,17 +100,26 @@ class ApiConnector(IEnricherConnector):
                         d[k] = v
 
                 yield d
-
+                
+    # itertuples almost implemented
+    # def enrichGeoPandasData1(self, data):
+    #     for tuple in data.itertuples():
+    #         if self.params["fields"]:
+    #             for field in self.params["fields"]:
+    #                 self.params[field["key"]] =  getattr(tuple, field["name"])
+    #             url = self._handle_params(self.url_pattern, self.params)
+    #             data.loc[tuple.Index,'enriched'] = self.response_parser(self._make_request(url))
+    #     return data
 
     def enrichGeoPandasData(self, data):
         for _, row in data.iterrows():
             if self.params["fields"]:
+
                 for field in self.params["fields"]:
                     self.params[field["key"]] = row[field["name"]]
                 url = self._handle_params(self.url_pattern, self.params)
                 row['enriched'] = self.response_parser(self._make_request(url))
         return data
-
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This interface do enrichment using
         API as a enricher and return all data enriched as Json. This method
