@@ -1,4 +1,6 @@
 import geopandas
+import dask.dataframe as dd
+import dask_geopandas
 
 
 class Data:
@@ -37,16 +39,34 @@ class Data:
 
 class GeopandasData(Data):
     @classmethod
+    def from_geodataframe(cls, geodataframe, parallel=False, npartitions=4):
+        if parallel:
+            gddf = DaskGeopandas.from_geodataframe()
+            return gddf
+        else:
+            geopandasData = GeopandasData()
+            geopandasData.data = geodataframe
+            return geopandasData
+
+    @classmethod
+    def from_path(cls, path, parallel=False):
+        if parallel:
+            gddf = DaskGeopandas.from_path()
+            return gddf
+        else:
+            geopandasData = GeopandasData()
+            geopandasData.data = geopandas.read_file(path)
+            return geopandasData
+
+
+class DaskGeopandas(Data):
+    @classmethod
     def from_geodataframe(cls, geodataframe):
-        geopandasData = GeopandasData()
-        geopandasData.data = geodataframe
-        return geopandasData
+        pass
 
     @classmethod
     def from_path(cls, path):
-        geopandasData = GeopandasData()
-        geopandasData.data = geopandas.read_file(path)
-        return geopandasData
+        pass
 
 
 class JsonData(Data):
