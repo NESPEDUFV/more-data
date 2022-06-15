@@ -1,4 +1,5 @@
 import geopandas
+import dask_geopandas
 
 
 class Data:
@@ -34,20 +35,28 @@ class Data:
         """add enricher in enrichers attribute"""
         self.enrichers.append(enricher)
 
-
 class GeopandasData(Data):
     @classmethod
-    def from_geodataframe(cls, geodataframe):
+    def from_geodataframe(cls, geodataframe, parallel=False, npartitions=4):
         geopandasData = GeopandasData()
         geopandasData.data = geodataframe
-        return geopandasData
+        return parallel and DaskGeopandas.from_geodataframe(geopandasData,npartitions) or geopandasData
 
     @classmethod
-    def from_path(cls, path):
+    def from_path(cls, path, parallel=False, npartitions=4):
         geopandasData = GeopandasData()
         geopandasData.data = geopandas.read_file(path)
-        return geopandasData
+        return parallel and DaskGeopandas.from_geodataframe(geopandasData,npartitions) or geopandasData
 
+class DaskGeopandas(Data):
+    @classmethod
+    def from_geodataframe(cls, geopandasData, npartitions):
+        geopandasData.data = dask_geopandas.from_geopandas(geopandasData.data, npartitions)
+        return geopandasData
+    # @classmethod
+    # def from_path(cls, geopandasData, npartitions):
+    #     geopandasData.data = dask_geopandas.from_geopandas(geopandasData.data, npartitions)
+    #     return geopandasData
 
 class JsonData(Data):
     def __init__(self, data_file, parser):
