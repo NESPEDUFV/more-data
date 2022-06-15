@@ -1,4 +1,4 @@
-from moredata.models.data import GeopandasData, JsonData
+from moredata.models.data import GeopandasData, JsonData, DaskGeopandas
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
 
@@ -187,6 +187,9 @@ class OSMPlacesConnector(IEnricherConnector):
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
+            return self.enrichGeoPandasData(data.data)
+        
+        elif isinstance(data, DaskGeopandas):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):

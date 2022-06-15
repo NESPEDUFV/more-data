@@ -2,7 +2,7 @@ from ..enricher import IEnricherConnector
 import sqlalchemy
 import decimal
 import pandas as pd
-from moredata.models.data import GeopandasData, JsonData
+from moredata.models.data import GeopandasData, JsonData, DaskGeopandas
 
 class SqlConnector(IEnricherConnector):
     """SQLconnector implements interface IEnricherConnector, so this is a connector that can be used to enrich data.
@@ -139,6 +139,11 @@ class SqlConnector(IEnricherConnector):
         """
 
         if isinstance(data, GeopandasData):
+            if(self.df_column == None):
+                raise Exception('df_column is required in GeopandasData')
+            return self.enrichGeoPandasData(data.data)
+        
+        elif isinstance(data, DaskGeopandas):
             if(self.df_column == None):
                 raise Exception('df_column is required in GeopandasData')
             return self.enrichGeoPandasData(data.data)

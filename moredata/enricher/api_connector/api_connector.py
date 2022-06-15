@@ -1,5 +1,5 @@
 from ..enricher import IEnricherConnector
-from ...models.data import  GeopandasData, JsonData
+from ...models.data import  GeopandasData, JsonData, DaskGeopandas
 from ...utils import load_json
 import pandas as pd
 
@@ -134,7 +134,11 @@ class ApiConnector(IEnricherConnector):
         ------
         data: Dict
         """
+
         if isinstance(data, GeopandasData):
+            return self.enrichGeoPandasData(data.data)
+
+        elif isinstance(data, DaskGeopandas):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):
