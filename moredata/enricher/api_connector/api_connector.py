@@ -2,7 +2,8 @@ from ..enricher import IEnricherConnector
 from ...models.data import  GeopandasData, JsonData, DaskGeopandas
 from ...utils import load_json
 import pandas as pd
-
+import dask
+from distributed import Client, LocalCluster
 
 class ApiConnector(IEnricherConnector):
     """ApiConnector implements interface IEnricherConnector,
@@ -139,7 +140,10 @@ class ApiConnector(IEnricherConnector):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, DaskGeopandas):
-            return self.enrichGeoPandasData(data.data)
+            dask.config.set({"distributed.nanny.environ.MALLOC_TRIM_THRESHOLD_": 0})
+            cluster = LocalCluster(n_workers=1, threads_per_worker=2, memory_limit='2GB')
+            client = Client(cluster)
+            return self.enrichGeoPandasData(data.data).compute()
 
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)
