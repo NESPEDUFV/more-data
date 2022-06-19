@@ -7,6 +7,8 @@ from shapely import wkt
 import geopandas
 import pyproj
 from functools import partial
+import dask
+from distributed import Client, LocalCluster
 
 from shapely.geometry import MultiPolygon, Polygon
 from shapely.ops import transform
@@ -190,7 +192,12 @@ class OSMPlacesConnector(IEnricherConnector):
             return self.enrichGeoPandasData(data.data)
         
         elif isinstance(data, DaskGeopandas):
-            return self.enrichGeoPandasData(data.data)
+            cluster = LocalCluster(n_workers=1, threads_per_worker=2, memory_limit='1GB')
+            client = Client(cluster)
+            client
+            cluster.workers
+            computed = self.enrichGeoPandasData(data.data).compute()
+            return computed
 
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)
