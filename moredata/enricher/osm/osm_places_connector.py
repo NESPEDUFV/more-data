@@ -1,4 +1,5 @@
-from moredata.models.data import GeopandasData, JsonData, DaskGeopandas
+import dask_geopandas
+from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
 
@@ -145,13 +146,8 @@ class OSMPlacesConnector(IEnricherConnector):
                     for polygon in polygons_intersected:
                         point["geometry_intersected"].append(str(polygon))
 
-                point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
-
-    def enrichGeoPandasData(self, data):
-        spatial_joined = geopandas.sjoin(
-            data, self._df, how="left", predicate="intersects"
-        )
-        return spatial_joined
+                point["local"].append(
+                    *p[["name", "key", "value"]].to_dict("records"))
 
     def enrichJsonData(self, data, **kwargs):
         for d in data.parse(**kwargs):
@@ -174,6 +170,18 @@ class OSMPlacesConnector(IEnricherConnector):
 
             yield d
 
+    def enrichGeoPandasData(self, data):
+        spatial_joined = geopandas.sjoin(
+            data, self._df, how="left", predicate="intersects"
+        )
+        return spatial_joined
+
+    def enrichDaskGeoPandasData(self, data):
+        joined = dask_geopandas.sjoin(
+            data, self._df, predicate="intersects"
+        )
+        return joined
+
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
 
@@ -184,19 +192,16 @@ class OSMPlacesConnector(IEnricherConnector):
 
         if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
-            self._df = osm_util.get_places(self.place_name, self.key, self.value)
+            self._df = osm_util.get_places(
+                self.place_name, self.key, self.value)
 
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
             return self.enrichGeoPandasData(data.data)
-        
-        elif isinstance(data, DaskGeopandas):
-            cluster = LocalCluster(n_workers=1, threads_per_worker=2, memory_limit='1GB')
-            client = Client(cluster)
-            client
-            cluster.workers
-            computed = self.enrichGeoPandasData(data.data).compute()
+
+        elif isinstance(data, DaskGeopandasData):
+            computed = self.enrichDaskGeoPandasData(data.data)
             return computed
 
         elif isinstance(data, JsonData):

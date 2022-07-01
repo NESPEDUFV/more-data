@@ -1,9 +1,7 @@
 from ..enricher import IEnricherConnector
-from ...models.data import  GeopandasData, JsonData, DaskGeopandas
+from ...models.data import GeopandasData, JsonData
 from ...utils import load_json
-import pandas as pd
-import dask
-from distributed import Client, LocalCluster
+
 
 class ApiConnector(IEnricherConnector):
     """ApiConnector implements interface IEnricherConnector,
@@ -58,7 +56,8 @@ class ApiConnector(IEnricherConnector):
         routes = regex.findall(pattern)
 
         for route in routes:
-            pattern = pattern.replace(route, str(params[route[1 : len(route) - 1]]))
+            pattern = pattern.replace(route, str(
+                params[route[1: len(route) - 1]]))
 
         return pattern
 
@@ -77,7 +76,8 @@ class ApiConnector(IEnricherConnector):
         import requests
         from urllib3.exceptions import InsecureRequestWarning
 
-        requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
+        requests.packages.urllib3.disable_warnings(
+            category=InsecureRequestWarning)
 
         return requests.get(url, verify=False).json()
 
@@ -93,7 +93,8 @@ class ApiConnector(IEnricherConnector):
                 if url in responses_cache.keys():
                     response_value = responses_cache[url]
                 else:
-                    response_value = self.response_parser(self._make_request(url))
+                    response_value = self.response_parser(
+                        self._make_request(url))
                     responses_cache[url] = response_value
 
                 if response_value is not None:
@@ -101,7 +102,7 @@ class ApiConnector(IEnricherConnector):
                         d[k] = v
 
                 yield d
-                
+
     # itertuples almost implemented
     # def enrichGeoPandasData1(self, data):
     #     for tuple in data.itertuples():
@@ -121,6 +122,7 @@ class ApiConnector(IEnricherConnector):
                 url = self._handle_params(self.url_pattern, self.params)
                 row['enriched'] = self.response_parser(self._make_request(url))
         return data
+
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This interface do enrichment using
         API as a enricher and return all data enriched as Json. This method
@@ -139,13 +141,5 @@ class ApiConnector(IEnricherConnector):
         if isinstance(data, GeopandasData):
             return self.enrichGeoPandasData(data.data)
 
-        elif isinstance(data, DaskGeopandas):
-            dask.config.set({"distributed.nanny.environ.MALLOC_TRIM_THRESHOLD_": 0})
-            cluster = LocalCluster(n_workers=1, threads_per_worker=2, memory_limit='2GB')
-            client = Client(cluster)
-            return self.enrichGeoPandasData(data.data).compute()
-
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)
-
- 
