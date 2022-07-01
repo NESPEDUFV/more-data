@@ -11,7 +11,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
-from moredata.models.data import GeopandasData, JsonData, DaskGeopandas
+from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
 
 
 class FunctionalRegionConnector(IEnricherConnector):
@@ -135,7 +135,7 @@ class FunctionalRegionConnector(IEnricherConnector):
         if isinstance(data, GeopandasData):
             return self.enrichGeoPandasData(data.data)
 
-        elif isinstance(data, DaskGeopandas):
+        elif isinstance(data, DaskGeopandasData):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):
