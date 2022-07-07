@@ -12,6 +12,7 @@ from shapely.geometry.polygon import Polygon
 from shapely.geometry import shape, mapping
 from rtree import index as rtreeindex
 from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
+import dask_geopandas
 
 
 class FunctionalRegionConnector(IEnricherConnector):
@@ -128,6 +129,35 @@ class FunctionalRegionConnector(IEnricherConnector):
         data[self.key] = different_indices
         return GeopandasData.from_geodataframe(data)
 
+    def enrichDaskGeoPandasData(self, data):
+
+        complete_df = pd.DataFrame()
+
+        for f in self.files:
+            if os.path.getsize(f) > 3:
+                _df = pd.read_csv(f)
+                _df["geometry"] = _df["geometry"].apply(wkt.loads)
+                complete_df = pd.concat([_df, complete_df], ignore_index=True)
+
+        complete_df = geopandas.GeoDataFrame(complete_df)
+        complete_df = complete_df.set_crs(epsg=4326).to_crs(epsg=3857)
+        data.reset_index()
+
+        # Realizar o spatial join
+
+        spatial_joined = dask_geopandas.sjoin(
+            data, complete_df, predicate="intersects"
+        )
+
+        print(spatial_joined.info())
+        # Contar quantos indices distintos existem
+        different_indices = spatial_joined.index.value_counts()
+        print(different_indices)
+        # Criar uma nova coluna com o nome key (passado pelo notebook)
+        data.set_index('index', inplace=True)
+        data[self.key] = different_indices
+        return DaskGeopandasData.from_geodataframe(data)
+
     def enrich(self, data, **kwargs):
         """Method overrided of interface. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. For optimization purposes we recommend to buffer the point, using ``geodesic_point_buffer`` function, creating, necessarily, a label named ``area_point``, and save the file with points buffered to use as base of enrichment. After buffer the points, you can use the Functional Region Connector to create your enrichment passing proper attributes."""
         self._get_polygons()
@@ -136,7 +166,7 @@ class FunctionalRegionConnector(IEnricherConnector):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, DaskGeopandasData):
-            return self.enrichGeoPandasData(data.data)
+            return self.enrichDaskGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)
