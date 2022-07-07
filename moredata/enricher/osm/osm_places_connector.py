@@ -201,8 +201,7 @@ class OSMPlacesConnector(IEnricherConnector):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, DaskGeopandasData):
-            computed = self.enrichDaskGeoPandasData(data.data)
-            return computed
+            return self.enrichDaskGeoPandasData(data.data).compute()
 
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)

@@ -114,13 +114,24 @@ class ApiConnector(IEnricherConnector):
     #     return data
 
     def enrichGeoPandasData(self, data):
-        for _, row in data.iterrows():
+        for i, row in data.iterrows():
             if self.params["fields"]:
 
                 for field in self.params["fields"]:
+                    print(f'FIELD KEY {field["key"]}')
+                    print(f'FILED NAME {field["name"]}')
+                    print(f'ROW FILED NAME {row[field["name"]]}')
                     self.params[field["key"]] = row[field["name"]]
+                    print(row[field["name"]])
                 url = self._handle_params(self.url_pattern, self.params)
-                row['enriched'] = self.response_parser(self._make_request(url))
+                print(
+                    f'SELF REPONSE PARSER: {self.response_parser(self._make_request(url))}')
+                # row['enriched'] = self.response_parser(self._make_request(url))
+
+                data.loc[i, 'enriched'] = self.response_parser(
+                    self._make_request(url))
+                # print(f'ROW: {row}')
+        print(f'ENRICHED_DATA:{data}')
         return data
 
     def enrich(self, data, **kwargs):
@@ -139,6 +150,7 @@ class ApiConnector(IEnricherConnector):
         """
 
         if isinstance(data, GeopandasData):
+            print('GEOPANDAS DATA')
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):

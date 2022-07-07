@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from ..models.data import Data
+from moredata.models.data import DaskGeopandasData
 
 
 class Enricher:
