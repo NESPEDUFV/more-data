@@ -4,7 +4,7 @@ import json
 import pyproj
 from functools import partial
 from shapely.ops import transform
-from shapely.geometry import Point
+from shapely.geometry import Point, Polygon
 
 
 def geodesic_point_buffer(lat, lon, radius):
@@ -19,15 +19,20 @@ def geodesic_point_buffer(lat, lon, radius):
     radius: float
         distance in meters
     """
-    proj_wgs84 = pyproj.Proj("+proj=longlat +datum=WGS84")
+    wgs84 = pyproj.CRS("EPSG:4326")
+    merc = pyproj.CRS("EPSG:3857")
+    x, y = pyproj.transform(wgs84, merc, lat, lon)
+    poly = Polygon(Point(x, y).buffer(radius).exterior.coords[:])
 
-    # Azimuthal equidistant projection
-    aeqd_proj = "+proj=aeqd +lat_0={lat} +lon_0={lon} +x_0=0 +y_0=0"
-    project = partial(
-        pyproj.transform, pyproj.Proj(aeqd_proj.format(lat=lat, lon=lon)), proj_wgs84
-    )
-    buf = Point(0, 0).buffer(radius)  # distance in meters
-    return transform(project, buf).exterior.coords[:]
+    project = pyproj.Transformer.from_proj(
+        pyproj.Proj(init='epsg:3857'),
+        pyproj.Proj(init='epsg:4326'))
+
+    poly = transform(project.transform, poly)
+
+    # poly = pyproj.transform(merc,wgs84, poly)
+
+    return poly
 
 
 def read_json_from_file(file):
@@ -76,7 +81,8 @@ class Converter:
         for i, file in enumerate(files):
             try:
                 df = pd.read_json(file, orient="records")
-                df.to_csv(output_path + str(i) + ".csv", encoding="utf-8", index=False)
+                df.to_csv(output_path + str(i) + ".csv",
+                          encoding="utf-8", index=False)
             except AttributeError as e:
                 print(file)
                 raise (e)
