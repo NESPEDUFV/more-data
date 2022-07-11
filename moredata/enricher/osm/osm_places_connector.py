@@ -2,13 +2,12 @@ import dask_geopandas
 from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
-
+import numpy as np
 import pandas as pd
+import geopandas as gpd
 from shapely import wkt
 import geopandas
-import pyproj
 from functools import partial
-import dask
 from distributed import Client, LocalCluster
 
 from shapely.geometry import MultiPolygon, Polygon
@@ -107,11 +106,10 @@ class OSMPlacesConnector(IEnricherConnector):
         if self.buffered:
             shp = wkt.loads(point["area_point"])
         elif self.radius is not None:
-            shp = Polygon(
-                geodesic_point_buffer(
-                    point["latitude"], point["longitude"], self.radius
-                )
+            shp = geodesic_point_buffer(
+                point["latitude"], point["longitude"], self.radius
             )
+
         else:
             shp = Point(point["longitude"], point["latitude"])
 
@@ -171,12 +169,22 @@ class OSMPlacesConnector(IEnricherConnector):
             yield d
 
     def enrichGeoPandasData(self, data):
+        data = data.set_crs(epsg=4326).to_crs(epsg=3857)
+        data['geometry'] = data.buffer(self.radius)
+        data = data.to_crs(epsg=4326)
+        self._df = self._df.set_crs(epsg=4326)
+
         spatial_joined = geopandas.sjoin(
             data, self._df, how="left", predicate="intersects"
         )
         return spatial_joined
 
     def enrichDaskGeoPandasData(self, data):
+        data = data.set_crs("EPSG:4326").to_crs("EPSG:3857")
+        data['geometry'] = data.buffer(self.radius)
+        data = data.to_crs("EPSG:4326")
+        self._df = self._df.set_crs("EPSG:4326")
+
         joined = dask_geopandas.sjoin(
             data, self._df, predicate="intersects"
         )
@@ -201,7 +209,7 @@ class OSMPlacesConnector(IEnricherConnector):
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, DaskGeopandasData):
-            return self.enrichDaskGeoPandasData(data.data).compute()
+            return self.enrichDaskGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):
             return self.enrichJsonData(data, **kwargs)
