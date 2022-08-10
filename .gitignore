@@ -11,3 +11,5 @@ moredata.egg-info/
 
 *.csv.gz
 .examples/osm/.ipynb_checkpoints
+
+**/dask-worker-space/**

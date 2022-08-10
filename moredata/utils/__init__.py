@@ -24,13 +24,8 @@ def geodesic_point_buffer(lat, lon, radius):
     x, y = pyproj.transform(wgs84, merc, lat, lon)
     poly = Polygon(Point(x, y).buffer(radius).exterior.coords[:])
 
-    project = pyproj.Transformer.from_proj(
-        pyproj.Proj(init='epsg:3857'),
-        pyproj.Proj(init='epsg:4326'))
-
-    poly = transform(project.transform, poly)
-
-    # poly = pyproj.transform(merc,wgs84, poly)
+    project = pyproj.Transformer.from_crs(merc, wgs84).transform
+    poly = transform(project, poly)
 
     return poly
 
@@ -81,8 +76,7 @@ class Converter:
         for i, file in enumerate(files):
             try:
                 df = pd.read_json(file, orient="records")
-                df.to_csv(output_path + str(i) + ".csv",
-                          encoding="utf-8", index=False)
+                df.to_csv(output_path + str(i) + ".csv", encoding="utf-8", index=False)
             except AttributeError as e:
                 print(file)
                 raise (e)

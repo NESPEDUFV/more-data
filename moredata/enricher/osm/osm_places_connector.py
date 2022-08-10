@@ -2,19 +2,11 @@ import dask_geopandas
 from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
-import numpy as np
 import pandas as pd
-import geopandas as gpd
 from shapely import wkt
 import geopandas
-from functools import partial
-from distributed import Client, LocalCluster
-
-from shapely.geometry import MultiPolygon, Polygon
-from shapely.ops import transform
 from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
-from shapely.geometry import shape, mapping
+from shapely.geometry import shape
 from rtree import index as rtreeindex
 
 from ...utils import geodesic_point_buffer
@@ -83,13 +75,16 @@ class OSMPlacesConnector(IEnricherConnector):
         self.dict_keys = dict_keys
         self.geometry = geometry_intersected
         self.buffered = buffered
+
         if self.files is not None:
-            readTemp = []
+            read_temp = []
             for file in self.files:
-                readTemp.append(pd.read_csv(file))
-            self._df = pd.concat(readTemp)
+                read_temp.append(pd.read_csv(file))
+            self._df = pd.concat(read_temp)
             self._df["geometry"] = self._df["geometry"].apply(wkt.loads)
             self._df = geopandas.GeoDataFrame(self._df)
+        if self.geometry:
+            self._df["geometry_intersected"] = self._df.geometry
 
     def _get_polygons(self):
         self.array_polygons = []
@@ -144,10 +139,9 @@ class OSMPlacesConnector(IEnricherConnector):
                     for polygon in polygons_intersected:
                         point["geometry_intersected"].append(str(polygon))
 
-                point["local"].append(
-                    *p[["name", "key", "value"]].to_dict("records"))
+                point["local"].append(*p[["name", "key", "value"]].to_dict("records"))
 
-    def enrichJsonData(self, data, **kwargs):
+    def enrich_json_data(self, data, **kwargs):
         for d in data.parse(**kwargs):
 
             if not self.dict_keys:
@@ -168,9 +162,9 @@ class OSMPlacesConnector(IEnricherConnector):
 
             yield d
 
-    def enrichGeoPandasData(self, data):
+    def enrich_geopandas_data(self, data):
         data = data.set_crs(epsg=4326).to_crs(epsg=3857)
-        data['geometry'] = data.buffer(self.radius)
+        data["geometry"] = data.buffer(self.radius)
         data = data.to_crs(epsg=4326)
         self._df = self._df.set_crs(epsg=4326)
 
@@ -179,15 +173,13 @@ class OSMPlacesConnector(IEnricherConnector):
         )
         return spatial_joined
 
-    def enrichDaskGeoPandasData(self, data):
+    def enrich_dask_geopandas_data(self, data):
         data = data.set_crs("EPSG:4326").to_crs("EPSG:3857")
-        data['geometry'] = data.buffer(self.radius)
+        data["geometry"] = data.buffer(self.radius)
         data = data.to_crs("EPSG:4326")
         self._df = self._df.set_crs("EPSG:4326")
 
-        joined = dask_geopandas.sjoin(
-            data, self._df, predicate="intersects"
-        )
+        joined = dask_geopandas.sjoin(data, self._df, predicate="intersects")
         return joined
 
     def enrich(self, data, **kwargs):
@@ -200,16 +192,15 @@ class OSMPlacesConnector(IEnricherConnector):
 
         if self.files is None and self.key is not None and self.value is not None:
             osm_util = OSM_util()
-            self._df = osm_util.get_places(
-                self.place_name, self.key, self.value)
+            self._df = osm_util.get_places(self.place_name, self.key, self.value)
 
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
-            return self.enrichGeoPandasData(data.data)
+            return self.enrich_geopandas_data(data.data)
 
         elif isinstance(data, DaskGeopandasData):
-            return self.enrichDaskGeoPandasData(data.data)
+            return self.enrich_dask_geopandas_data(data.data)
 
         elif isinstance(data, JsonData):
-            return self.enrichJsonData(data, **kwargs)
+            return self.enrich_json_data(data, **kwargs)

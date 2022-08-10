@@ -56,8 +56,7 @@ class ApiConnector(IEnricherConnector):
         routes = regex.findall(pattern)
 
         for route in routes:
-            pattern = pattern.replace(route, str(
-                params[route[1: len(route) - 1]]))
+            pattern = pattern.replace(route, str(params[route[1 : len(route) - 1]]))
 
         return pattern
 
@@ -76,8 +75,7 @@ class ApiConnector(IEnricherConnector):
         import requests
         from urllib3.exceptions import InsecureRequestWarning
 
-        requests.packages.urllib3.disable_warnings(
-            category=InsecureRequestWarning)
+        requests.packages.urllib3.disable_warnings(category=InsecureRequestWarning)
 
         return requests.get(url, verify=False).json()
 
@@ -93,8 +91,7 @@ class ApiConnector(IEnricherConnector):
                 if url in responses_cache.keys():
                     response_value = responses_cache[url]
                 else:
-                    response_value = self.response_parser(
-                        self._make_request(url))
+                    response_value = self.response_parser(self._make_request(url))
                     responses_cache[url] = response_value
 
                 if response_value is not None:
@@ -103,36 +100,27 @@ class ApiConnector(IEnricherConnector):
 
                 yield d
 
-    # itertuples almost implemented
-    # def enrichGeoPandasData1(self, data):
-    #     for tuple in data.itertuples():
-    #         if self.params["fields"]:
-    #             for field in self.params["fields"]:
-    #                 self.params[field["key"]] =  getattr(tuple, field["name"])
-    #             url = self._handle_params(self.url_pattern, self.params)
-    #             data.loc[tuple.Index,'enriched'] = self.response_parser(self._make_request(url))
-    #     return data
-
     def enrichGeoPandasData(self, data):
-        for i, row in data.iterrows():
+        responses_cache = {}
+
+        d = data.copy()
+        for i, row in d.iterrows():
             if self.params["fields"]:
 
                 for field in self.params["fields"]:
-                    print(f'FIELD KEY {field["key"]}')
-                    print(f'FILED NAME {field["name"]}')
-                    print(f'ROW FILED NAME {row[field["name"]]}')
                     self.params[field["key"]] = row[field["name"]]
-                    print(row[field["name"]])
                 url = self._handle_params(self.url_pattern, self.params)
-                print(
-                    f'SELF REPONSE PARSER: {self.response_parser(self._make_request(url))}')
-                # row['enriched'] = self.response_parser(self._make_request(url))
 
-                data.loc[i, 'enriched'] = self.response_parser(
-                    self._make_request(url))
-                # print(f'ROW: {row}')
-        print(f'ENRICHED_DATA:{data}')
-        return data
+                if url in responses_cache.keys():
+                    response_value = responses_cache[url]
+                else:
+                    response_value = self.response_parser(self._make_request(url))
+                    responses_cache[url] = response_value
+
+                if response_value is not None:
+                    for k, v in response_value.items():
+                        d.loc[i, k] = v
+        return d
 
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This interface do enrichment using
@@ -150,7 +138,6 @@ class ApiConnector(IEnricherConnector):
         """
 
         if isinstance(data, GeopandasData):
-            print('GEOPANDAS DATA')
             return self.enrichGeoPandasData(data.data)
 
         elif isinstance(data, JsonData):

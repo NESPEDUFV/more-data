@@ -36,36 +36,18 @@ class Data:
         self.enrichers.append(enricher)
 
 
-# class GeopandasData(Data):
-#     @classmethod
-#     def from_geodataframe(cls, geodataframe, parallel=False, npartitions=4):
-#         geopandasData = GeopandasData()
-#         geopandasData.data = geodataframe
-#         if(parallel):
-#             return DaskGeopandas.from_geodataframe(geopandasData, npartitions)
-#         return geopandasData
-
-#     @classmethod
-#     def from_path(cls, path, parallel=False, npartitions=4):
-#         geopandasData = GeopandasData()
-#         geopandasData.data = geopandas.read_file(path)
-#         if(parallel):
-#             return DaskGeopandas.read_file(path, npartitions)
-#         return geopandasData
-
-
 class GeopandasData(Data):
     @classmethod
     def from_geodataframe(cls, geodataframe):
-        geopandasData = GeopandasData()
-        geopandasData.data = geodataframe
-        return geopandasData
+        geopandas_data = GeopandasData()
+        geopandas_data.data = geodataframe
+        return geopandas_data
 
     @classmethod
     def from_path(cls, path):
-        geopandasData = GeopandasData()
-        geopandasData.data = geopandas.read_file(path)
-        return geopandasData
+        geopandas_data = GeopandasData()
+        geopandas_data.data = geopandas.read_file(path)
+        return geopandas_data
 
 
 class DaskGeopandasData(Data):

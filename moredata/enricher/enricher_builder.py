@@ -58,7 +58,9 @@ class EnricherBuilder(Builder):
         if isinstance(self._data, JsonData) and not isinstance(
             connector, ElasticsearchConnector
         ):
-            raise Exception
+            raise Exception(
+                "JsonData can only be enriched with ElasticsearchConnector using EnricherBuilder"
+            )
 
         self._data.add(connector)
         return self
@@ -75,6 +77,6 @@ class EnricherBuilder(Builder):
 
         Returns
         -------
-        This method returns the implementations of each :func:`~enricher.Enricher.enrich` that is a Json structure.
+        This method returns the implementations of each :func:`~enricher.Enricher.enrich`.
         """
         return pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs)
