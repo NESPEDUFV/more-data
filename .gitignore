@@ -2,6 +2,7 @@
 __pycache__
 data/output/
 docs/build
+**/build
 *.bat
 
 dist/
