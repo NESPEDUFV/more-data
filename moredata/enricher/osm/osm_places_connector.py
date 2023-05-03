@@ -192,7 +192,7 @@ class OSMPlacesConnector(IEnricherConnector):
         sj = dask_geopandas.sjoin(data, self._df, predicate="intersects")
 
         sj["geometry"] = sj["geometry_not_buffered"]
-        sj.drop(columns=["geometry_not_buffered"], inplace=True)
+        sj = sj.drop(columns=["geometry_not_buffered"])
 
         return DaskGeopandasData.from_dask_geodataframe(sj)
 
@@ -211,10 +211,10 @@ class OSMPlacesConnector(IEnricherConnector):
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
-            return self.enrich_geopandas_data(data, **kwargs)
+            return self.enrich_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, DaskGeopandasData):
-            return self.enrich_dask_geopandas_data(data, **kwargs)
+            return self.enrich_dask_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, JsonData):
             return self.enrich_json_data(data, **kwargs)
