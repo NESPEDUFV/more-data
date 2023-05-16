@@ -27,7 +27,7 @@ The first step is to clone/download the repository and open the project folder i
 
 Then go to examples directory and open a new jupyter-notebook in examples directory:
 
-$ cd examples/
+    $ cd examples/
 
 If you want to run elasticsearch or SQL example you should have installed docker or have elasticsearch/MySQL in your machine, then:
 
