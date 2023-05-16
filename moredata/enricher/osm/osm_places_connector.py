@@ -35,10 +35,6 @@ class OSMPlacesConnector(IEnricherConnector):
     radius: numeric, optional
         radius to around of point to intersect the polygon.
 
-    buffered: boolean
-        True if the region is already buffered;
-        False if you want buffer the region;
-
     files: List[str]
 
     Attributes
@@ -63,9 +59,8 @@ class OSMPlacesConnector(IEnricherConnector):
         dict_keys=[],
         place_name="Brasil",
         files=None,
-        radius=None,
+        radius=0,
         geometry_intersected=False,
-        buffered=False,
     ):
         self.key = key
         self.value = value
@@ -74,7 +69,6 @@ class OSMPlacesConnector(IEnricherConnector):
         self.radius = radius
         self.dict_keys = dict_keys
         self.geometry = geometry_intersected
-        self.buffered = buffered
 
         if self.files is not None:
             read_temp = []
@@ -88,7 +82,7 @@ class OSMPlacesConnector(IEnricherConnector):
 
     def _get_polygons(self):
         self.array_polygons = []
-        for index, row in self._df.iterrows():
+        for _, row in self._df.iterrows():
             pol = row["geometry"]
             self.array_polygons.append(pol)
 
@@ -98,13 +92,12 @@ class OSMPlacesConnector(IEnricherConnector):
 
     def _fence_check_local(self, point):
         polygon_metadata = []
-        if self.buffered:
+        if "area_point" in point.keys() and point["area_point"] is not None:
             shp = wkt.loads(point["area_point"])
         elif self.radius is not None:
             shp = geodesic_point_buffer(
                 point["latitude"], point["longitude"], self.radius
             )
-
         else:
             shp = Point(point["longitude"], point["latitude"])
 
@@ -162,25 +155,46 @@ class OSMPlacesConnector(IEnricherConnector):
 
             yield d
 
-    def enrich_geopandas_data(self, data):
-        data = data.set_crs(epsg=4326).to_crs(epsg=3857)
-        data["geometry"] = data.buffer(self.radius)
-        data = data.to_crs(epsg=4326)
-        self._df = self._df.set_crs(epsg=4326)
+    def _buffer_with_crs(self, data, new_crs=None):
+        if new_crs is None:
+            new_crs = 3857
 
-        spatial_joined = geopandas.sjoin(
-            data, self._df, how="left", predicate="intersects"
-        )
-        return spatial_joined
+        if data.crs is None:
+            data = data.set_crs(4326)
 
-    def enrich_dask_geopandas_data(self, data):
-        data = data.set_crs("EPSG:4326").to_crs("EPSG:3857")
-        data["geometry"] = data.buffer(self.radius)
-        data = data.to_crs("EPSG:4326")
+        if data.crs != new_crs:
+            data = data.to_crs(new_crs)
+
+        data["geometry_not_buffered"] = data["geometry"]
+        data["geometry"] = data.geometry.buffer(self.radius)
+
+        data = data.to_crs(4326)
+
+        return data
+
+    def enrich_geopandas_data(self, data, **kwargs):
+        data = self._buffer_with_crs(data, kwargs.get("new_crs", None))
+
         self._df = self._df.set_crs("EPSG:4326")
 
-        joined = dask_geopandas.sjoin(data, self._df, predicate="intersects")
-        return joined
+        sj = geopandas.sjoin(data, self._df, how="left", predicate="intersects")
+
+        sj["geometry"] = sj["geometry_not_buffered"]
+        sj.drop(columns=["geometry_not_buffered"], inplace=True)
+
+        return GeopandasData.from_geodataframe(sj)
+
+    def enrich_dask_geopandas_data(self, data, **kwargs):
+        data = self._buffer_with_crs(data, kwargs.get("new_crs", None))
+
+        self._df = self._df.set_crs("EPSG:4326")
+
+        sj = dask_geopandas.sjoin(data, self._df, predicate="intersects")
+
+        sj["geometry"] = sj["geometry_not_buffered"]
+        sj = sj.drop(columns=["geometry_not_buffered"])
+
+        return DaskGeopandasData.from_dask_geodataframe(sj)
 
     def enrich(self, data, **kwargs):
         """Method overrided of interface. This method do enrichment using OSM data as a enricher. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. If the radius attribute is passed the algorithm returns all polygons that intersect the point buffered with this radius else the algorithm returns all polygons that contains the point.
@@ -197,10 +211,10 @@ class OSMPlacesConnector(IEnricherConnector):
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
-            return self.enrich_geopandas_data(data.data)
+            return self.enrich_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, DaskGeopandasData):
-            return self.enrich_dask_geopandas_data(data.data)
+            return self.enrich_dask_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, JsonData):
             return self.enrich_json_data(data, **kwargs)

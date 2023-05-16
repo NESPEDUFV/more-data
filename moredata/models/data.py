@@ -37,31 +37,37 @@ class Data:
 
 
 class GeopandasData(Data):
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+
     @classmethod
     def from_geodataframe(cls, geodataframe):
-        geopandas_data = GeopandasData()
-        geopandas_data.data = geodataframe
-        return geopandas_data
+        return GeopandasData(geodataframe)
 
     @classmethod
     def from_path(cls, path):
-        geopandas_data = GeopandasData()
-        geopandas_data.data = geopandas.read_file(path)
-        return geopandas_data
+        return GeopandasData(geopandas.read_file(path))
 
 
 class DaskGeopandasData(Data):
+    def __init__(self, data):
+        super().__init__()
+        self.data = data
+
     @classmethod
     def from_geodataframe(cls, geodataframe, npartitions=4):
-        dgd = DaskGeopandasData()
-        dgd.data = dask_geopandas.from_geopandas(geodataframe, npartitions)
-        return dgd
+        return DaskGeopandasData(
+            dask_geopandas.from_geopandas(geodataframe, npartitions)
+        )
+
+    @classmethod
+    def from_dask_geodataframe(cls, dask_geodataframe):
+        return DaskGeopandasData(dask_geodataframe)
 
     @classmethod
     def from_path(cls, path, npartitions=4):
-        dgd = DaskGeopandasData()
-        dgd.data = dask_geopandas.read_file(path, npartitions)
-        return dgd
+        return DaskGeopandasData(dask_geopandas.read_file(path, npartitions))
 
 
 class JsonData(Data):

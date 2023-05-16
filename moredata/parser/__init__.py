@@ -2,12 +2,12 @@ import json
 import csv
 from h3 import h3
 from ..utils import read_json_from_file, load_json
-from shapely.geometry import asPoint
+from shapely.geometry import Point
 from numpy import array
 
 
 def _add_geo_location(doc):
-    doc["geo_location"] = asPoint(array([doc["longitude"], doc["latitude"]])).wkt
+    doc["geo_location"] = Point(array([doc["longitude"], doc["latitude"]])).wkt
     return doc
 
 

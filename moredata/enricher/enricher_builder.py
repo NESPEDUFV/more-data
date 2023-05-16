@@ -79,4 +79,4 @@ class EnricherBuilder(Builder):
         -------
         This method returns the implementations of each :func:`~enricher.Enricher.enrich`.
         """
-        return pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs)
+        return pipe(self._data, [e.enrich for e in self._data.enrichers], **kwargs).data

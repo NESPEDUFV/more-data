@@ -13,22 +13,37 @@ for item in os.listdir("moredata/datasets"):
 if os.environ.get("READTHEDOCS", False) == "True":
     INSTALL_REQUIRES = []
     DOCS_REQUIRES = []
+    dependencies = []
+    elasticsearch = []
+    sql = []
+    json = []
+    osm = []
 else:
-    INSTALL_REQUIRES = [
-        "dask-geopandas>=0.2.0",
-        "requests>=2.22.0",
-        "SQLAlchemy>=1.4.37",
-        "PyMySQL>=0.10.0",
-        "osm2geojson>=0.1.27",
-        "h3==3.4.3",
-        "Rtree>=0.9.7",
-        "pyproj>=2.4.2.post1",
-        "geopandas>=0.7.0",
-        "geopy>=2.0.0",
+    dependencies = [
+        "requests==2.28.2",
+        "Rtree==1.0.1",
+        "pyproj==3.5.0",
+        "geopy==2.0.0",
         "pandas>=1.0.1",
         "numpy>=1.18.1",
-        "elasticsearch==7.17.0",
-        "shapely>=1.7.0",
+        "shapely>=1.8",
+    ]
+
+    elasticsearch = [
+        "elasticsearch>=7.17.0",
+    ]
+
+    sql = [
+        "SQLAlchemy==1.4.37",
+        "PyMySQL==0.10.0",
+    ]
+
+    json = ["h3==3.4.3"]
+
+    osm = [
+        "osm2geojson==0.1.27",
+        "dask_geopandas==0.2.0",
+        "geopandas>=0.10.2",
     ]
 
     DOCS_REQUIRES = [
@@ -40,15 +55,19 @@ else:
 
 setup(
     name="moredata",
-    url="https://github.com/gegen07/more-data",
-    download_url="https://github.com/gegen07/more-data/archive/v0.1.5.tar.gz",
-    version="0.1.5",
+    url="https://https://github.com/NESPEDUFV/more-data",
+    download_url="https://github.com/NESPEDUFV/more-data/archive/v0.2.0.tar.gz",
+    version="0.2.0",
     packages=find_packages(where="."),
-    package_data={"moredata": data_files},
-    python_requires=">=3.6",
-    install_requires=INSTALL_REQUIRES,
+    python_requires=">=3.8",
+    install_requires=dependencies,
     extras_require={
-        "develop": INSTALL_REQUIRES + DOCS_REQUIRES,
+        "complete": dependencies + elasticsearch + sql + json + osm,
+        "osm": dependencies + osm,
+        "elasticsearch": dependencies + elasticsearch,
+        "sql": dependencies + sql,
+        "json": dependencies + json,
+        "develop": dependencies + DOCS_REQUIRES + elasticsearch + sql + json + osm,
         "docs": DOCS_REQUIRES,
     },
 )

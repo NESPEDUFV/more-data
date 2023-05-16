@@ -38,10 +38,11 @@ class FunctionalRegionConnector(IEnricherConnector):
     key: str
     """
 
-    def __init__(self, files, key, dict_keys=[]):
+    def __init__(self, files, key, radius=0, dict_keys=[]):
         self.key = key
         self.dict_keys = dict_keys
         self.files = files
+        self.radius = radius
 
         self._df = []
         if self.files is not None:
@@ -86,7 +87,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 "area_point polygon was not found. Please use function geodesic_point_buffer present in utils package and try again."
             )
 
-    def enrichJsonData(self, data, **kwargs):
+    def enrich_json_data(self, data, **kwargs):
         for d in data.parse(**kwargs):
 
             if not self.dict_keys:
@@ -107,9 +108,30 @@ class FunctionalRegionConnector(IEnricherConnector):
 
             yield d
 
-    def enrich_geopandas_data(self, data):
-        self._df = self._df.set_crs(epsg=4326).to_crs(epsg=3857)
+    def _buffer_with_crs(self, data, new_crs=None):
+        if new_crs is None:
+            new_crs = "EPSG:3857"
+
+        if data.crs is None:
+            data = data.set_crs("EPSG:4326")
+
+        data["geometry_not_buffered"] = data["geometry"].copy()
+
+        if data.crs != new_crs:
+            data = data.to_crs(new_crs)
+
+        data["geometry"] = data["geometry"].buffer(self.radius)
+
+        data = data.to_crs("EPSG:4326")
+
+        return data
+
+    def enrich_geopandas_data(self, data: geopandas.GeoDataFrame, **kwargs):
+        self._df = self._df.set_crs("EPSG:4326")
         data.reset_index(inplace=True)
+
+        if self.radius != 0:
+            data = self._buffer_with_crs(data, kwargs.get("new_crs", None))
 
         spatial_joined = geopandas.sjoin(
             data, self._df, how="inner", predicate="intersects"
@@ -121,6 +143,9 @@ class FunctionalRegionConnector(IEnricherConnector):
         data[self.key] = different_indices
         data[self.key].fillna(0, inplace=True)
 
+        data["geometry"] = data["geometry_not_buffered"]
+        data.drop("geometry_not_buffered", axis=1, inplace=True)
+
         return GeopandasData.from_geodataframe(data)
 
     def enrich(self, data, **kwargs):
@@ -128,10 +153,10 @@ class FunctionalRegionConnector(IEnricherConnector):
         self._get_polygons()
 
         if isinstance(data, GeopandasData):
-            return self.enrich_geopandas_data(data.data)
+            return self.enrich_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, DaskGeopandasData):
-            raise Exception("DaskGeopandasData not supported yet")
+            raise Exception("DaskGeopandasData not implemented")
 
         elif isinstance(data, JsonData):
-            return self.enrichJsonData(data, **kwargs)
+            return self.enrich_json_data(data, **kwargs)
