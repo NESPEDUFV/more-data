@@ -1,6 +1,15 @@
 from setuptools import setup, find_packages
 import os
 
+# get all data dirs in the datasets module
+data_files = []
+
+for item in os.listdir("moredata/datasets"):
+    print("")
+    if not item.startswith("__"):
+        if os.path.isdir(os.path.join("moredata/datasets/", item)):
+            data_files.append(os.path.join("datasets", item, "*"))
+
 if os.environ.get("READTHEDOCS", False) == "True":
     INSTALL_REQUIRES = []
     DOCS_REQUIRES = []
