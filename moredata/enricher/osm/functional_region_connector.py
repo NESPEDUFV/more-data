@@ -87,7 +87,7 @@ class FunctionalRegionConnector(IEnricherConnector):
                 "area_point polygon was not found. Please use function geodesic_point_buffer present in utils package and try again."
             )
 
-    def enrichJsonData(self, data, **kwargs):
+    def enrich_json_data(self, data, **kwargs):
         for d in data.parse(**kwargs):
 
             if not self.dict_keys:
@@ -148,19 +148,6 @@ class FunctionalRegionConnector(IEnricherConnector):
 
         return GeopandasData.from_geodataframe(data)
 
-    def enrich_dask_geopandas_data(self, data, **kwargs):
-        self._df = self._df.set_crs("EPSG:4326")
-        data.reset_index(inplace=True)
-
-        if not "geometry_not_buffered" in data.columns:
-            data = self._buffer_with_crs(data, kwargs.get("new_crs", None))
-
-        self._df = self._df.set_crs("EPSG:4326")
-
-        joined = dask_geopandas.sjoin(data, self._df, predicate="intersects")
-
-        return DaskGeopandasData.from_dask_geodataframe(joined)
-
     def enrich(self, data, **kwargs):
         """Method overrided of interface. It walk through the keys to reach at the data that will be used to intersect the polygons. It uses a R tree to index polygons and search faster. For optimization purposes we recommend to buffer the point, using ``geodesic_point_buffer`` function, creating, necessarily, a label named ``area_point``, and save the file with points buffered to use as base of enrichment. After buffer the points, you can use the Functional Region Connector to create your enrichment passing proper attributes."""
         self._get_polygons()
@@ -169,7 +156,7 @@ class FunctionalRegionConnector(IEnricherConnector):
             return self.enrich_geopandas_data(data.data, **kwargs)
 
         elif isinstance(data, DaskGeopandasData):
-            raise self.enrich_dask_geopandas_data(data.data, **kwargs)
+            raise Exception("DaskGeopandasData not implemented")
 
         elif isinstance(data, JsonData):
-            return self.enrichJsonData(data, **kwargs)
+            return self.enrich_json_data(data, **kwargs)
