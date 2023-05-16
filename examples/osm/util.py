@@ -1,4 +1,6 @@
 import folium
+
+
 def add_categorical_legend(folium_map, title, colors, labels):
     if len(colors) != len(labels):
         raise ValueError("colors and labels must have the same length.")
