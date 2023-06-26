@@ -30,7 +30,7 @@ else:
     ]
 
     elasticsearch = [
-        "elasticsearch>=7.17.0",
+        "elasticsearch==7.17.0",
     ]
 
     sql = [
@@ -56,18 +56,18 @@ else:
 setup(
     name="moredata",
     url="https://https://github.com/NESPEDUFV/more-data",
-    download_url="https://github.com/NESPEDUFV/more-data/archive/v0.2.0.tar.gz",
-    version="0.2.0",
+    download_url="https://github.com/NESPEDUFV/more-data/archive/v0.2.6.tar.gz",
+    version="0.2.6",
     packages=find_packages(where="."),
     python_requires=">=3.8",
-    install_requires=dependencies,
-    extras_require={
-        "complete": dependencies + elasticsearch + sql + json + osm,
-        "osm": dependencies + osm,
-        "elasticsearch": dependencies + elasticsearch,
-        "sql": dependencies + sql,
-        "json": dependencies + json,
-        "develop": dependencies + DOCS_REQUIRES + elasticsearch + sql + json + osm,
-        "docs": DOCS_REQUIRES,
-    },
+    install_requires=dependencies + elasticsearch + sql + json + osm,
+    # extras_require={
+    #     "complete": dependencies + elasticsearch + sql + json + osm,
+    #     "osm": dependencies + osm,
+    #     "elasticsearch": dependencies + elasticsearch,
+    #     "sql": dependencies + sql,
+    #     "json": dependencies + json,
+    #     "develop": dependencies + DOCS_REQUIRES + elasticsearch + sql + json + osm,
+    #     "docs": DOCS_REQUIRES,
+    # },
 )

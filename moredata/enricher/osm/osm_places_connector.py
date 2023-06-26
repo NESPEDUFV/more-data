@@ -177,10 +177,18 @@ class OSMPlacesConnector(IEnricherConnector):
 
         self._df = self._df.set_crs("EPSG:4326")
 
-        sj = geopandas.sjoin(data, self._df, how="left", predicate="intersects")
+        sj = geopandas.sjoin(
+            data, self._df, how=kwargs.get("join_how", "left"), predicate="intersects"
+        )
 
         sj["geometry"] = sj["geometry_not_buffered"]
         sj.drop(columns=["geometry_not_buffered"], inplace=True)
+
+        for column in ["index_left", "index_right"]:
+            try:
+                sj.drop(column, axis=1, inplace=True)
+            except KeyError:
+                pass
 
         return GeopandasData.from_geodataframe(sj)
 
@@ -193,6 +201,12 @@ class OSMPlacesConnector(IEnricherConnector):
 
         sj["geometry"] = sj["geometry_not_buffered"]
         sj = sj.drop(columns=["geometry_not_buffered"])
+
+        for column in ["index_left", "index_right"]:
+            try:
+                sj = sj.drop(column, axis=1)
+            except Exception:
+                pass
 
         return DaskGeopandasData.from_dask_geodataframe(sj)
 
