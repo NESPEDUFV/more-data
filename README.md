@@ -1,5 +1,5 @@
-More Data
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gegen07/more-data/main?labpath=examples)
+MoreData
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/gegen07/more-data/main?labpath=examples)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1yqE31Q_lEHyvSQrogFQHX8Qk8ZHK0fjP?usp=sharing)
 =========
 
 
