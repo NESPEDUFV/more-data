@@ -20,30 +20,30 @@ if os.environ.get("READTHEDOCS", False) == "True":
     osm = []
 else:
     dependencies = [
-        "requests==2.28.2",
-        "Rtree==1.0.1",
-        "pyproj==3.5.0",
-        "geopy==2.0.0",
-        "pandas>=1.0.1",
-        "numpy>=1.18.1",
-        "shapely>=1.8",
+        "requests>=2.31",
+        "Rtree>=1.2",
+        "pyproj>=3.6",
+        "geopy>=2.4",
+        "pandas>=2.2",
+        "numpy>=1.26",
+        "shapely>=2",
     ]
 
     elasticsearch = [
-        "elasticsearch==7.17.0",
+        "elasticsearch>=8",
     ]
 
     sql = [
-        "SQLAlchemy==1.4.37",
-        "PyMySQL==0.10.0",
+        "SQLAlchemy>=2",
+        "PyMySQL>=1.1",
     ]
 
-    json = ["h3==3.4.3"]
+    json = ["h3>=4"]
 
     osm = [
-        "osm2geojson==0.1.27",
-        "dask_geopandas==0.2.0",
-        "geopandas>=0.10.2",
+        "osm2geojson>=0.2",
+        "dask_geopandas>=0.4",
+        "geopandas>=1.0",
     ]
 
     DOCS_REQUIRES = [
@@ -57,10 +57,15 @@ setup(
     name="moredata",
     url="https://https://github.com/NESPEDUFV/more-data",
     download_url="https://github.com/NESPEDUFV/more-data/archive/v0.2.6.tar.gz",
-    version="0.2.6",
+    version="0.3.0",
     packages=find_packages(where="."),
-    python_requires=">=3.8",
-    install_requires=dependencies + elasticsearch + sql + json + osm,
+    python_requires=">=3.10",
+    install_requires=dependencies + osm,
+    extras_require={
+        "elasticsearch": elasticsearch,
+        "sql": sql,
+        "h3": json,
+    },
     # extras_require={
     #     "complete": dependencies + elasticsearch + sql + json + osm,
     #     "osm": dependencies + osm,
