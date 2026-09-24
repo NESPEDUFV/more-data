@@ -1,9 +1,13 @@
 from abc import ABC, abstractproperty, abstractmethod
 from logging import raiseExceptions
 
-from moredata.enricher.elasticsearch_connector.elasticsearch_connector import (
-    ElasticsearchConnector,
-)
+try:
+    from moredata.enricher.elasticsearch_connector.elasticsearch_connector import (
+        ElasticsearchConnector,
+    )
+except ImportError:
+    ElasticsearchConnector = ()
+
 from .enricher import Enricher
 from ..models.data import Data, JsonData
 

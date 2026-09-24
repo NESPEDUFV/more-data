@@ -1,4 +1,3 @@
-import dask_geopandas
 from moredata.models.data import GeopandasData, JsonData, DaskGeopandasData
 from ..enricher import IEnricherConnector
 from ...utils import OSM_util
@@ -102,10 +101,11 @@ class OSMPlacesConnector(IEnricherConnector):
             shp = Point(point["longitude"], point["latitude"])
 
         for j in self.idx.intersection(shp.bounds):
+            polygon = self.array_polygons[j]
             if self.radius is None:
-                if shp.within(shape(self.array_polygons[j])):
+                if shp.within(shape(polygon)):
                     polygon_metadata.append(self._df.iloc[j].to_frame().T)
-            else:
+            elif shp.intersects(polygon):
                 polygon_metadata.append(self._df.iloc[j].to_frame().T)
         return polygon_metadata
 
@@ -193,6 +193,8 @@ class OSMPlacesConnector(IEnricherConnector):
         return GeopandasData.from_geodataframe(sj)
 
     def enrich_dask_geopandas_data(self, data, **kwargs):
+        import dask_geopandas
+
         data = self._buffer_with_crs(data, kwargs.get("new_crs", None))
 
         self._df = self._df.set_crs("EPSG:4326")

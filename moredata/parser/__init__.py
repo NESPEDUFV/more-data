@@ -1,6 +1,5 @@
 import json
 import csv
-from h3 import h3
 from ..utils import read_json_from_file, load_json
 from shapely.geometry import Point
 from numpy import array
@@ -12,7 +11,14 @@ def _add_geo_location(doc):
 
 
 def _add_code_point(doc):
-    doc["code_h3"] = h3.geo_to_h3(doc["latitude"], doc["longitude"], 8)
+    import h3
+
+    lat = doc["latitude"]
+    lon = doc["longitude"]
+    if hasattr(h3, "latlng_to_cell"):
+        doc["code_h3"] = h3.latlng_to_cell(lat, lon, 8)
+    else:
+        doc["code_h3"] = h3.geo_to_h3(lat, lon, 8)
     return doc
 
 

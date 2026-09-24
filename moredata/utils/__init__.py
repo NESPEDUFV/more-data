@@ -21,11 +21,12 @@ def geodesic_point_buffer(lat, lon, radius):
     """
     wgs84 = pyproj.CRS("EPSG:4326")
     merc = pyproj.CRS("EPSG:3857")
-    x, y = pyproj.transform(wgs84, merc, lat, lon)
+    # always_xy keeps longitude first. The old pyproj.transform(lat, lon) call swapped the axes.
+    forward = pyproj.Transformer.from_crs(wgs84, merc, always_xy=True)
+    backward = pyproj.Transformer.from_crs(merc, wgs84, always_xy=True)
+    x, y = forward.transform(lon, lat)
     poly = Polygon(Point(x, y).buffer(radius).exterior.coords[:])
-
-    project = pyproj.Transformer.from_crs(merc, wgs84).transform
-    poly = transform(project, poly)
+    poly = transform(backward.transform, poly)
 
     return poly
 

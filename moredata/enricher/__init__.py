@@ -1,5 +1,13 @@
 from .enricher import *
 from .enricher_builder import *
-from .elasticsearch_connector import *
 from .osm import *
-from .sql_connector import *
+
+try:
+    from .elasticsearch_connector import *
+except ImportError:
+    pass
+
+try:
+    from .sql_connector import *
+except ImportError:
+    pass
